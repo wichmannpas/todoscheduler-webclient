@@ -1,5 +1,0 @@
-Django
-django-registration
-djangorestframework
-django_widget_tweaks
-typing; python_version <= '3.4'

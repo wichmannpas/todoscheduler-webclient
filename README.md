@@ -2,52 +2,40 @@ TodoScheduler
 =============
 
 [![Build Status](https://travis-ci.org/wichmannpas/todoscheduler.svg?branch=master)](https://travis-ci.org/wichmannpas/todoscheduler)
-[![codecov](https://codecov.io/gh/wichmannpas/todoscheduler/branch/master/graph/badge.svg)](https://codecov.io/gh/wichmannpas/todoscheduler)
 
 TodoScheduler helps you managing and scheduling your tasks. You can split your tasks into chunks and schedule them for specific days.
 Scheduling all of your tasks means less postponed tasks and a higher productivity. That means more free time!
 
-Installation
-------------
+This repository contains a JavaScript web frontend of TodoScheduler.
+The backend can be found in [this repository](https://github.com/wichmannpas/todoscheduler).
 
-The installation is that of a common Django app. Basically, the following steps are required (for advanced configuration as well as a production-suitable database, see the official [Django documentation](https://docs.djangoproject.com/)):
+Build Setup
+-----------
 
-Create a virtual environment and activate it:
+In order to be able to use the vuejs dev server, it is recommended to follow both the following steps and the django development server setup described in the main README.
+In order to have the backend available from the vuejs dev server, a proxy like nginx could be used to pass the requests to the respective upstream.
 
-```
-virtualenv --python $(which python3) .pyenv
-. .pyenv/bin/activate
-```
+``` bash
+# install dependencies
+npm install
 
-Install the dependencies:
+# serve with hot reload at localhost:8080
+npm run dev
 
-```
-pip install -r requirements.txt
-```
+# build for production with minification
+npm run build
 
-Copy the example settings:
+# build for production and view the bundle analyzer report
+npm run build --report
 
-```
-cp todoscheduler/settings.py{.example,}
-```
+# run unit tests
+npm run unit
 
-Migrate the database:
-
-```
-./manage.py migrate
-```
-
-Compile the client-side application:
-
-```
-./build_client
+# run all tests
+npm test
 ```
 
-Run the development server (again, see the official documentation for production-suitable deployments):
-
-```
-./manage.py runserver
-```
+For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
 
 Demo
 ----
