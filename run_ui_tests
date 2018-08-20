@@ -1,0 +1,23 @@
+#!/bin/sh -e
+TMPDIR=`mktemp -d`
+
+cd dist
+DISTDIR=`pwd`
+cd ..
+
+git clone -b $(cat API_VERSION) --depth=1 https://github.com/wichmannpas/todoscheduler.git $TMPDIR
+
+cp -r uitests $TMPDIR/
+
+cd $TMPDIR
+
+pip install pip-tools
+pip-compile --output-file requirements-testing.txt requirements-testing.in requirements.in
+pip install -r requirements-testing.txt
+pip install selenium
+pip install psycopg2-binary
+
+cp todoscheduler/settings.py.example.postgres todoscheduler/settings.py
+sed -i "s/INSTALLED_APPS = \\[/INSTALLED_APPS = ['uitests',/" todoscheduler/settings_base.py
+
+DIST_DIR=$DISTDIR exec ./manage.py test uitests
