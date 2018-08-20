@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+import Imprint from '@/pages/Imprint'
 import LoginPage from '@/pages/LoginPage'
 import OverviewPage from '@/pages/OverviewPage'
 
@@ -17,6 +18,11 @@ export default new VueRouter({
       path: '/login',
       name: 'login',
       component: LoginPage
+    },
+    {
+      path: '/imprint',
+      name: 'imprint',
+      component: Imprint
     }
   ]
 })
