@@ -1,10 +1,12 @@
 import axios from 'axios'
 
+import { API_URL } from '@/config'
+
 export default {
   login (username, password) {
     return new Promise(function (resolve, reject) {
       delete axios.defaults.headers.common['Authorization']
-      axios.post('/api/token-auth/', {
+      axios.post(API_URL + '/auth/login/', {
         username: username,
         password: password
       }).then(
@@ -36,7 +38,7 @@ export default {
       }
       axios.defaults.headers.common['Authorization'] = 'Token ' + authToken
 
-      axios.get('/api/user/').then((response) => {
+      axios.get(API_URL + '/api/user/').then((response) => {
         return resolve(true)
       }).catch((error) => {
         console.error(error)
@@ -49,7 +51,7 @@ export default {
     })
   },
   getIncompleteTasks (store) {
-    axios.get('/api/tasks/task/?incomplete').then(function (response) {
+    axios.get(API_URL + '/api/tasks/task/?incomplete').then(function (response) {
       store.dispatch('setIncompleteTasks', response.data)
     })
   },
@@ -58,7 +60,7 @@ export default {
       let duration = task.duration.sub(task.incompleteDuration())
       if (duration.toNumber() <= 0) {
         // unscheduled task, delete it
-        axios.delete('/api/tasks/task/' + task.id.toString() + '/').then(function (response) {
+        axios.delete(API_URL + '/api/tasks/task/' + task.id.toString() + '/').then(function (response) {
           if (response.status === 204) {
             store.commit('deleteIncompleteTask', task)
 
@@ -72,7 +74,7 @@ export default {
         })
       } else {
         // update the task duration
-        axios.patch('/api/tasks/task/' + task.id.toString() + '/', {
+        axios.patch(API_URL + '/api/tasks/task/' + task.id.toString() + '/', {
           duration: duration
         }).then(function (response) {
           if (response.status === 200) {
@@ -91,7 +93,7 @@ export default {
   },
   scheduleTask (store, task, day, duration) {
     return new Promise(function (resolve, reject) {
-      axios.post('/api/tasks/taskexecution/', {
+      axios.post(API_URL + '/api/tasks/taskexecution/', {
         task_id: task.id,
         day: day,
         duration: duration
@@ -111,7 +113,7 @@ export default {
     })
   },
   getTaskExecutions (store) {
-    axios.get('/api/tasks/taskexecution/').then(function (response) {
+    axios.get(API_URL + '/api/tasks/taskexecution/').then(function (response) {
       for (let i = 0; i < response.data.length; i++) {
         store.commit('setTaskExecutionsForDay', response.data[i])
       }
@@ -119,7 +121,7 @@ export default {
   },
   createTask (store, task) {
     return new Promise(function (resolve, reject) {
-      axios.post('/api/tasks/task/', {
+      axios.post(API_URL + '/api/tasks/task/', {
         name: task.name,
         duration: task.duration,
         start: task.start
@@ -138,7 +140,7 @@ export default {
   },
   updateTask (store, task) {
     return new Promise(function (resolve, reject) {
-      axios.put('/api/tasks/task/' + task.id.toString() + '/', {
+      axios.put(API_URL + '/api/tasks/task/' + task.id.toString() + '/', {
         name: task.name,
         duration: task.duration,
         start: task.start
@@ -158,7 +160,7 @@ export default {
   },
   changeTaskDuration (store, task, newDuration) {
     return new Promise(function (resolve, reject) {
-      axios.patch('/api/tasks/task/' + task.id.toString() + '/', {
+      axios.patch(API_URL + '/api/tasks/task/' + task.id.toString() + '/', {
         duration: newDuration
       }).then(function (response) {
         store.dispatch('updateTask', response.data)
@@ -169,13 +171,13 @@ export default {
     })
   },
   getMissedTaskExecutions (store) {
-    axios.get('/api/tasks/taskexecution/?missed').then(function (response) {
+    axios.get(API_URL + '/api/tasks/taskexecution/?missed').then(function (response) {
       store.commit('setMissedTaskExecutions', response.data)
     })
   },
   deleteTaskExecution (store, execution, postpone) {
     return new Promise(function (resolve, reject) {
-      axios.delete(
+      axios.delete(API_URL +
         '/api/tasks/taskexecution/' + execution.id.toString() +
         '/?postpone=' + (postpone ? '1' : '0')).then(function (response) {
         store.commit('deleteTaskExecution', execution)
@@ -192,7 +194,7 @@ export default {
   },
   changeTaskExecutionDuration (store, execution, newDuration) {
     return new Promise(function (resolve, reject) {
-      axios.patch('/api/tasks/taskexecution/' + execution.id.toString() + '/', {
+      axios.patch(API_URL + '/api/tasks/taskexecution/' + execution.id.toString() + '/', {
         duration: newDuration
       }).then(function (response) {
         store.dispatch('updateTaskExecution', response.data)
@@ -205,7 +207,7 @@ export default {
   },
   exchangeTaskExecution (store, execution, exchange) {
     return new Promise(function (resolve, reject) {
-      axios.patch('/api/tasks/taskexecution/' + execution.id.toString() + '/', {
+      axios.patch(API_URL + '/api/tasks/taskexecution/' + execution.id.toString() + '/', {
         day_order: exchange.dayOrder
       }).then(function (response) {
         store.dispatch('updateTaskExecution', response.data)
@@ -218,7 +220,7 @@ export default {
   },
   finishTaskExecution (store, execution, newState) {
     return new Promise(function (resolve, reject) {
-      axios.patch('/api/tasks/taskexecution/' + execution.id.toString() + '/', {
+      axios.patch(API_URL + '/api/tasks/taskexecution/' + execution.id.toString() + '/', {
         finished: newState
       }).then(function (response) {
         store.dispatch('updateTaskExecution', response.data)
@@ -231,7 +233,7 @@ export default {
   },
   updateTaskExecutionDay (store, execution, newDay) {
     return new Promise(function (resolve, reject) {
-      axios.patch('/api/tasks/taskexecution/' + execution.id.toString() + '/', {
+      axios.patch(API_URL + '/api/tasks/taskexecution/' + execution.id.toString() + '/', {
         day: newDay
       }).then(function (response) {
         store.dispatch('updateTaskExecution', response.data)
