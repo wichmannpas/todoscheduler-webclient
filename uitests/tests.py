@@ -1,15 +1,17 @@
 import os
+from base64 import urlsafe_b64encode
 
 from datetime import date, timedelta
 from decimal import Decimal
 from time import sleep
-from subprocess import call, DEVNULL
+from subprocess import DEVNULL, Popen
 
 from django.contrib.auth import get_user_model
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.management import call_command
-from rest_framework.authtoken.models import Token as AuthToken
+from django.core.servers.basehttp import ThreadedWSGIServer
+from django.test import override_settings, LiveServerTestCase
+from django.test.testcases import LiveServerThread, QuietWSGIRequestHandler
+from rest_authtoken.models import AuthToken
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
@@ -17,21 +19,43 @@ from selenium.webdriver.support.ui import Select
 from task.models import Task, TaskExecution
 
 
-class SeleniumTest(StaticLiveServerTestCase):
+@override_settings(STATIC_ROOT='nonexistent', STATIC_URL='nonexistent')
+class SeleniumTest(LiveServerTestCase):
+    host = '127.0.0.1'
+    port = 8000
+    frontend_port = 8080
+
     @classmethod
     def setUpClass(cls):
-        if 'NO_BUILD_CLIENT' not in os.environ:
-            call('./build_client', stdout=DEVNULL, stderr=DEVNULL)
         super().setUpClass()
         options = webdriver.ChromeOptions()
         options.add_argument('--headless')
         cls.selenium = webdriver.Chrome(options=options)
         cls.selenium.implicitly_wait(10)
 
+        cls._frontend_server = Popen([
+            'python',
+            '-m', 'http.server',
+            str(cls.frontend_port),
+        ], cwd=os.environ.get('DIST_DIR'), stdout=DEVNULL, stderr=DEVNULL)
+        sleep(0.2)
+        cls.frontend_url = 'http://127.0.0.1:{}'.format(cls.frontend_port)
+
     @classmethod
     def tearDownClass(cls):
         cls.selenium.quit()
+        cls._frontend_server.kill()
         super().tearDownClass()
+
+    class ReusableLiveServerThread(LiveServerThread):
+        def _create_server(self):
+            return ThreadedWSGIServer(
+                (self.host, self.port),
+                QuietWSGIRequestHandler,
+                allow_reuse_address=True
+            )
+
+    server_thread_class = ReusableLiveServerThread
 
 
 class LoginPageTest(SeleniumTest):
@@ -47,7 +71,7 @@ class LoginPageTest(SeleniumTest):
         user.set_password('foobar123')
         user.save()
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
 
         # hash-location is #/login now
@@ -83,8 +107,8 @@ class AuthenticatedSeleniumTest(SeleniumTest):
             workhours_weekday=Decimal(8),
             workhours_weekend=Decimal(4))
 
-        self.selenium.get(self.live_server_url)
-        token, created = AuthToken.objects.get_or_create(user=self.user)
+        self.selenium.get(self.frontend_url)
+        token = urlsafe_b64encode(AuthToken.create_token_for_user(self.user)).decode()
         self.selenium.execute_script(
             'window.localStorage.setItem("authToken", "{}")'.format(token))
 
@@ -93,7 +117,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
     def test_new_task(self):
         self.assertEqual(Task.objects.count(), 0)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         new_task_link = self.selenium.find_element_by_link_text('New Task')
         new_task_link.click()
@@ -117,7 +141,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
     def test_new_task_submit_with_enter_duration(self):
         self.assertEqual(Task.objects.count(), 0)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         new_task_link = self.selenium.find_element_by_link_text('New Task')
         new_task_link.click()
@@ -141,7 +165,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
     def test_new_task_submit_with_enter_name(self):
         self.assertEqual(Task.objects.count(), 0)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         new_task_link = self.selenium.find_element_by_link_text('New Task')
         new_task_link.click()
@@ -167,7 +191,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
         self.assertEqual(Task.objects.count(), 0)
         self.assertEqual(TaskExecution.objects.count(), 0)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         new_task_link = self.selenium.find_element_by_link_text('New Task')
         new_task_link.click()
@@ -200,7 +224,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
         self.assertEqual(Task.objects.count(), 0)
         self.assertEqual(TaskExecution.objects.count(), 0)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         new_task_link = self.selenium.find_element_by_link_text('New Task')
         new_task_link.click()
@@ -234,7 +258,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
     def test_new_task_invalid_duration(self):
         self.assertEqual(Task.objects.count(), 0)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         new_task_link = self.selenium.find_element_by_link_text('New Task')
         new_task_link.click()
@@ -257,7 +281,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
     def test_new_task_with_start_date(self):
         self.assertEqual(Task.objects.count(), 0)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         new_task_link = self.selenium.find_element_by_link_text('New Task')
         new_task_link.click()
@@ -301,7 +325,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             day_order=0,
             finished=True)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         edit_task_link = self.selenium.find_elements_by_class_name('fa-pencil')[0]
         edit_task_link.click()
@@ -346,7 +370,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             day_order=0,
             finished=True)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         edit_task_link = self.selenium.find_elements_by_class_name('fa-pencil')[0]
         edit_task_link.click()
@@ -389,7 +413,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             day_order=0,
             finished=True)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         edit_task_link = self.selenium.find_elements_by_class_name('fa-pencil')[0]
         edit_task_link.click()
@@ -432,7 +456,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             day_order=0,
             finished=True)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         edit_task_link = self.selenium.find_elements_by_class_name('fa-pencil')[0]
         edit_task_link.click()
@@ -478,7 +502,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             day_order=0,
             finished=True)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         edit_task_link = self.selenium.find_elements_by_class_name('fa-pencil')[0]
         edit_task_link.click()
@@ -515,7 +539,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             name='Testtask',
             duration=5)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         schedule_link = self.selenium.find_element_by_xpath('//a[@data-tooltip="Schedule"]')
         schedule_link.click()
@@ -549,7 +573,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             name='Testtask',
             duration=5)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         schedule_link = self.selenium.find_element_by_xpath('//a[@data-tooltip="Schedule"]')
         schedule_link.click()
@@ -583,7 +607,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             name='Testtask',
             duration=5)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         schedule_link = self.selenium.find_element_by_xpath('//a[@data-tooltip="Schedule"]')
         schedule_link.click()
@@ -632,7 +656,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             TaskExecution(
                 task=other_task, duration=10, day=date.today() + timedelta(days=2), day_order=0)])
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         schedule_link = self.selenium.find_element_by_xpath('//a[@data-tooltip="Schedule"]')
         schedule_link.click()
@@ -669,7 +693,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             name='Testtask',
             duration=5)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         schedule_link = self.selenium.find_element_by_xpath('//a[@data-tooltip="Schedule"]')
         schedule_link.click()
@@ -710,7 +734,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             name='Testtask',
             duration=5)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         schedule_link = self.selenium.find_element_by_xpath('//a[@data-tooltip="Schedule"]')
         schedule_link.click()
@@ -751,7 +775,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             name='Testtask',
             duration=5)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         schedule_link = self.selenium.find_element_by_xpath('//a[@data-tooltip="Schedule"]')
         schedule_link.click()
@@ -786,7 +810,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             name='Testtask',
             duration=5)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         self.selenium.find_element_by_css_selector('[data-tooltip="Finish task"]').click()
         sleep(0.5)
@@ -809,7 +833,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             duration=2,
             day_order=0)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         self.selenium.find_element_by_css_selector('[data-tooltip="Finish task"]').click()
         sleep(0.5)
@@ -830,7 +854,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             duration=2,
             day_order=0)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         self.selenium.find_element_by_css_selector('[data-tooltip="Takes 30 more minutes"]').click()
         sleep(0.5)
@@ -851,7 +875,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             duration=2,
             day_order=0)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         self.selenium.find_element_by_css_selector('[data-tooltip="Takes 30 less minutes"]').click()
         sleep(0.5)
@@ -872,7 +896,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             duration=2,
             day_order=0)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         self.selenium.find_element_by_css_selector('[data-tooltip="Done"]').click()
         sleep(0.5)
@@ -892,7 +916,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             day_order=0,
             finished=True)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         self.selenium.find_element_by_css_selector('[data-tooltip="Not done"]').click()
         sleep(0.5)
@@ -912,7 +936,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             day_order=0,
             finished=True)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         self.selenium.find_element_by_css_selector('[data-tooltip="No time needed on this day"]').click()
         alert = self.selenium.switch_to.alert
@@ -937,7 +961,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             day_order=0,
             finished=True)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         self.selenium.find_element_by_css_selector('[data-tooltip="Postpone to another day"]').click()
         sleep(0.5)
@@ -959,7 +983,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             duration=2,
             day_order=0)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         self.selenium.find_elements_by_css_selector('[data-tooltip="Move to previous day"]')[0].click()
         sleep(0.5)
@@ -980,7 +1004,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             duration=2,
             day_order=0)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         self.selenium.find_elements_by_css_selector('[data-tooltip="Move to next day"]')[0].click()
         sleep(0.5)
@@ -1010,7 +1034,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             duration=1,
             day_order=1)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         self.selenium.find_elements_by_css_selector('[data-tooltip="Needs time earlier"]')[1].click()
         sleep(0.5)
@@ -1044,7 +1068,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             duration=1,
             day_order=1)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
         self.selenium.find_elements_by_css_selector('[data-tooltip="Needs time later"]')[0].click()
         sleep(0.5)
@@ -1069,7 +1093,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             duration=2,
             day_order=0)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
 
         self.assertIn(
@@ -1093,7 +1117,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             duration=2,
             day_order=0)
 
-        self.selenium.get(self.live_server_url)
+        self.selenium.get(self.frontend_url)
         sleep(0.5)
 
         self.assertIn(
