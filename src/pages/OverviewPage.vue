@@ -2,7 +2,7 @@
   <div class="overview">
     <NewTask />
 
-    <MissedTaskExecutions />
+    <MissedTaskChunks />
 
     <IncompleteTasks />
 
@@ -12,7 +12,7 @@
 <script>
 import { checkAuth } from '@/api'
 import IncompleteTasks from '@/components/IncompleteTasks'
-import MissedTaskExecutions from '@/components/MissedTaskExecutions'
+import MissedTaskChunks from '@/components/MissedTaskChunks'
 import NewTask from '@/components/NewTask'
 import Schedule from '@/components/Schedule'
 
@@ -21,7 +21,7 @@ export default {
   components: {
     NewTask,
     IncompleteTasks,
-    MissedTaskExecutions,
+    MissedTaskChunks,
     Schedule
   },
   created: function () {

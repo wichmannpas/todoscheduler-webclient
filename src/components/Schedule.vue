@@ -32,7 +32,7 @@ export default {
       let result = []
       let day = firstDay
       for (let i = 0; i < count; i++) {
-        result.push(this.$store.getters.taskExecutionsForDay(day))
+        result.push(this.$store.getters.taskChunksForDay(day))
 
         day = addDays(day, 1)
       }
@@ -44,7 +44,7 @@ export default {
           past: true,
           today: false,
           overloaded: false,
-          executions: [
+          chunks: [
             {
               id: 42,
               task: {

@@ -14,7 +14,7 @@ function fetchTaskChunks (store) {
 
     axios.get(API_URL + '/task/chunk/').then(function (response) {
       for (let i = 0; i < response.data.length; i++) {
-        store.commit('setTaskExecutionsForDay', response.data[i])
+        store.commit('setTaskChunksForDay', response.data[i])
       }
     }).catch((error) => handleGenericErrors(error, resolve, reject))
   })

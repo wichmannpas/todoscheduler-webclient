@@ -1,47 +1,47 @@
 <template>
   <span
       v-bind:class="[
-        'task-execution',
-        { finished: execution.finished },
-        { overdue: execution.overdue }
+        'task-chunk',
+        { finished: chunk.finished },
+        { overdue: chunk.overdue }
       ]"
       v-bind:style="[
-        { height: (execution.duration.toNumber() * 4).toString() + 'em' }
+        { height: (chunk.duration.toNumber() * 4).toString() + 'em' }
       ]">
-    <strong>{{ execution.task.name }}</strong>
+    <strong>{{ chunk.task.name }}</strong>
     <span
       v-if="loading"
       class="loading loading-lg"></span>
     <span class="float-right">
-      {{ execution.duration.toNumber() }}h
-      <span v-if="execution.task.duration.toNumber() !== execution.duration.toNumber()">
-        ({{ execution.task.duration.toNumber() }}h)
+      {{ chunk.duration.toNumber() }}h
+      <span v-if="chunk.task.duration.toNumber() !== chunk.duration.toNumber()">
+        ({{ chunk.task.duration.toNumber() }}h)
       </span>
     </span>
     <br/>
     <span class="float-left">
       <a
-          @click="finishExecution(true)"
-          v-if="!execution.finished"
+          @click="finishChunk(true)"
+          v-if="!chunk.finished"
           class="tooltip tooltip-right"
           data-tooltip="Done">
         <span class="fa fa-check"></span>
       </a>
       <a
-          @click="finishExecution(false)"
-          v-if="execution.finished"
+          @click="finishChunk(false)"
+          v-if="chunk.finished"
           class="tooltip tooltip-right"
           data-tooltip="Not done">
         <span class="fa fa-undo"></span>
       </a>
       <a
-          @click="deleteExecution()"
+          @click="deleteChunk()"
           class="tooltip tooltip-right"
           data-tooltip="No time needed on this day">
         <span class="fa fa-times"></span>
       </a>
       <a
-          @click="postponeExecution()"
+          @click="postponeChunk()"
           class="tooltip tooltip-right"
           data-tooltip="Postpone to another day">
         <span class="fa fa-clock-o"></span>
@@ -62,54 +62,54 @@
     </span>
     <span class="float-right">
       <a
-          @click="updateExecutionDay(-1)"
+          @click="updateChunkDay(-1)"
           class="tooltip tooltip-left"
           v-bind:class="[
-            { 'invisible': execution.finished }
+            { 'invisible': chunk.finished }
           ]"
           data-tooltip="Move to previous day">
         <span class="fa fa-arrow-left"></span>
       </a>
       <a
-          @click="moveExecution(-1)"
+          @click="moveChunk(-1)"
           class="tooltip tooltip-left"
           v-bind:class="[
-            { 'invisible': execution.finished },
+            { 'invisible': chunk.finished },
             { 'invisible': !canBeMovedUp }
           ]"
          data-tooltip="Needs time earlier">
         <span class="fa fa-arrow-up"></span>
       </a>
       <a
-          @click="moveExecution(1)"
+          @click="moveChunk(1)"
           class="tooltip tooltip-left"
           v-bind:class="[
-            { 'invisible': execution.finished },
+            { 'invisible': chunk.finished },
             { 'invisible': !canBeMovedDown }
           ]"
           data-tooltip="Needs time later">
         <span class="fa fa-arrow-down"></span>
       </a>
       <a
-          @click="updateExecutionDay(1)"
+          @click="updateChunkDay(1)"
           class="tooltip tooltip-left"
           v-bind:class="[
-            { 'invisible': execution.finished }
+            { 'invisible': chunk.finished }
           ]"
           data-tooltip="Move to next day">
         <span class="fa fa-arrow-right"></span>
       </a>
       <a
-          @click="changeExecutionDuration('-0.5')"
+          @click="changeChunkDuration('-0.5')"
           class="tooltip tooltip-left"
           v-bind:class="[
-            { 'invisible': execution.duration.toNumber() <= 0.5 }
+            { 'invisible': chunk.duration.toNumber() <= 0.5 }
           ]"
           data-tooltip="Takes 30 less minutes">
         <span class="fa fa-minus"></span>
       </a>
       <a
-          @click="changeExecutionDuration('0.5')"
+          @click="changeChunkDuration('0.5')"
           class="tooltip tooltip-left"
           data-tooltip="Takes 30 more minutes">
         <span class="fa fa-plus"></span>
@@ -118,7 +118,7 @@
     <EditTaskModal
         @close="editModalActive = false"
         v-if="editModalActive"
-        v-bind:task="execution.task"
+        v-bind:task="chunk.task"
     />
   </span>
 </template>
@@ -136,12 +136,12 @@ import EditTaskModal from '@/components/EditTaskModal'
 import { dayDelta } from '@/utils'
 
 export default {
-  name: 'TaskExecution',
+  name: 'TaskChunk',
   components: {
     EditTaskModal
   },
   props: [
-    'execution'
+    'chunk'
   ],
   data: function () {
     return {
@@ -151,44 +151,44 @@ export default {
   },
   computed: {
     canBeMovedUp () {
-      return this.$store.getters.taskExecutionToExchange(
-        this.execution, -1) !== null
+      return this.$store.getters.taskChunkToExchange(
+        this.chunk, -1) !== null
     },
     canBeMovedDown () {
-      return this.$store.getters.taskExecutionToExchange(
-        this.execution, 1) !== null
+      return this.$store.getters.taskChunkToExchange(
+        this.chunk, 1) !== null
     }
   },
   methods: {
-    changeExecutionDuration (delta) {
+    changeChunkDuration (delta) {
       this.loading = true
       changeTaskChunkDuration(
         this.$store,
-        this.execution,
-        this.execution.duration.add(delta).toString()).then(
+        this.chunk,
+        this.chunk.duration.add(delta).toString()).then(
         () => {
           this.loading = false
         })
     },
-    deleteExecution () {
-      if (!confirm('Are you sure that you want to delete this task execution?')) {
+    deleteChunk () {
+      if (!confirm('Are you sure that you want to delete this task chunk?')) {
         return
       }
 
       this.loading = true
       deleteTaskChunk(
         this.$store,
-        this.execution,
+        this.chunk,
         false).then(
         () => {
           this.loading = false
         })
     },
-    finishExecution (newState) {
+    finishChunk (newState) {
       this.loading = true
       finishTaskChunk(
         this.$store,
-        this.execution,
+        this.chunk,
         newState).then(
         () => {
           this.loading = false
@@ -198,15 +198,15 @@ export default {
       this.loading = true
       changeTaskDuration(
         this.$store,
-        this.execution.task,
-        this.execution.task.duration.add(delta.toString())).then(
+        this.chunk.task,
+        this.chunk.task.duration.add(delta.toString())).then(
         () => {
           this.loading = false
         })
     },
-    moveExecution (direction) {
-      let exchange = this.$store.getters.taskExecutionToExchange(
-        this.execution,
+    moveChunk (direction) {
+      let exchange = this.$store.getters.taskChunkToExchange(
+        this.chunk,
         direction)
       if (exchange === null) {
         // nothing to exchange with
@@ -216,32 +216,32 @@ export default {
       this.loading = true
       exchangeTaskChunk(
         this.$store,
-        this.execution,
+        this.chunk,
         exchange).then(
         () => {
           this.loading = false
         })
     },
-    postponeExecution () {
+    postponeChunk () {
       this.loading = true
       deleteTaskChunk(
         this.$store,
-        this.execution,
+        this.chunk,
         true).then(
         () => {
           this.loading = false
         })
     },
-    updateExecutionDay (direction) {
+    updateChunkDay (direction) {
       let newDay = dayDelta(
-        this.execution.day,
+        this.chunk.day,
         direction * 86400000)
-      console.log(this.execution.day)
+      console.log(this.chunk.day)
 
       this.loading = true
       updateTaskChunkDay(
         this.$store,
-        this.execution,
+        this.chunk,
         newDay).then(
         () => {
           this.loading = false

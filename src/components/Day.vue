@@ -21,10 +21,10 @@
       </span>
       </div>
       <div class="body">
-        <TaskExecution
-          v-for="execution in day.taskExecutions"
-          v-bind:key="execution.id"
-          v-bind:execution="execution"/>
+        <TaskChunk
+          v-for="chunk in day.taskChunks"
+          v-bind:key="chunk.id"
+          v-bind:chunk="chunk"/>
       </div>
       <div class="footer">
         <span class="float-right">
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import TaskExecution from '@/components/TaskExecution'
+import TaskChunk from '@/components/TaskChunk'
 
 export default {
   name: 'Day',
@@ -45,7 +45,7 @@ export default {
     'day'
   ],
   components: {
-    TaskExecution
+    TaskChunk
   }
 }
 </script>
