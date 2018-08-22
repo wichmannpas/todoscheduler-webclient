@@ -67,7 +67,7 @@
 <script>
 import Vue from 'vue'
 
-import Api from '@/api/Api'
+import { createTask, scheduleTask } from '@/api/task'
 import { objectToTask } from '@/models/Task'
 import TaskForm from '@/components/TaskForm'
 
@@ -93,9 +93,9 @@ export default {
     createTask () {
       this.loading = true
 
-      Api.createTask(this.$store, this.task).then((task) => {
+      createTask(this.$store, this.task).then((task) => {
         if (this.schedule) {
-          Api.scheduleTask(
+          scheduleTask(
             this.$store,
             objectToTask(task),
             this.scheduleFor,

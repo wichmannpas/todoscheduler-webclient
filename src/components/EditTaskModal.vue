@@ -52,7 +52,7 @@
 <script>
 import Vue from 'vue'
 
-import Api from '@/api/Api'
+import { updateTask } from '@/api/task'
 import TaskForm from '@/components/TaskForm'
 
 export default {
@@ -76,7 +76,7 @@ export default {
 
       let task = Object.assign({}, this.editedTask)
       task.id = this.task.id
-      Api.updateTask(this.$store, task).then((response) => {
+      updateTask(this.$store, task).then((response) => {
         this.loading = false
         Vue.set(this, 'errors', [])
 

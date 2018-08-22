@@ -124,7 +124,14 @@
 </template>
 
 <script>
-import Api from '@/api/Api'
+import { changeTaskDuration } from '@/api/task'
+import {
+  changeTaskChunkDuration,
+  deleteTaskChunk,
+  exchangeTaskChunk,
+  finishTaskChunk,
+  updateTaskChunkDay
+} from '@/api/taskChunk'
 import EditTaskModal from '@/components/EditTaskModal'
 import { dayDelta } from '@/utils'
 
@@ -155,7 +162,7 @@ export default {
   methods: {
     changeExecutionDuration (delta) {
       this.loading = true
-      Api.changeTaskExecutionDuration(
+      changeTaskChunkDuration(
         this.$store,
         this.execution,
         this.execution.duration.add(delta).toString()).then(
@@ -169,7 +176,7 @@ export default {
       }
 
       this.loading = true
-      Api.deleteTaskExecution(
+      deleteTaskChunk(
         this.$store,
         this.execution,
         false).then(
@@ -179,7 +186,7 @@ export default {
     },
     finishExecution (newState) {
       this.loading = true
-      Api.finishTaskExecution(
+      finishTaskChunk(
         this.$store,
         this.execution,
         newState).then(
@@ -189,7 +196,7 @@ export default {
     },
     increaseTaskDuration (delta) {
       this.loading = true
-      Api.changeTaskDuration(
+      changeTaskDuration(
         this.$store,
         this.execution.task,
         this.execution.task.duration.add(delta.toString())).then(
@@ -207,7 +214,7 @@ export default {
       }
 
       this.loading = true
-      Api.exchangeTaskExecution(
+      exchangeTaskChunk(
         this.$store,
         this.execution,
         exchange).then(
@@ -217,7 +224,7 @@ export default {
     },
     postponeExecution () {
       this.loading = true
-      Api.deleteTaskExecution(
+      deleteTaskChunk(
         this.$store,
         this.execution,
         true).then(
@@ -232,7 +239,7 @@ export default {
       console.log(this.execution.day)
 
       this.loading = true
-      Api.updateTaskExecutionDay(
+      updateTaskChunkDay(
         this.$store,
         this.execution,
         newDay).then(
