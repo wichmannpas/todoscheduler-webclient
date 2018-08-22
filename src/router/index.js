@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 
 import Imprint from '@/pages/Imprint'
 import LoginPage from '@/pages/LoginPage'
-import OverviewPage from '@/pages/OverviewPage'
+import MainPage from '@/pages/MainPage'
 
 Vue.use(VueRouter)
 
@@ -11,8 +11,8 @@ export default new VueRouter({
   routes: [
     {
       path: '/',
-      name: 'overview',
-      component: OverviewPage
+      name: 'main',
+      component: MainPage
     },
     {
       path: '/login',

@@ -66,10 +66,11 @@
 
 <script>
 import Vue from 'vue'
+import { deserialize } from 'serializr'
 
-import { createTask, scheduleTask } from '@/api/task'
-import { objectToTask } from '@/models/Task'
+import Task from '@/models/Task'
 import TaskForm from '@/components/TaskForm'
+import { createTask, scheduleTask } from '@/api/task'
 
 export default {
   name: 'NewTaskModal',
@@ -97,7 +98,7 @@ export default {
         if (this.schedule) {
           scheduleTask(
             this.$store,
-            objectToTask(task),
+            deserialize(Task, task),
             this.scheduleFor,
             this.task.duration
           ).then((response) => {

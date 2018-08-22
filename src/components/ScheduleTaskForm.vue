@@ -69,7 +69,8 @@ export default {
       loading: false,
       scheduleFor: 'today',
       scheduleForDate: formatDayString(new Date()),
-      duration: this.task.defaultScheduleDuration.toNumber(),
+      duration: this.task.defaultScheduleDuration(
+        this.$store.state.user.user).toNumber(),
       errors: []
     }
   },

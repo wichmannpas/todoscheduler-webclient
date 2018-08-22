@@ -50,8 +50,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
-
 import { updateTask } from '@/api/task'
 import TaskForm from '@/components/TaskForm'
 
@@ -77,14 +75,13 @@ export default {
       let task = Object.assign({}, this.editedTask)
       task.id = this.task.id
       updateTask(this.$store, task).then((response) => {
-        this.loading = false
-        Vue.set(this, 'errors', [])
+        this.errors = []
 
         this.closeModal()
-      }).catch((response) => {
+      }).catch(error => {
+        this.errors = Object.keys(error)
+      }).finally(() => {
         this.loading = false
-
-        Vue.set(this, 'errors', Object.keys(response))
       })
     },
     closeModal () {

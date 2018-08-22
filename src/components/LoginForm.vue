@@ -57,6 +57,7 @@ export default {
     }
   },
   created: function () {
+    // TODO: move auth check to LoginPage
     // TODO: do not explicitly check auth here but rely on store to check authentication
     checkAuth().then((auth) => {
       if (auth) {

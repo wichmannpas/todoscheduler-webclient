@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { deleteTaskChunk, finishTaskChunk } from '@/api/taskChunk'
+import { deleteTaskChunk, finishTaskChunk } from '@/api/taskchunk'
 
 export default {
   name: 'MissedTaskChunks',

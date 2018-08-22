@@ -59,6 +59,8 @@ function handleGenericErrors (error, resolve, reject, callback) {
 
   if (callback !== undefined) {
     callback(error)
+  } else if (response.status === 400) {
+    reject(response.data)
   } else {
     console.error(error)
 

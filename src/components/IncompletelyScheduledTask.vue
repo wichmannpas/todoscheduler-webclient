@@ -1,7 +1,7 @@
 <template>
   <li>
     {{ task.name }}
-    ({{ task.incompleteDuration().toNumber() }}h)
+    ({{ task.unscheduledDuration().toNumber() }}h)
 
     <EditTaskModal
         @close="editModalActive = false"
@@ -20,9 +20,9 @@
         data-tooltip="Edit task">
       <span class="fa fa-pencil"></span></a>
     <a
-        @click="finishTask()"
+        @click="completeTask()"
         class="tooltip"
-        data-tooltip="Finish task">
+        data-tooltip="Complete task">
       <span class="fa fa-check"></span></a>
     <a
         @click="scheduleModalActive = true"
@@ -33,12 +33,12 @@
 </template>
 
 <script>
-import { finishTask } from '@/api/task'
+import { completeTask } from '@/api/task'
 import EditTaskModal from '@/components/EditTaskModal'
 import ScheduleTaskModal from '@/components/ScheduleTaskModal'
 
 export default {
-  name: 'IncompleteTask',
+  name: 'IncompletelyScheduledTask',
   props: [
     'task'
   ],
@@ -53,8 +53,8 @@ export default {
     ScheduleTaskModal
   },
   methods: {
-    finishTask () {
-      finishTask(this.$store, this.task)
+    completeTask () {
+      completeTask(this.$store, this.task)
     }
   }
 }

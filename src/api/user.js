@@ -1,8 +1,9 @@
 import axios from 'axios'
+import { deserialize } from 'serializr'
 
 import { API_URL } from '@/config'
-
 import { ensureAuthToken, handleGenericErrors } from '@/api'
+import User from '@/models/User'
 
 /**
  * Fetch the account of the authenticated user.
@@ -14,8 +15,7 @@ function fetchUser () {
     }
 
     axios.get(API_URL + '/base/user/').then((response) => {
-      // TODO: deserialize
-      return resolve(response.data)
+      return resolve(deserialize(User, response.data))
     }).catch((error) => handleGenericErrors(error, resolve, reject))
   })
 }

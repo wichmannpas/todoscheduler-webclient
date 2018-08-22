@@ -1,34 +1,36 @@
 import axios from 'axios'
+import { deserialize } from 'serializr'
 
 import { API_URL } from '@/config'
-
 import { ensureAuthToken, handleGenericErrors } from '@/api'
+import Task from '@/models/Task'
+import TaskChunk from '@/models/TaskChunk'
 
-function fetchTasks (store) {
+function fetchTasks () {
   return new Promise(function (resolve, reject) {
     if (!ensureAuthToken()) {
       reject(new Error('no auth'))
     }
 
     axios.get(API_URL + '/task/task/').then(function (response) {
-      // TODO: deserialize
-      store.dispatch('setIncompleteTasks', response.data)
+      resolve(
+        response.data.map(raw => deserialize(Task, raw)))
     }).catch((error) => handleGenericErrors(error))
   })
 }
 
-function finishTask (store, task) {
+function completeTask (store, task) {
   return new Promise(function (resolve, reject) {
     if (!ensureAuthToken()) {
       reject(new Error('no auth'))
     }
 
-    let duration = task.duration.sub(task.incompleteDuration())
+    let duration = task.duration.sub(task.unscheduledDuration())
     if (duration.toNumber() <= 0) {
       // unscheduled task, delete it
       axios.delete(API_URL + '/task/task/' + task.id.toString() + '/').then(function (response) {
         if (response.status === 204) {
-          store.commit('deleteIncompleteTask', task)
+          store.commit('deleteTask', task.id)
 
           resolve()
         } else {
@@ -40,12 +42,11 @@ function finishTask (store, task) {
       })
     } else {
       // update the task duration
-      axios.patch(API_URL + '/tasks/task/' + task.id.toString() + '/', {
+      axios.patch(API_URL + '/task/task/' + task.id.toString() + '/', {
         duration: duration
       }).then(function (response) {
         if (response.status === 200) {
-          store.dispatch('updateTask', response.data)
-          store.dispatch('updateTaskInChunks', response.data)
+          store.commit('updateTask', deserialize(Task, response.data))
           resolve()
         } else {
           reject(response.data)
@@ -61,14 +62,14 @@ function scheduleTask (store, task, day, duration) {
       reject(new Error('no auth'))
     }
 
-    axios.post(API_URL + '/tasks/taskchunk/', {
+    axios.post(API_URL + '/task/chunk/', {
       task_id: task.id,
       day: day,
       duration: duration
     }).then(function (response) {
       if (response.status === 201) {
-        store.dispatch('updateTask', response.data.task)
-        store.dispatch('addTaskChunk', response.data)
+        store.commit('updateTask', deserialize(Task, response.data.task))
+        store.commit('addTaskChunk', deserialize(TaskChunk, response.data))
 
         resolve()
       } else {
@@ -90,8 +91,9 @@ function createTask (store, task) {
       start: task.start
     }).then(function (response) {
       if (response.status === 201) {
-        store.commit('addIncompleteTask', response.data)
-        resolve(response.data)
+        let task = deserialize(Task, response.data)
+        store.commit('addTask', task)
+        resolve(task)
       } else {
         reject(response.data)
       }
@@ -111,8 +113,7 @@ function updateTask (store, task) {
       start: task.start
     }).then(function (response) {
       if (response.status === 200) {
-        store.dispatch('updateTask', response.data)
-        store.dispatch('updateTaskInChunks', response.data)
+        store.commit('updateTask', deserialize(Task, response.data))
         resolve()
       } else {
         reject(response.data)
@@ -130,8 +131,7 @@ function changeTaskDuration (store, task, newDuration) {
     axios.patch(API_URL + '/task/task/' + task.id.toString() + '/', {
       duration: newDuration
     }).then(function (response) {
-      store.dispatch('updateTask', response.data)
-      store.dispatch('updateTaskInChunks', response.data)
+      store.commit('updateTask', deserialize(Task, response.data))
 
       resolve()
     }).catch((error) => handleGenericErrors(error, resolve, reject))
@@ -142,7 +142,7 @@ export {
   changeTaskDuration,
   createTask,
   fetchTasks,
-  finishTask,
+  completeTask,
   scheduleTask,
   updateTask
 }
