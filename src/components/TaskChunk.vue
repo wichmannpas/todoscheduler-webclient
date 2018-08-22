@@ -26,32 +26,37 @@
           v-if="!chunk.finished"
           class="tooltip tooltip-right"
           data-tooltip="Done">
-        <span class="fa fa-check"></span>
+        <font-awesome-icon
+            icon="check" />
       </a>
       <a
           @click="finishChunk(false)"
           v-if="chunk.finished"
           class="tooltip tooltip-right"
           data-tooltip="Not done">
-        <span class="fa fa-undo"></span>
+        <font-awesome-icon
+            icon="undo" />
       </a>
       <a
           @click="deleteChunk()"
           class="tooltip tooltip-right"
           data-tooltip="No time needed on this day">
-        <span class="fa fa-times"></span>
+        <font-awesome-icon
+            icon="times" />
       </a>
       <a
           @click="postponeChunk()"
           class="tooltip tooltip-right"
           data-tooltip="Postpone to another day">
-        <span class="fa fa-clock-o"></span>
+        <font-awesome-icon
+            :icon="['far', 'clock']" />
       </a>
       <a
           @click="increaseTaskDuration(1)"
           class="tooltip tooltip-right"
           data-tooltip="Needs more time on another day">
-        <span class="fa fa-files-o"></span>
+        <font-awesome-icon
+            :icon="['far', 'copy']" />
       </a>
       <a
           @click="editModalActive = true"
@@ -59,7 +64,9 @@
             task-edit
             tooltip tooltip-right"
           data-tooltip="Edit task">
-        <span class="fa fa-pencil"></span></a>
+        <font-awesome-icon
+            icon="pencil-alt" />
+      </a>
     </span>
     <span class="float-right">
       <a
@@ -69,7 +76,8 @@
             { 'invisible': chunk.finished }
           ]"
           data-tooltip="Move to previous day">
-        <span class="fa fa-arrow-left"></span>
+        <font-awesome-icon
+            icon="arrow-left" />
       </a>
       <a
           @click="moveChunk(-1)"
@@ -79,7 +87,8 @@
             { 'invisible': !canBeMovedUp }
           ]"
          data-tooltip="Needs time earlier">
-        <span class="fa fa-arrow-up"></span>
+        <font-awesome-icon
+            icon="arrow-up" />
       </a>
       <a
           @click="moveChunk(1)"
@@ -89,7 +98,8 @@
             { 'invisible': !canBeMovedDown }
           ]"
           data-tooltip="Needs time later">
-        <span class="fa fa-arrow-down"></span>
+        <font-awesome-icon
+            icon="arrow-down" />
       </a>
       <a
           @click="updateChunkDay(1)"
@@ -98,7 +108,8 @@
             { 'invisible': chunk.finished }
           ]"
           data-tooltip="Move to next day">
-        <span class="fa fa-arrow-right"></span>
+        <font-awesome-icon
+            icon="arrow-right" />
       </a>
       <a
           @click="changeChunkDuration('-0.5')"
@@ -107,13 +118,15 @@
             { 'invisible': chunk.duration.toNumber() <= 0.5 }
           ]"
           data-tooltip="Takes 30 less minutes">
-        <span class="fa fa-minus"></span>
+        <font-awesome-icon
+            icon="minus" />
       </a>
       <a
           @click="changeChunkDuration('0.5')"
           class="tooltip tooltip-left"
           data-tooltip="Takes 30 more minutes">
-        <span class="fa fa-plus"></span>
+        <font-awesome-icon
+            icon="plus" />
       </a>
     </span>
     <EditTaskModal

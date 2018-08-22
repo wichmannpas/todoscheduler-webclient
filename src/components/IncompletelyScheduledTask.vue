@@ -18,17 +18,23 @@
     <a class="task-edit tooltip"
         @click="editModalActive = true"
         data-tooltip="Edit task">
-      <span class="fa fa-pencil"></span></a>
+      <font-awesome-icon
+          icon="pencil-alt" />
+    </a>
     <a
         @click="completeTask()"
         class="tooltip"
         data-tooltip="Complete task">
-      <span class="fa fa-check"></span></a>
+      <font-awesome-icon
+          icon="check" />
+    </a>
     <a
         @click="scheduleModalActive = true"
         class="task-schedule tooltip"
         data-tooltip="Schedule">
-      <span class="fa fa-play"></span></a>
+      <font-awesome-icon
+          icon="play" />
+    </a>
   </li>
 </template>
 
