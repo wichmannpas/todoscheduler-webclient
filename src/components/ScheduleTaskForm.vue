@@ -56,7 +56,7 @@
 <script>
 import Vue from 'vue'
 
-import Api from '@/api/Api'
+import { scheduleTask } from '@/api/task'
 import { formatDayString } from '@/utils'
 
 export default {
@@ -91,7 +91,7 @@ export default {
       if (this.scheduleFor !== 'another_time') {
         day = this.scheduleFor
       }
-      Api.scheduleTask(this.$store, this.task, day, this.duration).then((response) => {
+      scheduleTask(this.$store, this.task, day, this.duration).then((response) => {
         this.loading = false
         Vue.set(this, 'errors', [])
 

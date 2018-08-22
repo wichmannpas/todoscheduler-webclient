@@ -41,7 +41,8 @@
 </template>
 
 <script>
-import Api from '@/api/Api'
+import { checkAuth } from '@/api'
+import { login } from '@/api/auth'
 
 export default {
   name: 'LoginForm',
@@ -56,7 +57,8 @@ export default {
     }
   },
   created: function () {
-    Api.getAuth().then((auth) => {
+    // TODO: do not explicitly check auth here but rely on store to check authentication
+    checkAuth().then((auth) => {
       if (auth) {
         this.$router.push('/')
       }
@@ -66,7 +68,7 @@ export default {
     login () {
       this.authFailure = false
       this.loading = true
-      Api.login(this.user.username, this.user.password).then(
+      login(this.user.username, this.user.password).then(
         () => {
           this.authFailure = false
           console.log('successfully authenticated')

@@ -39,7 +39,6 @@
 </template>
 
 <script>
-import Api from '@/api/Api'
 import IncompleteTask from '@/components/IncompleteTask'
 
 export default {
@@ -48,7 +47,8 @@ export default {
     IncompleteTask
   },
   created: function () {
-    Api.getIncompleteTasks(this.$store)
+    // TODO: read incomplete tasks from store
+    // getIncompleteTasks(this.$store)
   },
   computed: {
     incompleteTasks () {

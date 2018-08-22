@@ -25,12 +25,13 @@
 </template>
 
 <script>
-import Api from '@/api/Api'
+import { deleteTaskChunk, finishTaskChunk } from '@/api/taskChunk'
 
 export default {
   name: 'MissedTaskExecutions',
   created: function () {
-    Api.getMissedTaskExecutions(this.$store)
+    // TODO: adapt to new API
+    // Api.getMissedTaskExecutions(this.$store)
   },
   computed: {
     missedTaskExecutions () {
@@ -39,13 +40,13 @@ export default {
   },
   methods: {
     finishExecution (execution) {
-      Api.finishTaskExecution(
+      finishTaskChunk(
         this.$store,
         execution,
         true)
     },
     postponeExecution (execution) {
-      Api.deleteTaskExecution(
+      deleteTaskChunk(
         this.$store,
         execution,
         true)

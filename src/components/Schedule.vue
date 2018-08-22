@@ -11,7 +11,7 @@
 <script>
 import { addDays, subDays } from 'date-fns'
 
-import Api from '@/api/Api'
+import { fetchTaskChunks } from '@/api/taskChunk'
 import Day from '@/components/Day'
 
 export default {
@@ -20,7 +20,7 @@ export default {
     Day
   },
   created: function () {
-    Api.getTaskExecutions(this.$store)
+    fetchTaskChunks(this.$store)
   },
   methods: {
     days () {

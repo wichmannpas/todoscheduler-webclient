@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import Api from '@/api/Api'
+import { finishTask } from '@/api/task'
 import EditTaskModal from '@/components/EditTaskModal'
 import ScheduleTaskModal from '@/components/ScheduleTaskModal'
 
@@ -54,7 +54,7 @@ export default {
   },
   methods: {
     finishTask () {
-      Api.finishTask(this.$store, this.task)
+      finishTask(this.$store, this.task)
     }
   }
 }

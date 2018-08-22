@@ -10,7 +10,7 @@
   </div>
 </template>
 <script>
-import Api from '@/api/Api'
+import { checkAuth } from '@/api'
 import IncompleteTasks from '@/components/IncompleteTasks'
 import MissedTaskExecutions from '@/components/MissedTaskExecutions'
 import NewTask from '@/components/NewTask'
@@ -25,7 +25,7 @@ export default {
     Schedule
   },
   created: function () {
-    Api.getAuth().then((auth) => {
+    checkAuth().then((auth) => {
       if (!auth) {
         this.$router.push('/login')
       }
