@@ -1,5 +1,5 @@
 import { isAfter } from 'date-fns'
-import { Decimal } from 'decimal.js'
+import { Decimal } from 'decimal.js-light'
 import { parseDayString } from '@/utils'
 
 function Task (id, name, duration, scheduledDuration, finishedDuration, defaultScheduleDuration, start) {

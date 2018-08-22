@@ -22,11 +22,7 @@ const createLintingRule = () => ({
 module.exports = {
   context: path.resolve(__dirname, '../'),
   entry: {
-    app: './src/main.js',
-    styles: [
-      './src/assets/css/font-awesome.css',
-      './src/assets/css/spectre.css',
-    ]
+    app: './src/main.js'
   },
   output: {
     path: config.build.assetsRoot,
@@ -71,38 +67,11 @@ module.exports = {
         }
       },
       {
-        test: /\.woff(\?.*)?$/,
+        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
         loader: 'url-loader',
         options: {
-          mimetype: 'application/font-woff'
-        }
-      },
-      {
-        test: /\.woff2(\?.*)?$/,
-        loader: 'url-loader',
-        options: {
-          mimetype: 'application/font-woff2'
-        }
-      },
-      {
-        test: /\.eot(\?.*)?$/,
-        loader: 'url-loader',
-        options: {
-          mimetype: 'application/vnd.ms-fontobject'
-        }
-      },
-      {
-        test: /\.[ot]tf(\?.*)?$/,
-        loader: 'url-loader',
-        options: {
-          mimetype: 'application/octet-stream'
-        }
-      },
-      {
-        test: /\.svg(\?.*)?$/,
-        loader: 'url-loader',
-        options: {
-          mimetype: 'image/svg+xml'
+          limit: 10000,
+          name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
       }
     ]

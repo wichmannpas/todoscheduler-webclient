@@ -1,4 +1,4 @@
-import { Decimal } from 'decimal.js'
+import { Decimal } from 'decimal.js-light'
 
 import { objectToTask } from '@/models/Task'
 import { isPastDay, naturalDay } from '@/utils'
