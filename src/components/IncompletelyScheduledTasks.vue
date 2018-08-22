@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-        v-if="incompleteTasks.length > 0"
+        v-if="incompletelyScheduledTasks.length > 0"
         style="
           max-height: 12em;
           overflow-x: hidden;
@@ -9,7 +9,7 @@
       <div class="columns">
         <div class="column col-6 col-sm-12">
           <ul>
-            <IncompleteTask
+            <IncompletelyScheduledTask
               v-for="task in activeTasks"
               v-bind:key="task.id"
               v-bind:task="task" />
@@ -25,7 +25,7 @@
             </label>
             <div class="accordion-body">
               <ul>
-                <IncompleteTask
+                <IncompletelyScheduledTask
                   v-for="task in futureTasks"
                   v-bind:key="task.id"
                   v-bind:task="task" />
@@ -39,27 +39,23 @@
 </template>
 
 <script>
-import IncompleteTask from '@/components/IncompleteTask'
+import IncompletelyScheduledTask from '@/components/IncompletelyScheduledTask'
 
 export default {
-  name: 'IncompleteTasks',
+  name: 'IncompletelyScheduledTasks',
   components: {
-    IncompleteTask
-  },
-  created: function () {
-    // TODO: read incomplete tasks from store
-    // getIncompleteTasks(this.$store)
+    IncompletelyScheduledTask
   },
   computed: {
-    incompleteTasks () {
-      return this.$store.state.tasks.incomplete
+    incompletelyScheduledTasks () {
+      return this.$store.getters.incompletelyScheduledTasks
     },
     activeTasks () {
-      return this.$store.state.tasks.incomplete.filter(
+      return this.$store.getters.incompletelyScheduledTasks.filter(
         task => !task.startInFuture())
     },
     futureTasks () {
-      return this.$store.state.tasks.incomplete.filter(
+      return this.$store.getters.incompletelyScheduledTasks.filter(
         task => task.startInFuture())
     }
   }

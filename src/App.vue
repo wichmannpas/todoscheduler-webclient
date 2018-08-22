@@ -10,10 +10,10 @@
         TodoScheduler</a>
       is free software.
       &bull;
-      <a href="/">Home</a>
+      <router-link :to="{ name: 'main' }">Home</router-link>
       <span v-if="useImprint">
         &bull;
-        <router-link to="imprint">Imprint</router-link>
+        <router-link :to="{ name: 'imprint' }">Imprint</router-link>
       </span>
     </div>
   </div>

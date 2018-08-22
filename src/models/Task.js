@@ -1,70 +1,90 @@
 import { isAfter } from 'date-fns'
-import { Decimal } from 'decimal.js-light'
-import { parseDayString } from '@/utils'
+import Decimal from 'decimal.js-light'
+import {
+  alias,
+  createModelSchema,
+  custom,
+  date,
+  identifier,
+  primitive
+} from 'serializr'
 
-function Task (id, name, duration, scheduledDuration, finishedDuration, defaultScheduleDuration, start) {
-  this.id = id
-  this.name = name
-  this.duration = Decimal(duration)
-  this.scheduledDuration = Decimal(scheduledDuration)
-  this.finishedDuration = Decimal(finishedDuration)
-  this.defaultScheduleDuration = Decimal(defaultScheduleDuration)
-  this.start = start
-  if (start !== null) {
-    this.start = parseDayString(start)
+class Task {
+  id = -1
+  name = ''
+  duration = Decimal(0)
+  start = null
+  scheduledDuration = Decimal(0)
+  finishedDuration = Decimal(0)
+
+  /**
+   * Returns the default schedule duration of the user if the
+   * unscheduled duration is greater than the max duration
+   * to schedule by default, the unscheduled duration else.
+   */
+  defaultScheduleDuration (user) {
+    let unscheduledDuration = this.unscheduledDuration()
+    if (user.defaultScheduleFullDurationMax.comparedTo(unscheduledDuration) > 0) {
+      return user.defaultScheduleDuration
+    }
+
+    return unscheduledDuration
+  }
+
+  unscheduledDuration () {
+    return this.duration.sub(this.scheduledDuration)
+  }
+  incompletelyScheduled () {
+    return this.unscheduledDuration().toNumber() > 0
+  }
+
+  // TODO: use today argument (from store)
+  startInFuture () {
+    let today = new Date()
+
+    return isAfter(this.start, today)
+  }
+
+  /**
+   * Compare to another task.
+   * returns negative values if < other
+   * 0 if = other
+   * positive values if > other
+   */
+  compareTo (other) {
+    // first criterion: start
+    if (this.start === null && other.start !== null) {
+      return -1
+    } else if (this.start !== null && other.start === null) {
+      return 1
+    } else if (this.start < other.start) {
+      return -1
+    } else if (this.start > other.start) {
+      return 1
+    }
+    // start equals, use second criterion
+
+    // second criterion: name
+    return this.name > other.name
   }
 }
-Task.prototype.incompleteDuration = function () {
-  return this.duration.sub(this.scheduledDuration)
-}
-Task.prototype.incomplete = function () {
-  return this.incompleteDuration().toNumber() > 0
-}
-Task.prototype.startInFuture = function () {
-  let today = new Date()
 
-  return isAfter(this.start, today)
-}
+createModelSchema(Task, {
+  id: identifier(),
+  name: primitive(),
+  duration: custom(
+    val => { return val.toFixed() },
+    val => { return new Decimal(val) }
+  ),
+  start: date(),
+  scheduledDuration: alias('scheduled_duration', custom(
+    val => { return val.toFixed() },
+    val => { return new Decimal(val) }
+  )),
+  finishedDuration: alias('finished_duration', custom(
+    val => { return val.toFixed() },
+    val => { return new Decimal(val) }
+  ))
+})
 
-function objectToTask (task) {
-  if (task instanceof Task) {
-    return task
-  }
-  return new Task(
-    task.id,
-    task.name,
-    task.duration,
-    task.scheduled_duration,
-    task.finished_duration,
-    task.default_schedule_duration,
-    task.start)
-}
-
-/**
- * Compare tasks a and b.
- * returns negative values if a < b
- * 0 if a = b
- * positive values if a > b
- */
-function compareTasks (a, b) {
-  // first criterion: start
-  if (a.start === null && b.start !== null) {
-    return -1
-  } else if (a.start !== null && b.start === null) {
-    return 1
-  } else if (a.start < b.start) {
-    return -1
-  } else if (a.start > b.start) {
-    return 1
-  }
-  // start equals, use second criterion
-
-  // second criterion: name
-  return a.name > b.name
-}
-
-export {
-  compareTasks,
-  objectToTask,
-  Task
-}
+export default Task

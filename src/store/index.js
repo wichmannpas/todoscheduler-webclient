@@ -1,14 +1,16 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import tasks from './tasks'
-import taskchunks from './taskchunks'
+import taskchunk from './taskchunk'
+import task from './task'
+import user from './user'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
-    tasks,
-    taskchunks
+    taskchunk,
+    task,
+    user
   }
 })

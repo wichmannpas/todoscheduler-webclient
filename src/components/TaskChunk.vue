@@ -9,6 +9,7 @@
         { height: (chunk.duration.toNumber() * 4).toString() + 'em' }
       ]">
     <strong>{{ chunk.task.name }}</strong>
+    {{ chunk.dayOrder }}
     <span
       v-if="loading"
       class="loading loading-lg"></span>
@@ -131,7 +132,7 @@ import {
   exchangeTaskChunk,
   finishTaskChunk,
   updateTaskChunkDay
-} from '@/api/taskChunk'
+} from '@/api/taskchunk'
 import EditTaskModal from '@/components/EditTaskModal'
 import { dayDelta } from '@/utils'
 
