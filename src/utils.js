@@ -29,7 +29,8 @@ function naturalDay (day) {
 
   // TODO: use today from store
   let today = new Date()
-  if (differenceInDays(today, day) <= 7) {
+  let dayDelta = differenceInDays(day, today)
+  if (dayDelta <= 7 && dayDelta >= 0) {
     return format(day, 'dddd')
   }
   return format(day, 'MMM. D, YYYY')

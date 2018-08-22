@@ -13,12 +13,16 @@
               @click="finishChunk(chunk)"
               class="tooltip"
               data-tooltip="Done">
-            <span class="fa fa-check"></span></a>
+            <font-awesome-icon
+                icon="check" />
+          </a>
           <a
               @click="postponeChunk(chunk)"
               class="tooltip"
               data-tooltip="Postpone to another day">
-            <span class="fa fa-clock-o"></span></a>
+            <font-awesome-icon
+                :icon="['far', 'clock']" />
+          </a>
       </li>
     </ul>
   </div>
@@ -29,10 +33,6 @@ import { deleteTaskChunk, finishTaskChunk } from '@/api/taskchunk'
 
 export default {
   name: 'MissedTaskChunks',
-  created: function () {
-    // TODO: adapt to new API
-    // Api.getMissedTaskChunks(this.$store)
-  },
   computed: {
     missedTaskChunks () {
       return this.$store.getters.missedTaskChunks

@@ -13,11 +13,14 @@
       <div class="header">
         {{ naturalDay }}
         <span class="float-right">
-        <span class="
-          fa fa-clock-o
-          tooltip tooltip-left"
-              data-tooltip="Max duration for day">
-        </span>&nbsp;{{ maxDuration.toNumber() }}h
+          {{ maxDuration.toNumber() }}h
+          <span
+              class="tooltip tooltip-left"
+                data-tooltip="Max duration for this day">
+            <font-awesome-icon
+                icon="clock"
+            />
+          </span>
       </span>
       </div>
       <div class="body">
@@ -28,9 +31,13 @@
       </div>
       <div class="footer">
         <span class="float-right">
-          <span class="fa fa-clock-o tooltip"
-                data-tooltip="Remaining/total scheduled duration">
-          </span>&nbsp;{{ unfinishedScheduledDuration.toNumber() }}h/{{ scheduledDuration.toNumber() }}h
+          {{ unfinishedScheduledDuration.toNumber() }}h/{{ scheduledDuration.toNumber() }}h
+          <span
+              class="tooltip"
+              data-tooltip="Unfinished/total scheduled duration">
+            <font-awesome-icon
+                :icon="['far', 'clock']" />
+          </span>
         </span>
       </div>
     </div>
