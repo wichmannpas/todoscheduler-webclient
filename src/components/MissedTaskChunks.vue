@@ -1,21 +1,21 @@
 <template>
   <div
-      v-if="missedTaskExecutions.length > 0"
+      v-if="missedTaskChunks.length > 0"
       class="toast toast-warning">
     There are unfinished scheduled tasks for past days!
 
     <ul>
       <li
-          v-for="execution in missedTaskExecutions"
-          v-bind:key="execution.id">
-          {{ execution.task.name }} ({{ execution.naturalDay() }})
+          v-for="chunk in missedTaskChunks"
+          v-bind:key="chunk.id">
+          {{ chunk.task.name }} ({{ chunk.naturalDay() }})
           <a
-              @click="finishExecution(execution)"
+              @click="finishChunk(chunk)"
               class="tooltip"
               data-tooltip="Done">
             <span class="fa fa-check"></span></a>
           <a
-              @click="postponeExecution(execution)"
+              @click="postponeChunk(chunk)"
               class="tooltip"
               data-tooltip="Postpone to another day">
             <span class="fa fa-clock-o"></span></a>
@@ -28,27 +28,27 @@
 import { deleteTaskChunk, finishTaskChunk } from '@/api/taskChunk'
 
 export default {
-  name: 'MissedTaskExecutions',
+  name: 'MissedTaskChunks',
   created: function () {
     // TODO: adapt to new API
-    // Api.getMissedTaskExecutions(this.$store)
+    // Api.getMissedTaskChunks(this.$store)
   },
   computed: {
-    missedTaskExecutions () {
-      return this.$store.getters.missedTaskExecutions
+    missedTaskChunks () {
+      return this.$store.getters.missedTaskChunks
     }
   },
   methods: {
-    finishExecution (execution) {
+    finishChunk (chunk) {
       finishTaskChunk(
         this.$store,
-        execution,
+        chunk,
         true)
     },
-    postponeExecution (execution) {
+    postponeChunk (chunk) {
       deleteTaskChunk(
         this.$store,
-        execution,
+        chunk,
         true)
     }
   }

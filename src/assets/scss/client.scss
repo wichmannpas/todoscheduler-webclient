@@ -41,7 +41,7 @@ a:hover {
   }
 }
 
-span.task-execution {
+span.task-chunk {
   display: block;
 
   min-height: 3.5em;
@@ -52,11 +52,11 @@ span.task-execution {
   padding: 0.2em;
 }
 
-span.task-execution.finished {
+span.task-chunk.finished {
   background: #a4ffa0;
 }
 
-span.task-execution.overdue {
+span.task-chunk.overdue {
   background: #ffb0a4;
 }
 

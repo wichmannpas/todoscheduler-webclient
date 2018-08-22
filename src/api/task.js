@@ -45,7 +45,7 @@ function finishTask (store, task) {
       }).then(function (response) {
         if (response.status === 200) {
           store.dispatch('updateTask', response.data)
-          store.dispatch('updateTaskInExecutions', response.data)
+          store.dispatch('updateTaskInChunks', response.data)
           resolve()
         } else {
           reject(response.data)
@@ -61,14 +61,14 @@ function scheduleTask (store, task, day, duration) {
       reject(new Error('no auth'))
     }
 
-    axios.post(API_URL + '/tasks/taskexecution/', {
+    axios.post(API_URL + '/tasks/taskchunk/', {
       task_id: task.id,
       day: day,
       duration: duration
     }).then(function (response) {
       if (response.status === 201) {
         store.dispatch('updateTask', response.data.task)
-        store.dispatch('addTaskExecution', response.data)
+        store.dispatch('addTaskChunk', response.data)
 
         resolve()
       } else {
@@ -112,7 +112,7 @@ function updateTask (store, task) {
     }).then(function (response) {
       if (response.status === 200) {
         store.dispatch('updateTask', response.data)
-        store.dispatch('updateTaskInExecutions', response.data)
+        store.dispatch('updateTaskInChunks', response.data)
         resolve()
       } else {
         reject(response.data)
@@ -131,7 +131,7 @@ function changeTaskDuration (store, task, newDuration) {
       duration: newDuration
     }).then(function (response) {
       store.dispatch('updateTask', response.data)
-      store.dispatch('updateTaskInExecutions', response.data)
+      store.dispatch('updateTaskInChunks', response.data)
 
       resolve()
     }).catch((error) => handleGenericErrors(error, resolve, reject))
