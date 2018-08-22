@@ -1,5 +1,5 @@
 import { isToday } from 'date-fns'
-import { Decimal } from 'decimal.js'
+import { Decimal } from 'decimal.js-light'
 
 import { formatDayString, isPastDay, naturalDay } from '@/utils.js'
 
