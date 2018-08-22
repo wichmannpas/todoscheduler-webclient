@@ -135,6 +135,8 @@ import {
 import EditTaskModal from '@/components/EditTaskModal'
 import { dayDelta } from '@/utils'
 
+import '@/assets/scss/taskchunk.scss'
+
 export default {
   name: 'TaskChunk',
   components: {

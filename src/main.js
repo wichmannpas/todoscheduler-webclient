@@ -4,7 +4,9 @@ import App from './App'
 import router from './router'
 import store from './store'
 
-import '@/assets/scss/client.scss'
+import '@/assets/css/spectre.css'
+
+import '@/assets/scss/base.scss'
 
 Vue.use(VueRouter)
 

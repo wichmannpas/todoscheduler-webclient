@@ -14,6 +14,8 @@ import { addDays, subDays } from 'date-fns'
 import { fetchTaskChunks } from '@/api/taskChunk'
 import Day from '@/components/Day'
 
+import '@/assets/scss/schedule.scss'
+
 export default {
   name: 'Schedule',
   components: {
