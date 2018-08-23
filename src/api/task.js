@@ -15,7 +15,7 @@ function fetchTasks () {
     axios.get(API_URL + '/task/task/').then(function (response) {
       resolve(
         response.data.map(raw => deserialize(Task, raw)))
-    }).catch((error) => handleGenericErrors(error))
+    }).catch(error => handleGenericErrors(error, resolve, reject))
   })
 }
 
@@ -36,10 +36,7 @@ function completeTask (store, task) {
         } else {
           reject(response.data)
         }
-      }).catch(function (error) {
-        console.error(error)
-        reject(error.response.data)
-      })
+      }).catch(error => handleGenericErrors(error, resolve, reject))
     } else {
       // update the task duration
       axios.patch(API_URL + '/task/task/' + task.id.toString() + '/', {
@@ -51,7 +48,7 @@ function completeTask (store, task) {
         } else {
           reject(response.data)
         }
-      }).catch((error) => handleGenericErrors(error, resolve, reject))
+      }).catch(error => handleGenericErrors(error, resolve, reject))
     }
   })
 }
@@ -75,7 +72,7 @@ function scheduleTask (store, task, day, duration) {
       } else {
         reject(response.data)
       }
-    }).catch((error) => handleGenericErrors(error, resolve, reject))
+    }).catch(error => handleGenericErrors(error, resolve, reject))
   })
 }
 
@@ -97,7 +94,7 @@ function createTask (store, task) {
       } else {
         reject(response.data)
       }
-    }).catch((error) => handleGenericErrors(error, resolve, reject))
+    }).catch(error => handleGenericErrors(error, resolve, reject))
   })
 }
 
@@ -118,7 +115,7 @@ function updateTask (store, task) {
       } else {
         reject(response.data)
       }
-    }).catch((error) => handleGenericErrors(error, resolve, reject))
+    }).catch(error => handleGenericErrors(error, resolve, reject))
   })
 }
 
@@ -134,7 +131,7 @@ function changeTaskDuration (store, task, newDuration) {
       store.commit('updateTask', deserialize(Task, response.data))
 
       resolve()
-    }).catch((error) => handleGenericErrors(error, resolve, reject))
+    }).catch(error => handleGenericErrors(error, resolve, reject))
   })
 }
 

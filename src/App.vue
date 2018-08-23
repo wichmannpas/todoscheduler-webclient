@@ -28,6 +28,19 @@ export default {
     useImprint: function () {
       return USE_IMPRINT
     }
+  },
+  created: function () {
+    window.handleMissingAuth = () => {
+      if (this.$route.name !== 'login') {
+        console.warn('auth no longer active, redirecting to login page')
+
+        this.$router.push({
+          name: 'login'
+        })
+      }
+
+      this.$store.commit('reset')
+    }
   }
 }
 </script>

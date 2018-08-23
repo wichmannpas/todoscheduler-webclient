@@ -16,7 +16,7 @@ function fetchUser () {
 
     axios.get(API_URL + '/base/user/').then((response) => {
       return resolve(deserialize(User, response.data))
-    }).catch((error) => handleGenericErrors(error, resolve, reject))
+    }).catch(error => handleGenericErrors(error, resolve, reject))
   })
 }
 
