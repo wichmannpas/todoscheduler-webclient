@@ -9,7 +9,6 @@
         { height: (chunk.duration.toNumber() * 4).toString() + 'em' }
       ]">
     <strong>{{ chunk.task.name }}</strong>
-    {{ chunk.dayOrder }}
     <span
       v-if="loading"
       class="loading loading-lg"></span>
