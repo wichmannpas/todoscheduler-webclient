@@ -21,7 +21,7 @@ function fetchTaskChunks (minDate, maxDate, taskId) {
     }).then(function (response) {
       resolve(
         response.data.map(raw => deserialize(TaskChunk, raw)))
-    }).catch((error) => handleGenericErrors(error, resolve, reject))
+    }).catch(error => handleGenericErrors(error, resolve, reject))
   })
 }
 
@@ -42,7 +42,7 @@ function deleteTaskChunk (store, chunk, postpone) {
       }
 
       resolve()
-    }).catch((error) => handleGenericErrors(error, resolve, reject))
+    }).catch(error => handleGenericErrors(error, resolve, reject))
   })
 }
 
@@ -55,7 +55,7 @@ function changeTaskChunkDuration (store, chunk, newDuration) {
       store.commit('updateTask', deserialize(Task, response.data.task))
 
       resolve()
-    })
+    }).catch(error => handleGenericErrors(error, resolve, reject))
   })
 }
 
@@ -69,7 +69,7 @@ function exchangeTaskChunk (store, chunk, exchange) {
       store.commit('updateTaskChunk', exchange)
 
       resolve()
-    })
+    }).catch(error => handleGenericErrors(error, resolve, reject))
   })
 }
 
@@ -82,7 +82,7 @@ function finishTaskChunk (store, chunk, newState) {
       store.commit('updateTask', deserialize(Task, response.data.task))
 
       resolve()
-    })
+    }).catch(error => handleGenericErrors(error, resolve, reject))
   })
 }
 
@@ -96,7 +96,7 @@ function splitTaskChunk (store, chunk) {
         response.data.map(raw => deserialize(TaskChunk, raw)))
 
       resolve()
-    })
+    }).catch(error => handleGenericErrors(error, resolve, reject))
   })
 }
 
@@ -108,7 +108,7 @@ function updateTaskChunkDay (store, chunk, newDay) {
       store.commit('updateTaskChunk', deserialize(TaskChunk, response.data))
 
       resolve()
-    })
+    }).catch(error => handleGenericErrors(error, resolve, reject))
   })
 }
 

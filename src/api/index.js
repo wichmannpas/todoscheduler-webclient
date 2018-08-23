@@ -37,7 +37,7 @@ function ensureAuthToken () {
 /**
  * handle generic errors. Optional callback is called if the error is not generic.
  */
-function handleGenericErrors (error, resolve, reject, callback) {
+function handleGenericErrors (error, resolve, reject, callback, ignoreAuth) {
   let response = error.response
   if (response === null || response === undefined) {
     // connection problem
@@ -45,12 +45,19 @@ function handleGenericErrors (error, resolve, reject, callback) {
       return reject(error)
     }
 
+    console.warn('no Promise reject passed, throwing error')
     throw error
   }
 
   if (response.status === 401) {
+    if (ignoreAuth === true) {
+      return
+    }
+
     // local auth token is not valid anymore, delete it
     window.localStorage.removeItem('authToken')
+
+    window.handleMissingAuth()
 
     if (reject !== undefined) {
       return reject(new Error('no auth'))
