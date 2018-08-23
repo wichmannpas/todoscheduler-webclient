@@ -5,6 +5,7 @@ const webpack = require('webpack')
 const config = require('../config')
 const merge = require('webpack-merge')
 const baseWebpackConfig = require('./webpack.base.conf')
+const AppCachePlugin = require('appcache-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
@@ -119,7 +120,14 @@ const webpackConfig = merge(baseWebpackConfig, {
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
       }
-    ])
+    ]),
+    new AppCachePlugin(Object.assign({}, {
+      network: [
+        '*'
+      ],
+      settings: ['prefer-online'],
+      output: 'manifest.appcache'
+    }))
   ]
 })
 
