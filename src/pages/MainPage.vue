@@ -8,6 +8,8 @@
     <IncompletelyScheduledTasks />
 
     <Schedule />
+
+    <Logout />
   </div>
   <div
       v-else
@@ -19,14 +21,16 @@ import { fetchUser } from '@/api/user'
 import IncompletelyScheduledTasks from '@/components/IncompletelyScheduledTasks'
 import MissedTaskChunks from '@/components/MissedTaskChunks'
 import NewTask from '@/components/NewTask'
+import Logout from '@/components/Logout'
 import Schedule from '@/components/Schedule'
 
 export default {
   name: 'MainPage',
   components: {
-    NewTask,
     IncompletelyScheduledTasks,
+    Logout,
     MissedTaskChunks,
+    NewTask,
     Schedule
   },
   created: function () {
