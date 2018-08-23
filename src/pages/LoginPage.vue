@@ -1,20 +1,20 @@
 <template>
-  <div class="login">
+  <div>
     <h1>
-      Login
+      TodoScheduler
     </h1>
 
-    <LoginForm />
+    <Login />
   </div>
 </template>
 
 <script>
-import LoginForm from '@/components/LoginForm'
+import Login from '@/components/Login'
 
 export default {
-  name: 'Login',
+  name: 'LoginPage',
   components: {
-    LoginForm
+    Login
   }
 }
 </script>

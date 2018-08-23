@@ -1,6 +1,11 @@
 <template>
   <form
+      class="form-horizontal"
       @submit.prevent="login">
+    <h3>
+      Login
+    </h3>
+
     <div class="form-group">
       <label class="form-label" for="login-username">
         Username
@@ -33,10 +38,13 @@
       Login with username “<em>{{ user.username }}</em>” failed.
     </div>
 
-    <input type="submit" class="btn btn-primary" value="Login" />
-    <a href="/accounts/register/">
-      Register
-    </a>
+    <div class="btn-group btn-group-block">
+      <input
+          type="submit"
+          class="btn btn-primary"
+          value="Login"
+          :disabled="loading" />
+    </div>
   </form>
 </template>
 
