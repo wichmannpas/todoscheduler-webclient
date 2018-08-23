@@ -18,6 +18,7 @@ import {
   faPencilAlt,
   faPlay,
   faPlus,
+  faSignOutAlt,
   faTimes,
   faUndo
 } from '@fortawesome/free-solid-svg-icons'
@@ -35,6 +36,7 @@ library.add(faMinus)
 library.add(faPencilAlt)
 library.add(faPlay)
 library.add(faPlus)
+library.add(faSignOutAlt)
 library.add(faTimes)
 library.add(faUndo)
 

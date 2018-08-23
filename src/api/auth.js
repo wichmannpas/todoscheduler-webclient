@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 import { API_URL } from '@/config'
+import { ensureAuthToken, handleGenericErrors } from '@/api'
 
 function login (username, password) {
   return new Promise(function (resolve, reject) {
@@ -28,6 +29,25 @@ function login (username, password) {
 
         reject(error)
       })
+  })
+}
+
+function logout () {
+  return new Promise(function (resolve, reject) {
+    if (!ensureAuthToken) {
+      // nothing to log out
+      return resolve()
+    }
+
+    axios.delete(API_URL + '/auth/logout/').then(
+      function (response) {
+        if (response.status === 204) {
+          return resolve()
+        }
+        reject(response.data)
+      }).catch(error => handleGenericErrors(error, resolve, reject))
+
+    delete axios.defaults.headers.common['Authorization']
   })
 }
 
@@ -61,5 +81,6 @@ function register (username, password) {
 
 export {
   login,
+  logout,
   register
 }
