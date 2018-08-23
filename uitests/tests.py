@@ -16,7 +16,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 
-from task.models import Task, TaskExecution
+from task.models import Task, TaskChunk
 
 
 @override_settings(STATIC_ROOT='nonexistent', STATIC_URL='nonexistent')
@@ -108,6 +108,7 @@ class AuthenticatedSeleniumTest(SeleniumTest):
             workhours_weekend=Decimal(4))
 
         self.selenium.get(self.frontend_url)
+        sleep(0.2)
         token = urlsafe_b64encode(AuthToken.create_token_for_user(self.user)).decode()
         self.selenium.execute_script(
             'window.localStorage.setItem("authToken", "{}")'.format(token))
@@ -189,7 +190,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
     def test_new_task_scheduling_today(self):
         """Test creating a new task and instantly scheduling it."""
         self.assertEqual(Task.objects.count(), 0)
-        self.assertEqual(TaskExecution.objects.count(), 0)
+        self.assertEqual(TaskChunk.objects.count(), 0)
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
@@ -214,15 +215,15 @@ class OverviewTest(AuthenticatedSeleniumTest):
         self.assertEqual(task.duration, Decimal('42.2'))
         self.assertEqual(task.start, None)
 
-        self.assertEqual(TaskExecution.objects.count(), 1)
-        execution = TaskExecution.objects.first()
-        self.assertEqual(execution.task, task)
-        self.assertEqual(execution.day, date.today())
+        self.assertEqual(TaskChunk.objects.count(), 1)
+        chunk = TaskChunk.objects.first()
+        self.assertEqual(chunk.task, task)
+        self.assertEqual(chunk.day, date.today())
 
     def test_new_task_scheduling_tomorrow(self):
         """Test creating a new task and instantly scheduling it."""
         self.assertEqual(Task.objects.count(), 0)
-        self.assertEqual(TaskExecution.objects.count(), 0)
+        self.assertEqual(TaskChunk.objects.count(), 0)
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
@@ -250,10 +251,10 @@ class OverviewTest(AuthenticatedSeleniumTest):
         self.assertEqual(task.duration, Decimal('42.2'))
         self.assertEqual(task.start, None)
 
-        self.assertEqual(TaskExecution.objects.count(), 1)
-        execution = TaskExecution.objects.first()
-        self.assertEqual(execution.task, task)
-        self.assertEqual(execution.day, date.today() + timedelta(days=1))
+        self.assertEqual(TaskChunk.objects.count(), 1)
+        chunk = TaskChunk.objects.first()
+        self.assertEqual(chunk.task, task)
+        self.assertEqual(chunk.day, date.today() + timedelta(days=1))
 
     def test_new_task_invalid_duration(self):
         self.assertEqual(Task.objects.count(), 0)
@@ -313,12 +314,12 @@ class OverviewTest(AuthenticatedSeleniumTest):
             user=self.user,
             name='Testtask',
             duration=5)
-        TaskExecution.objects.create(
+        TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=2,
             day_order=0)
-        TaskExecution.objects.create(
+        TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=1,
@@ -327,7 +328,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
-        edit_task_link = self.selenium.find_elements_by_class_name('fa-pencil')[0]
+        edit_task_link = self.selenium.find_elements_by_xpath('//a[@data-tooltip="Edit task"]')[0]
         edit_task_link.click()
         sleep(0.1)
         scheduled_display = self.selenium.find_element_by_xpath('//div[@class="content"]/p')
@@ -358,12 +359,12 @@ class OverviewTest(AuthenticatedSeleniumTest):
             user=self.user,
             name='Testtask',
             duration=5)
-        TaskExecution.objects.create(
+        TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=2,
             day_order=0)
-        TaskExecution.objects.create(
+        TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=1,
@@ -372,7 +373,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
-        edit_task_link = self.selenium.find_elements_by_class_name('fa-pencil')[0]
+        edit_task_link = self.selenium.find_elements_by_xpath('//a[@data-tooltip="Edit task"]')[0]
         edit_task_link.click()
         sleep(0.1)
         scheduled_display = self.selenium.find_element_by_xpath('//div[@class="content"]/p')
@@ -401,12 +402,12 @@ class OverviewTest(AuthenticatedSeleniumTest):
             user=self.user,
             name='Testtask',
             duration=5)
-        TaskExecution.objects.create(
+        TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=2,
             day_order=0)
-        TaskExecution.objects.create(
+        TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=1,
@@ -415,7 +416,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
-        edit_task_link = self.selenium.find_elements_by_class_name('fa-pencil')[0]
+        edit_task_link = self.selenium.find_elements_by_xpath('//a[@data-tooltip="Edit task"]')[0]
         edit_task_link.click()
         sleep(0.1)
         scheduled_display = self.selenium.find_element_by_xpath('//div[@class="content"]/p')
@@ -444,12 +445,12 @@ class OverviewTest(AuthenticatedSeleniumTest):
             user=self.user,
             name='Testtask',
             duration=5)
-        TaskExecution.objects.create(
+        TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=2,
             day_order=0)
-        TaskExecution.objects.create(
+        TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=1,
@@ -458,7 +459,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
-        edit_task_link = self.selenium.find_elements_by_class_name('fa-pencil')[0]
+        edit_task_link = self.selenium.find_elements_by_xpath('//a[@data-tooltip="Edit task"]')[0]
         edit_task_link.click()
         sleep(0.1)
         scheduled_display = self.selenium.find_element_by_xpath('//div[@class="content"]/p')
@@ -490,12 +491,12 @@ class OverviewTest(AuthenticatedSeleniumTest):
             user=self.user,
             name='Testtask',
             duration=5)
-        TaskExecution.objects.create(
+        TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=2,
             day_order=0)
-        TaskExecution.objects.create(
+        TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=1,
@@ -504,7 +505,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
-        edit_task_link = self.selenium.find_elements_by_class_name('fa-pencil')[0]
+        edit_task_link = self.selenium.find_elements_by_xpath('//a[@data-tooltip="Edit task"]')[0]
         edit_task_link.click()
         sleep(0.1)
         scheduled_display = self.selenium.find_element_by_xpath('//div[@class="content"]/p')
@@ -531,7 +532,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             date(2018, 5, 2))
 
     def test_schedule_task_for_today(self):
-        self.assertEqual(TaskExecution.objects.count(), 0)
+        self.assertEqual(TaskChunk.objects.count(), 0)
 
         # create dummy task
         task = Task.objects.create(
@@ -558,14 +559,14 @@ class OverviewTest(AuthenticatedSeleniumTest):
         self.selenium.find_element_by_xpath('//input[@value="Schedule"]').click()
         sleep(0.5)
 
-        self.assertEqual(task.executions.count(), 1)
-        execution = task.executions.first()
-        self.assertEqual(execution.day, date.today())
-        self.assertEqual(execution.duration, Decimal(1))
-        self.assertFalse(execution.finished)
+        self.assertEqual(task.chunks.count(), 1)
+        chunk = task.chunks.first()
+        self.assertEqual(chunk.day, date.today())
+        self.assertEqual(chunk.duration, Decimal(1))
+        self.assertFalse(chunk.finished)
 
     def test_schedule_task_for_today_submit_with_enter_duration(self):
-        self.assertEqual(TaskExecution.objects.count(), 0)
+        self.assertEqual(TaskChunk.objects.count(), 0)
 
         # create dummy task
         task = Task.objects.create(
@@ -592,14 +593,14 @@ class OverviewTest(AuthenticatedSeleniumTest):
         duration_input.send_keys(Keys.ENTER)
         sleep(0.5)
 
-        self.assertEqual(task.executions.count(), 1)
-        execution = task.executions.first()
-        self.assertEqual(execution.day, date.today())
-        self.assertEqual(execution.duration, Decimal(1))
-        self.assertFalse(execution.finished)
+        self.assertEqual(task.chunks.count(), 1)
+        chunk = task.chunks.first()
+        self.assertEqual(chunk.day, date.today())
+        self.assertEqual(chunk.duration, Decimal(1))
+        self.assertFalse(chunk.finished)
 
     def test_schedule_task_for_tomorrow(self):
-        self.assertEqual(TaskExecution.objects.count(), 0)
+        self.assertEqual(TaskChunk.objects.count(), 0)
 
         # create dummy task
         task = Task.objects.create(
@@ -629,14 +630,14 @@ class OverviewTest(AuthenticatedSeleniumTest):
         self.selenium.find_element_by_xpath('//input[@value="Schedule"]').click()
         sleep(0.5)
 
-        self.assertEqual(task.executions.count(), 1)
-        execution = task.executions.first()
-        self.assertEqual(execution.day, date.today() + timedelta(days=1))
-        self.assertEqual(execution.duration, Decimal(1))
-        self.assertFalse(execution.finished)
+        self.assertEqual(task.chunks.count(), 1)
+        chunk = task.chunks.first()
+        self.assertEqual(chunk.day, date.today() + timedelta(days=1))
+        self.assertEqual(chunk.duration, Decimal(1))
+        self.assertFalse(chunk.finished)
 
     def test_schedule_task_for_next_free_capacity(self):
-        self.assertEqual(TaskExecution.objects.count(), 0)
+        self.assertEqual(TaskChunk.objects.count(), 0)
 
         # create dummy task
         task = Task.objects.create(
@@ -647,13 +648,13 @@ class OverviewTest(AuthenticatedSeleniumTest):
             user=self.user,
             name='Placeholder Testtask',
             duration=30)
-        # create task executions to fill current and next 2 days
-        TaskExecution.objects.bulk_create([
-            TaskExecution(
+        # create task chunks to fill current and next 2 days
+        TaskChunk.objects.bulk_create([
+            TaskChunk(
                 task=other_task, duration=10, day=date.today(), day_order=0),
-            TaskExecution(
+            TaskChunk(
                 task=other_task, duration=10, day=date.today() + timedelta(days=1), day_order=0),
-            TaskExecution(
+            TaskChunk(
                 task=other_task, duration=10, day=date.today() + timedelta(days=2), day_order=0)])
 
         self.selenium.get(self.frontend_url)
@@ -678,14 +679,14 @@ class OverviewTest(AuthenticatedSeleniumTest):
         self.selenium.find_element_by_xpath('//input[@value="Schedule"]').click()
         sleep(0.5)
 
-        self.assertEqual(task.executions.count(), 1)
-        execution = task.executions.first()
-        self.assertEqual(execution.day, date.today() + timedelta(days=3))
-        self.assertEqual(execution.duration, Decimal(1))
-        self.assertFalse(execution.finished)
+        self.assertEqual(task.chunks.count(), 1)
+        chunk = task.chunks.first()
+        self.assertEqual(chunk.day, date.today() + timedelta(days=3))
+        self.assertEqual(chunk.duration, Decimal(1))
+        self.assertFalse(chunk.finished)
 
     def test_schedule_task_for_another_time(self):
-        self.assertEqual(TaskExecution.objects.count(), 0)
+        self.assertEqual(TaskChunk.objects.count(), 0)
 
         # create dummy task
         task = Task.objects.create(
@@ -719,14 +720,14 @@ class OverviewTest(AuthenticatedSeleniumTest):
         self.selenium.find_element_by_xpath('//input[@value="Schedule"]').click()
         sleep(0.5)
 
-        self.assertEqual(task.executions.count(), 1)
-        execution = task.executions.first()
-        self.assertEqual(execution.day, date(2017, 1, 2))
-        self.assertEqual(execution.duration, Decimal(1))
-        self.assertFalse(execution.finished)
+        self.assertEqual(task.chunks.count(), 1)
+        chunk = task.chunks.first()
+        self.assertEqual(chunk.day, date(2017, 1, 2))
+        self.assertEqual(chunk.duration, Decimal(1))
+        self.assertFalse(chunk.finished)
 
     def test_schedule_task_for_another_time_submit_with_enter_date(self):
-        self.assertEqual(TaskExecution.objects.count(), 0)
+        self.assertEqual(TaskChunk.objects.count(), 0)
 
         # create dummy task
         task = Task.objects.create(
@@ -760,14 +761,14 @@ class OverviewTest(AuthenticatedSeleniumTest):
         date_input.send_keys(Keys.ENTER)
         sleep(0.5)
 
-        self.assertEqual(task.executions.count(), 1)
-        execution = task.executions.first()
-        self.assertEqual(execution.day, date(2017, 1, 2))
-        self.assertEqual(execution.duration, Decimal(1))
-        self.assertFalse(execution.finished)
+        self.assertEqual(task.chunks.count(), 1)
+        chunk = task.chunks.first()
+        self.assertEqual(chunk.day, date(2017, 1, 2))
+        self.assertEqual(chunk.duration, Decimal(1))
+        self.assertFalse(chunk.finished)
 
     def test_schedule_task_invalid_duration(self):
-        self.assertEqual(TaskExecution.objects.count(), 0)
+        self.assertEqual(TaskChunk.objects.count(), 0)
 
         # create dummy task
         task = Task.objects.create(
@@ -799,11 +800,11 @@ class OverviewTest(AuthenticatedSeleniumTest):
             'is-error',
             duration_input.get_attribute('class'))
 
-        self.assertEqual(task.executions.count(), 0)
+        self.assertEqual(task.chunks.count(), 0)
 
     def test_task_unscheduled_finish(self):
         """
-        Finish a task from the incomplete list that has no task executions.
+        Finish a task from the incomplete list that has no task chunks.
         """
         task = Task.objects.create(
             user=self.user,
@@ -812,7 +813,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
-        self.selenium.find_element_by_css_selector('[data-tooltip="Finish task"]').click()
+        self.selenium.find_element_by_css_selector('[data-tooltip="Complete task"]').click()
         sleep(0.5)
 
         self.assertRaises(
@@ -821,13 +822,13 @@ class OverviewTest(AuthenticatedSeleniumTest):
 
     def test_task_scheduled_finish(self):
         """
-        Finish a task from the incomplete list that has task executions.
+        Finish a task from the incomplete list that has task chunks.
         """
         task = Task.objects.create(
             user=self.user,
             name='Testtask',
             duration=5)
-        execution = TaskExecution.objects.create(
+        chunk = TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=2,
@@ -835,7 +836,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
-        self.selenium.find_element_by_css_selector('[data-tooltip="Finish task"]').click()
+        self.selenium.find_element_by_css_selector('[data-tooltip="Complete task"]').click()
         sleep(0.5)
 
         task.refresh_from_db()
@@ -843,12 +844,12 @@ class OverviewTest(AuthenticatedSeleniumTest):
             task.duration,
             Decimal('2'))
 
-    def test_task_execution_increase_time(self):
+    def test_task_chunk_increase_time(self):
         task = Task.objects.create(
             user=self.user,
             name='Testtask',
             duration=5)
-        execution = TaskExecution.objects.create(
+        chunk = TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=2,
@@ -859,17 +860,17 @@ class OverviewTest(AuthenticatedSeleniumTest):
         self.selenium.find_element_by_css_selector('[data-tooltip="Takes 30 more minutes"]').click()
         sleep(0.5)
 
-        execution.refresh_from_db()
+        chunk.refresh_from_db()
         self.assertEqual(
-            execution.duration,
+            chunk.duration,
             Decimal('2.5'))
 
-    def test_task_execution_decrease_time(self):
+    def test_task_chunk_decrease_time(self):
         task = Task.objects.create(
             user=self.user,
             name='Testtask',
             duration=5)
-        execution = TaskExecution.objects.create(
+        chunk = TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=2,
@@ -880,17 +881,17 @@ class OverviewTest(AuthenticatedSeleniumTest):
         self.selenium.find_element_by_css_selector('[data-tooltip="Takes 30 less minutes"]').click()
         sleep(0.5)
 
-        execution.refresh_from_db()
+        chunk.refresh_from_db()
         self.assertEqual(
-            execution.duration,
+            chunk.duration,
             Decimal('1.5'))
 
-    def test_task_execution_finish(self):
+    def test_task_chunk_finish(self):
         task = Task.objects.create(
             user=self.user,
             name='Testtask',
             duration=5)
-        execution = TaskExecution.objects.create(
+        chunk = TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=2,
@@ -901,15 +902,15 @@ class OverviewTest(AuthenticatedSeleniumTest):
         self.selenium.find_element_by_css_selector('[data-tooltip="Done"]').click()
         sleep(0.5)
 
-        execution.refresh_from_db()
-        self.assertTrue(execution.finished)
+        chunk.refresh_from_db()
+        self.assertTrue(chunk.finished)
 
-    def test_task_execution_undo(self):
+    def test_task_chunk_undo(self):
         task = Task.objects.create(
             user=self.user,
             name='Testtask',
             duration=5)
-        execution = TaskExecution.objects.create(
+        chunk = TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=2,
@@ -921,15 +922,15 @@ class OverviewTest(AuthenticatedSeleniumTest):
         self.selenium.find_element_by_css_selector('[data-tooltip="Not done"]').click()
         sleep(0.5)
 
-        execution.refresh_from_db()
-        self.assertFalse(execution.finished)
+        chunk.refresh_from_db()
+        self.assertFalse(chunk.finished)
 
-    def test_task_execution_delete(self):
+    def test_task_chunk_delete(self):
         task = Task.objects.create(
             user=self.user,
             name='Testtask',
             duration=5)
-        execution = TaskExecution.objects.create(
+        chunk = TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=2,
@@ -943,18 +944,18 @@ class OverviewTest(AuthenticatedSeleniumTest):
         alert.accept()
         sleep(0.5)
 
-        self.assertRaises(ObjectDoesNotExist, execution.refresh_from_db)
+        self.assertRaises(ObjectDoesNotExist, chunk.refresh_from_db)
         task.refresh_from_db()
         self.assertEqual(
             task.duration,
             Decimal(3))
 
-    def test_task_execution_postpone(self):
+    def test_task_chunk_postpone(self):
         task = Task.objects.create(
             user=self.user,
             name='Testtask',
             duration=5)
-        execution = TaskExecution.objects.create(
+        chunk = TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=2,
@@ -966,18 +967,18 @@ class OverviewTest(AuthenticatedSeleniumTest):
         self.selenium.find_element_by_css_selector('[data-tooltip="Postpone to another day"]').click()
         sleep(0.5)
 
-        self.assertRaises(ObjectDoesNotExist, execution.refresh_from_db)
+        self.assertRaises(ObjectDoesNotExist, chunk.refresh_from_db)
         task.refresh_from_db()
         self.assertEqual(
             task.duration,
             Decimal(5))
 
-    def test_task_execution_left(self):
+    def test_task_chunk_left(self):
         task1 = Task.objects.create(
             user=self.user,
             name='Task 1',
             duration=5)
-        execution1 = TaskExecution.objects.create(
+        chunk1 = TaskChunk.objects.create(
             day=date.today(),
             task=task1,
             duration=2,
@@ -988,17 +989,17 @@ class OverviewTest(AuthenticatedSeleniumTest):
         self.selenium.find_elements_by_css_selector('[data-tooltip="Move to previous day"]')[0].click()
         sleep(0.5)
 
-        execution1.refresh_from_db()
+        chunk1.refresh_from_db()
         self.assertEqual(
-            execution1.day,
+            chunk1.day,
             date.today() - timedelta(days=1))
 
-    def test_task_execution_right(self):
+    def test_task_chunk_right(self):
         task1 = Task.objects.create(
             user=self.user,
             name='Task 1',
             duration=5)
-        execution1 = TaskExecution.objects.create(
+        chunk1 = TaskChunk.objects.create(
             day=date.today(),
             task=task1,
             duration=2,
@@ -1009,17 +1010,17 @@ class OverviewTest(AuthenticatedSeleniumTest):
         self.selenium.find_elements_by_css_selector('[data-tooltip="Move to next day"]')[0].click()
         sleep(0.5)
 
-        execution1.refresh_from_db()
+        chunk1.refresh_from_db()
         self.assertEqual(
-            execution1.day,
+            chunk1.day,
             date.today() + timedelta(days=1))
 
-    def test_task_execution_up(self):
+    def test_task_chunk_up(self):
         task1 = Task.objects.create(
             user=self.user,
             name='Task 1',
             duration=5)
-        execution1 = TaskExecution.objects.create(
+        chunk1 = TaskChunk.objects.create(
             day=date.today(),
             task=task1,
             duration=2,
@@ -1028,7 +1029,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             user=self.user,
             name='Task 2',
             duration=5)
-        execution2 = TaskExecution.objects.create(
+        chunk2 = TaskChunk.objects.create(
             day=date.today(),
             task=task2,
             duration=1,
@@ -1039,21 +1040,21 @@ class OverviewTest(AuthenticatedSeleniumTest):
         self.selenium.find_elements_by_css_selector('[data-tooltip="Needs time earlier"]')[1].click()
         sleep(0.5)
 
-        execution1.refresh_from_db()
-        execution2.refresh_from_db()
+        chunk1.refresh_from_db()
+        chunk2.refresh_from_db()
         self.assertEqual(
-            execution1.day_order,
+            chunk1.day_order,
             1)
         self.assertEqual(
-            execution2.day_order,
+            chunk2.day_order,
             0)
 
-    def test_task_execution_down(self):
+    def test_task_chunk_down(self):
         task1 = Task.objects.create(
             user=self.user,
             name='Task 1',
             duration=5)
-        execution1 = TaskExecution.objects.create(
+        chunk1 = TaskChunk.objects.create(
             day=date.today(),
             task=task1,
             duration=2,
@@ -1062,7 +1063,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
             user=self.user,
             name='Task 2',
             duration=5)
-        execution2 = TaskExecution.objects.create(
+        chunk2 = TaskChunk.objects.create(
             day=date.today(),
             task=task2,
             duration=1,
@@ -1073,21 +1074,21 @@ class OverviewTest(AuthenticatedSeleniumTest):
         self.selenium.find_elements_by_css_selector('[data-tooltip="Needs time later"]')[0].click()
         sleep(0.5)
 
-        execution1.refresh_from_db()
-        execution2.refresh_from_db()
+        chunk1.refresh_from_db()
+        chunk2.refresh_from_db()
         self.assertEqual(
-            execution1.day_order,
+            chunk1.day_order,
             1)
         self.assertEqual(
-            execution2.day_order,
+            chunk2.day_order,
             0)
 
-    def test_missed_task_execution_finish(self):
+    def test_missed_task_chunk_finish(self):
         task = Task.objects.create(
             user=self.user,
             name='Testtask',
             duration=5)
-        execution = TaskExecution.objects.create(
+        chunk = TaskChunk.objects.create(
             day=date.today() - timedelta(days=4),
             task=task,
             duration=2,
@@ -1098,20 +1099,20 @@ class OverviewTest(AuthenticatedSeleniumTest):
 
         self.assertIn(
             'There are unfinished scheduled tasks for past days!',
-            self.selenium.find_element_by_tag_name('body').get_attribute('innerHTML'))
+            self.selenium.execute_script('return document.documentElement.innerHTML'))
 
         self.selenium.find_element_by_css_selector('[data-tooltip="Done"]').click()
         sleep(0.5)
 
-        execution.refresh_from_db()
-        self.assertTrue(execution.finished)
+        chunk.refresh_from_db()
+        self.assertTrue(chunk.finished)
 
-    def test_missed_task_execution_postpone(self):
+    def test_missed_task_chunk_postpone(self):
         task = Task.objects.create(
             user=self.user,
             name='Testtask',
             duration=5)
-        execution = TaskExecution.objects.create(
+        chunk = TaskChunk.objects.create(
             day=date.today() - timedelta(days=4),
             task=task,
             duration=2,
@@ -1127,4 +1128,4 @@ class OverviewTest(AuthenticatedSeleniumTest):
         self.selenium.find_element_by_css_selector('[data-tooltip="Postpone to another day"]').click()
         sleep(0.5)
 
-        self.assertRaises(ObjectDoesNotExist, execution.refresh_from_db)
+        self.assertRaises(ObjectDoesNotExist, chunk.refresh_from_db)

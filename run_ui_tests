@@ -1,15 +1,15 @@
 #!/bin/sh -e
 TMPDIR=`mktemp -d`
 
-cd dist
-DISTDIR=`pwd`
-cd ..
+DISTDIR=`pwd`/dist
+TESTDIR=`pwd`/uitests
 
 git clone -b $(cat API_VERSION) --depth=1 https://github.com/wichmannpas/todoscheduler.git $TMPDIR
 
-cp -r uitests $TMPDIR/
 
 cd $TMPDIR
+
+ln -s $TESTDIR
 
 pip install pip-tools
 pip-compile --output-file requirements-testing.txt requirements-testing.in requirements.in
