@@ -86,6 +86,20 @@ function finishTaskChunk (store, chunk, newState) {
   })
 }
 
+function splitTaskChunk (store, chunk) {
+  return new Promise(function (resolve, reject) {
+    axios.post(
+      API_URL + '/task/chunk/' + chunk.id.toString() + '/split/'
+    ).then(function (response) {
+      store.commit(
+        'addUpdateTaskChunks',
+        response.data.map(raw => deserialize(TaskChunk, raw)))
+
+      resolve()
+    })
+  })
+}
+
 function updateTaskChunkDay (store, chunk, newDay) {
   return new Promise(function (resolve, reject) {
     axios.patch(API_URL + '/task/chunk/' + chunk.id.toString() + '/', {
@@ -104,5 +118,6 @@ export {
   exchangeTaskChunk,
   fetchTaskChunks,
   finishTaskChunk,
+  splitTaskChunk,
   updateTaskChunkDay
 }

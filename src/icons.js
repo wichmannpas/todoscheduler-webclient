@@ -13,6 +13,7 @@ import {
   faArrowRight,
   faArrowUp,
   faCheck,
+  faLayerGroup,
   faMinus,
   faPencilAlt,
   faPlay,
@@ -29,6 +30,7 @@ library.add(faCheck)
 library.add(faClock)
 library.add(faClockDark)
 library.add(faCopy)
+library.add(faLayerGroup)
 library.add(faMinus)
 library.add(faPencilAlt)
 library.add(faPlay)

@@ -70,6 +70,16 @@
     </span>
     <span class="float-right">
       <a
+          @click="splitChunk()"
+          class="tooltip tooltip-left"
+          v-bind:class="[
+            { 'invisible': !canBeSplit }
+          ]"
+          data-tooltip="Split task chunk">
+        <font-awesome-icon
+            icon="layer-group" />
+      </a>
+      <a
           @click="updateChunkDay(-1)"
           class="tooltip tooltip-left"
           v-bind:class="[
@@ -144,6 +154,7 @@ import {
   deleteTaskChunk,
   exchangeTaskChunk,
   finishTaskChunk,
+  splitTaskChunk,
   updateTaskChunkDay
 } from '@/api/taskchunk'
 import EditTaskModal from '@/components/EditTaskModal'
@@ -173,6 +184,9 @@ export default {
     canBeMovedDown () {
       return this.$store.getters.taskChunkToExchange(
         this.chunk, 1) !== null
+    },
+    canBeSplit () {
+      return this.chunk.duration.comparedTo(1) > 0
     }
   },
   methods: {
@@ -181,7 +195,7 @@ export default {
       changeTaskChunkDuration(
         this.$store,
         this.chunk,
-        this.chunk.duration.add(delta).toString()).then(
+        this.chunk.duration.add(delta).toString()).finally(
         () => {
           this.loading = false
         })
@@ -195,7 +209,8 @@ export default {
       deleteTaskChunk(
         this.$store,
         this.chunk,
-        false).then(
+        false
+      ).finally(
         () => {
           this.loading = false
         })
@@ -205,20 +220,20 @@ export default {
       finishTaskChunk(
         this.$store,
         this.chunk,
-        newState).then(
-        () => {
-          this.loading = false
-        })
+        newState
+      ).finally(() => {
+        this.loading = false
+      })
     },
     increaseTaskDuration (delta) {
       this.loading = true
       changeTaskDuration(
         this.$store,
         this.chunk.task,
-        this.chunk.task.duration.add(delta.toString())).then(
-        () => {
-          this.loading = false
-        })
+        this.chunk.task.duration.add(delta.toString())
+      ).finally(() => {
+        this.loading = false
+      })
     },
     moveChunk (direction) {
       let exchange = this.$store.getters.taskChunkToExchange(
@@ -233,17 +248,27 @@ export default {
       exchangeTaskChunk(
         this.$store,
         this.chunk,
-        exchange).then(
-        () => {
-          this.loading = false
-        })
+        exchange
+      ).finally(() => {
+        this.loading = false
+      })
     },
     postponeChunk () {
       this.loading = true
       deleteTaskChunk(
         this.$store,
         this.chunk,
-        true).then(
+        true
+      ).finally(() => {
+        this.loading = false
+      })
+    },
+    splitChunk () {
+      this.loading = true
+      splitTaskChunk(
+        this.$store,
+        this.chunk
+      ).finally(
         () => {
           this.loading = false
         })
@@ -252,13 +277,12 @@ export default {
       let newDay = dayDelta(
         this.chunk.day,
         direction * 86400000)
-      console.log(this.chunk.day)
 
       this.loading = true
       updateTaskChunkDay(
         this.$store,
         this.chunk,
-        newDay).then(
+        newDay).finally(
         () => {
           this.loading = false
         })
