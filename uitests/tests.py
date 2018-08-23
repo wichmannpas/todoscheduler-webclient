@@ -9,6 +9,7 @@ from subprocess import DEVNULL, Popen
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.servers.basehttp import ThreadedWSGIServer
+from django.db.models import Q
 from django.test import override_settings, LiveServerTestCase
 from django.test.testcases import LiveServerThread, QuietWSGIRequestHandler
 from rest_authtoken.models import AuthToken
@@ -972,6 +973,39 @@ class OverviewTest(AuthenticatedSeleniumTest):
         self.assertEqual(
             task.duration,
             Decimal(5))
+
+    def test_task_chunk_split(self):
+        task1 = Task.objects.create(
+            user=self.user,
+            name='Task 1',
+            duration=5)
+        chunk1 = TaskChunk.objects.create(
+            day=date.today(),
+            task=task1,
+            duration=Decimal(2.5),
+            day_order=0)
+
+        self.assertEqual(
+            TaskChunk.objects.count(),
+            1)
+
+        self.selenium.get(self.frontend_url)
+        sleep(0.5)
+        self.selenium.find_elements_by_css_selector('[data-tooltip="Split task chunk"]')[0].click()
+        sleep(0.5)
+
+        self.assertEqual(
+            TaskChunk.objects.count(),
+            2)
+
+        chunk1.refresh_from_db()
+        self.assertEqual(
+            chunk1.duration,
+            Decimal(1))
+        chunk2 = TaskChunk.objects.get(~Q(pk=chunk1.pk))
+        self.assertEqual(
+            chunk2.duration,
+            Decimal('1.5'))
 
     def test_task_chunk_left(self):
         task1 = Task.objects.create(

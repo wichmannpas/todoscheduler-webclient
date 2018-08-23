@@ -69,6 +69,28 @@ export default {
 
       state.ready = true
     },
+    /**
+     * add specified task chunks, previously removing them if they exist
+     */
+    addUpdateTaskChunks (state, taskChunks) {
+      taskChunks.forEach(taskChunk => {
+        let index = state.taskChunks.findIndex(
+          item => item.id === taskChunk.id)
+        if (index >= 0) {
+          Vue.delete(
+            state.taskChunks,
+            index)
+        }
+
+        state.taskChunks.splice(
+          insertIndex(state.taskChunks, taskChunk),
+          0,
+          taskChunk
+        )
+      })
+
+      state.ready = true
+    },
     addTaskChunk (state, taskChunk) {
       if (state.taskChunks.findIndex(item => item.id === taskChunk.id) >= 0) {
         // task chunk exists already
