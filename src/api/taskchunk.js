@@ -6,15 +6,19 @@ import { ensureAuthToken, handleGenericErrors } from '@/api'
 import Task from '@/models/Task'
 import TaskChunk from '@/models/TaskChunk'
 
-function fetchTaskChunks (store) {
-  // TODO: implement limiting date range
-
+function fetchTaskChunks (minDate, maxDate, taskId) {
   return new Promise(function (resolve, reject) {
     if (!ensureAuthToken()) {
       reject(new Error('no auth'))
     }
 
-    axios.get(API_URL + '/task/chunk/').then(function (response) {
+    axios.get(API_URL + '/task/chunk/', {
+      params: {
+        min_date: minDate,
+        max_date: maxDate,
+        task_id: taskId
+      }
+    }).then(function (response) {
       resolve(
         response.data.map(raw => deserialize(TaskChunk, raw)))
     }).catch((error) => handleGenericErrors(error, resolve, reject))

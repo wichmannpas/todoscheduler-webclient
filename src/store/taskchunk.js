@@ -1,10 +1,10 @@
 import Vue from 'vue'
 
-import { isSameDay } from 'date-fns'
+import { addDays, isSameDay } from 'date-fns'
 import Decimal from 'decimal.js-light'
 
 import { fetchTaskChunks } from '@/api/taskchunk'
-import { insertIndex, updateWithOrder } from '@/utils'
+import { formatDayString, insertIndex, updateWithOrder } from '@/utils'
 
 export default {
   state: {
@@ -101,12 +101,46 @@ export default {
     }
   },
   actions: {
-    fetchData ({ commit, state }) {
+    fetchData ({ commit, dispatch, state }, today) {
       if (state.ready) {
         return
       }
 
-      fetchTaskChunks().then(taskChunks => {
+      dispatch('fetchTaskChunks', {
+        today: today
+      })
+    },
+    /**
+     * To filter the task chunk day range to fetch, either a minDate/maxDate
+     * or the number of days to go into the past/future can be specified.
+     *
+     * If a minDate/maxDate is specified, this has precedence over
+     * pastDays/futureDays.
+     */
+    fetchTaskChunks (
+      { commit, state },
+      { today, minDate, maxDate, pastDays, futureDays }
+    ) {
+      if (today === undefined) {
+        today = new Date()
+      }
+      if (minDate === undefined) {
+        if (pastDays === undefined) {
+          pastDays = 1
+        }
+        minDate = addDays(today, -pastDays)
+      }
+      if (maxDate === undefined) {
+        if (futureDays === undefined) {
+          futureDays = 7
+        }
+        maxDate = addDays(today, futureDays)
+      }
+
+      fetchTaskChunks(
+        formatDayString(minDate),
+        formatDayString(maxDate)
+      ).then(taskChunks => {
         commit('setTaskChunks', taskChunks)
       })
     }

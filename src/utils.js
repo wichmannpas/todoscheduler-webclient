@@ -9,7 +9,6 @@ import {
 } from 'date-fns'
 import Vue from 'vue'
 
-// TODO: get rid of this function
 function formatDayString (day) {
   return format(day, 'YYYY-MM-DD')
 }
