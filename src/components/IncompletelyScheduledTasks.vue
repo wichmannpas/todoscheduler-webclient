@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div
+      v-if="ready">
     <div
         v-if="incompletelyScheduledTasks.length > 0"
         style="
@@ -36,6 +37,10 @@
       </div>
     </div>
   </div>
+  <div
+      v-else
+      class="loading loading-lg">
+  </div>
 </template>
 
 <script>
@@ -47,6 +52,9 @@ export default {
     IncompletelyScheduledTask
   },
   computed: {
+    ready () {
+      return this.$store.state.task.ready
+    },
     incompletelyScheduledTasks () {
       return this.$store.getters.incompletelyScheduledTasks
     },

@@ -1,6 +1,5 @@
 <template>
-  <div
-      v-if="ready">
+  <div>
     <NewTask />
 
     <MissedTaskChunks />
@@ -10,10 +9,6 @@
     <Schedule />
 
     <Logout />
-  </div>
-  <div
-      v-else
-      class="loading loading-lg">
   </div>
 </template>
 <script>
@@ -35,13 +30,6 @@ export default {
   },
   created: function () {
     this.fetchData()
-  },
-  computed: {
-    ready () {
-      return this.$store.state.user.ready &&
-        this.$store.state.task.ready &&
-        this.$store.state.taskchunk.ready
-    }
   },
   methods: {
     fetchData () {

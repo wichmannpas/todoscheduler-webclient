@@ -1,10 +1,16 @@
 <template>
-  <div class="schedule columns">
+  <div
+      v-if="ready"
+      class="schedule columns">
     <Day
       v-for="day in days"
       v-bind:key="day.getTime()"
       v-bind:day="day"
     />
+  </div>
+  <div
+      v-else
+      class="loading loading-lg">
   </div>
 </template>
 
@@ -21,6 +27,9 @@ export default {
     Day
   },
   computed: {
+    ready () {
+      return this.$store.state.task.ready && this.$store.state.taskchunk.ready
+    },
     days () {
       // TODO: use today from a store to make it reactive
       let today = new Date()
