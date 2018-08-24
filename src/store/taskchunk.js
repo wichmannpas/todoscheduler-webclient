@@ -61,6 +61,9 @@ export default {
       chunk => !chunk.finished && chunk.past())
   },
   mutations: {
+    reset (state) {
+      state.ready = false
+    },
     /**
      * requires no redundant taskChunks to be present
      */
