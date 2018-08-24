@@ -15,6 +15,9 @@ export default {
       task => task.incompletelyScheduled())
   },
   mutations: {
+    reset (state) {
+      state.ready = false
+    },
     /**
      * requires no redundant tasks to be present
      */
