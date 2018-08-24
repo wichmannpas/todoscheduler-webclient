@@ -51,12 +51,19 @@ function dayDelta (day, delta) {
  * Get the index at which to insert a new item into an Array of
  * items based on the compareTo method.
  *
+ * If index is provided, the items in the Array ar regarded as ids
+ * of objects contained in the index Object.
+ *
  * If an equal item exists, the new item is inserted *after* the
  * existing item.
  */
-function insertIndex (items, newItem) {
+function insertIndex (items, newItem, index) {
   for (let i = 0; i < items.length; i++) {
+    // TODO: drop support for non-indexed data structures to improve the performance
     let item = items[i]
+    if (index !== undefined) {
+      item = index[item]
+    }
 
     if (item.compareTo(newItem) > 0) {
       return i
