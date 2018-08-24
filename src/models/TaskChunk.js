@@ -1,6 +1,5 @@
 import Decimal from 'decimal.js-light'
 
-import Task from '@/models/Task'
 import { isPastDay, naturalDay } from '@/utils'
 import {
   alias,
@@ -8,17 +7,20 @@ import {
   custom,
   date,
   identifier,
-  object,
   primitive
 } from 'serializr'
 
 class TaskChunk {
   id = -1
-  task = new Task()
+  taskId = -1
   day = new Date()
   dayOrder = -1
   duration = Decimal(0)
   finished = false
+
+  task (store) {
+    return store.getters.taskById(this.taskId)
+  }
 
   past () {
     return isPastDay(this.day)
@@ -67,7 +69,10 @@ class TaskChunk {
 
 createModelSchema(TaskChunk, {
   id: identifier(),
-  task: object(Task),
+  taskId: alias('task', custom(
+    val => { return { id: val } },
+    val => val.id
+  )),
   day: date(),
   dayOrder: alias('day_order', primitive()),
   duration: custom(

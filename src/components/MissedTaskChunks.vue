@@ -8,7 +8,7 @@
       <li
           v-for="chunk in missedTaskChunks"
           v-bind:key="chunk.id">
-          {{ chunk.task.name }} ({{ chunk.naturalDay() }})
+          {{ chunk.task($store).name }} ({{ chunk.naturalDay() }})
           <a
               @click="finishChunk(chunk)"
               class="tooltip"

@@ -111,15 +111,6 @@ export default {
         state.taskChunks,
         state.taskChunks.findIndex(
           item => item.id === taskChunkId))
-    },
-    updateTask (state, task) {
-      state.taskChunks.forEach(taskChunk => {
-        if (taskChunk.task.id !== task.id) {
-          return
-        }
-
-        Vue.set(taskChunk, 'task', task)
-      })
     }
   },
   actions: {

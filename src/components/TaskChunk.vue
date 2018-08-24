@@ -8,14 +8,14 @@
       v-bind:style="[
         { height: (chunk.duration.toNumber() * 4).toString() + 'em' }
       ]">
-    <strong>{{ chunk.task.name }}</strong>
+    <strong>{{ chunk.task($store).name }}</strong>
     <span
       v-if="loading"
       class="loading loading-lg"></span>
     <span class="float-right">
       {{ chunk.duration.toNumber() }}h
-      <span v-if="chunk.task.duration.toNumber() !== chunk.duration.toNumber()">
-        ({{ chunk.task.duration.toNumber() }}h)
+      <span v-if="chunk.task($store).duration.toNumber() !== chunk.duration.toNumber()">
+        ({{ chunk.task($store).duration.toNumber() }}h)
       </span>
     </span>
     <br/>
@@ -141,7 +141,7 @@
     <EditTaskModal
         @close="editModalActive = false"
         v-if="editModalActive"
-        v-bind:task="chunk.task"
+        v-bind:task="chunk.task($store)"
     />
   </span>
 </template>
@@ -225,11 +225,12 @@ export default {
       })
     },
     increaseTaskDuration (delta) {
+      let task = this.chunk.task(this.$store)
       this.loading = true
       changeTaskDuration(
         this.$store,
-        this.chunk.task,
-        this.chunk.task.duration.add(delta.toString())
+        task,
+        task.duration.add(delta.toString())
       ).finally(() => {
         this.loading = false
       })
