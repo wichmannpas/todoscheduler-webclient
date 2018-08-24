@@ -1,53 +1,79 @@
 import Vue from 'vue'
 
 import { fetchTasks } from '@/api/task'
-import { insertIndex, updateWithOrder } from '@/utils'
+import { insertIndex } from '@/utils'
 
 export default {
   state: {
     ready: false,
-    tasks: []
+    tasks: {},
+    taskOrder: []
   },
   getters: {
-    taskById: state => taskId => state.tasks.find(task => task.id === taskId),
-    incompletelyScheduledTasks: (state) => state.tasks.filter(task => task.incompletelyScheduled())
+    orderedTasks: (state) => state.taskOrder.map(taskId => state.tasks[taskId]),
+    incompletelyScheduledTasks: (state, getters) => getters.orderedTasks.filter(
+      task => task.incompletelyScheduled())
   },
   mutations: {
     /**
      * requires no redundant tasks to be present
      */
     setTasks (state, tasks) {
-      state.tasks = []
+      state.tasks = {}
+      state.taskOrder = []
 
       tasks.forEach(task => {
-        state.tasks.splice(
-          insertIndex(state.tasks, task),
+        Vue.set(state.tasks, task.id, task)
+      })
+      // we need to iterate over the tasks a second time to ensure that the index
+      // is fully populated
+      tasks.forEach(task => {
+        state.taskOrder.splice(
+          insertIndex(state.taskOrder, task, state.tasks),
           0,
-          task
+          task.id
         )
       })
 
       state.ready = true
     },
     addTask (state, task) {
-      if (state.tasks.findIndex(item => item.id === task.id) >= 0) {
+      if (state.tasks[task.id] !== undefined) {
         // task exists already
         return
       }
 
-      state.tasks.splice(
-        insertIndex(state.tasks, task),
+      state.taskOrder.splice(
+        insertIndex(state.taskOrder, task, state.tasks),
         0,
-        task)
+        task.id)
+      Vue.set(state.tasks, task.id, task)
     },
     updateTask (state, task) {
-      updateWithOrder(state.tasks, task)
+      Vue.set(
+        state.tasks,
+        task.id,
+        task)
+
+      let orderIndex = state.taskOrder.indexOf(task.id)
+      if (insertIndex(state.taskOrder, task, state.tasks) !== orderIndex + 1) {
+        // affects ordering, update taskOrder
+        Vue.delete(
+          state.taskOrder,
+          orderIndex)
+        state.taskOrder.splice(
+          insertIndex(state.taskOrder, task, state.tasks),
+          0,
+          task.id)
+      }
     },
     deleteTask (state, taskId) {
       Vue.delete(
+        state.taskOrder,
+        state.taskOrder.indexOf(taskId))
+      Vue.delete(
         state.tasks,
-        state.tasks.findIndex(
-          item => item.id === taskId))
+        taskId)
     }
   },
   actions: {

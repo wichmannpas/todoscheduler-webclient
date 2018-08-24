@@ -19,7 +19,7 @@ class TaskChunk {
   finished = false
 
   task (store) {
-    return store.getters.taskById(this.taskId)
+    return store.state.task.tasks[this.taskId]
   }
 
   past () {
