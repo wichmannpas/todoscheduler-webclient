@@ -187,13 +187,17 @@ export default {
     }
   },
   actions: {
-    fetchData ({ commit, dispatch, state }, today) {
-      if (state.ready) {
+    fetchData ({ commit, dispatch, state }, options) {
+      if (options === undefined) {
+        options = {}
+      }
+
+      if (state.ready && options.ignoreReady !== true) {
         return
       }
 
       dispatch('fetchTaskChunks', {
-        today: today
+        today: options.today
       })
     },
     /**
