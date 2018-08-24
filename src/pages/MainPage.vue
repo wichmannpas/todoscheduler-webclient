@@ -1,5 +1,7 @@
 <template>
   <div>
+    <Sync />
+
     <NewTask />
 
     <MissedTaskChunks />
@@ -18,6 +20,7 @@ import MissedTaskChunks from '@/components/MissedTaskChunks'
 import NewTask from '@/components/NewTask'
 import Logout from '@/components/Logout'
 import Schedule from '@/components/Schedule'
+import Sync from '@/components/Sync'
 
 export default {
   name: 'MainPage',
@@ -26,7 +29,8 @@ export default {
     Logout,
     MissedTaskChunks,
     NewTask,
-    Schedule
+    Schedule,
+    Sync
   },
   created: function () {
     this.fetchData()

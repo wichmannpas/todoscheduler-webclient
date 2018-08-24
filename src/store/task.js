@@ -80,8 +80,12 @@ export default {
     }
   },
   actions: {
-    fetchData ({ commit, state }) {
-      if (state.ready) {
+    fetchData ({ commit, state }, options) {
+      if (options === undefined) {
+        options = {}
+      }
+
+      if (state.ready && options.ignoreReady !== true) {
         return
       }
 
