@@ -7,7 +7,6 @@ import {
   isYesterday,
   parse
 } from 'date-fns'
-import Vue from 'vue'
 
 function formatDayString (day) {
   return format(day, 'YYYY-MM-DD')
@@ -48,22 +47,17 @@ function dayDelta (day, delta) {
 }
 
 /**
- * Get the index at which to insert a new item into an Array of
- * items based on the compareTo method.
+ * Get the index at which to insert the id of a new item into an Array of
+ * item ids based on the compareTo method.
  *
- * If index is provided, the items in the Array ar regarded as ids
- * of objects contained in the index Object.
+ * The index is used to look up the items based on their ids.
  *
  * If an equal item exists, the new item is inserted *after* the
  * existing item.
  */
 function insertIndex (items, newItem, index) {
   for (let i = 0; i < items.length; i++) {
-    // TODO: drop support for non-indexed data structures to improve the performance
-    let item = items[i]
-    if (index !== undefined) {
-      item = index[item]
-    }
+    let item = index[items[i]]
 
     if (item.compareTo(newItem) > 0) {
       return i
@@ -73,44 +67,11 @@ function insertIndex (items, newItem, index) {
   return items.length
 }
 
-/**
- * Update an item within an Array preserving the Array order.
- *
- * If the update of the item does not affect its position within
- * the Array, it is directly updated.
- * Otherwise, the item is removed from the Array and then re-added.
- *
- * It assumes the items to have an id property, and uses insertIndex
- * to determine the position based on the compareTo method.
- */
-function updateWithOrder (arr, newItem) {
-  let index = arr.findIndex(item => item.id === newItem.id)
-  let newIndex = insertIndex(arr, newItem)
-
-  if (newIndex !== index + 1) {
-    // update affects ordering, delete and re-add item
-    Vue.delete(
-      arr,
-      arr.findIndex(
-        item => item.id === newItem.id))
-    arr.splice(
-      // re-calculate insert index as it might or might not be impacted
-      // by deleting the previous version of the item
-      insertIndex(arr, newItem),
-      0,
-      newItem)
-  } else {
-    // ordering is not affected, overwrite old task
-    Vue.set(arr, index, newItem)
-  }
-}
-
 export {
   dayDelta,
   formatDayString,
   insertIndex,
   isPastDay,
   naturalDay,
-  parseDayString,
-  updateWithOrder
+  parseDayString
 }
