@@ -9,6 +9,7 @@ export default {
     tasks: []
   },
   getters: {
+    taskById: state => taskId => state.tasks.find(task => task.id === taskId),
     incompletelyScheduledTasks: (state) => state.tasks.filter(task => task.incompletelyScheduled())
   },
   mutations: {

@@ -36,7 +36,7 @@ function deleteTaskChunk (store, chunk, postpone) {
       '/?postpone=' + (postpone ? '1' : '0')).then(function (response) {
       store.commit('deleteTaskChunk', chunk.id)
       if (postpone) {
-        let task = chunk.task
+        let task = chunk.task(store)
         task.scheduledDuration = task.scheduledDuration.sub(chunk.duration)
         store.commit('updateTask', task)
       }
