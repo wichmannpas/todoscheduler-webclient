@@ -7,6 +7,22 @@ Scheduling all of your tasks means less postponed tasks and a higher productivit
 This repository contains a JavaScript web frontend of TodoScheduler.
 The backend can be found in [this repository](https://github.com/wichmannpas/todoscheduler).
 
+Configuration
+-------------
+
+The configuration of the client is located in `src/config.js`.
+This file contains the URL of the backend API and additional instance-specific configurations.
+
+Installation
+------------
+
+Each [release](https://github.com/wichmannpas/todoscheduler-webclient/releases) contains a built version of the client (`dist.tar.gz`).
+
+The configuration contained used for development is built into this distribution. A (rather dirty) way of updating the configuration without needing to re-build it would be using the following commands:
+
+    sed -i 's/http:\/\/127.0.0.1:8000/https:\/\/api.todoscheduler.org/g' dist/static/js/app*.js
+    sed -i 's/John Doe\\nFoo Street 42\\n1337 Bar City\\nGermany/Your Name\\nYour Street\\n12345 Your City\\nYour Country/g' dist/static/js/app*.js
+
 Build Setup
 -----------
 
