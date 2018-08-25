@@ -54,7 +54,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 Demo
 ----
 
-A hosted instance of TodoScheduler is available [here](https://todoscheduler.pwsrv.de).
+A hosted instance of TodoScheduler is available [here](https://todoscheduler.org).
 
 License
 -------
