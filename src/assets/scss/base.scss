@@ -1,6 +1,9 @@
 @import 'material-icons-font/material-icons-font.css';
 @import 'material-components-web/dist/material-components-web.css';
 
+@import 'spectre.css/src/_variables.scss';
+@import 'spectre.css/src/_tooltips.scss';
+
 
 body {
   font-family: Roboto, sans-serif;
@@ -30,6 +33,11 @@ body {
   padding: 0 1em;
 }
 
+.container-full {
+  margin: 5em auto 0 auto;
+  padding: 0 1em;
+}
+
 .container-slim {
   max-width: 500px;
   margin: 5em auto 0 auto;
@@ -44,10 +52,32 @@ a {
   cursor: pointer;
 }
 
+.hidden {
+  display: none !important;
+}
+
 .invisible {
-  visibility: hidden;
+  visibility: hidden !important;
 }
 
 .align-right {
   text-align: right;
+}
+
+.full-width-text-field {
+  display: block;
+  width: 100%;
+  margin: 1.5em auto;
+}
+
+.mdc-text-field__text {
+  bottom: 0.3em !important;
+}
+
+.mdc-dialog__body--scrollable {
+  overflow-y: auto !important;
+}
+
+.mdc-dialog__body--big {
+  max-height: 55em !important;
 }

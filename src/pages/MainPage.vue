@@ -1,36 +1,44 @@
 <template>
-  <div>
-    <Sync />
-
-    <NewTask />
-
-    <MissedTaskChunks />
-
-    <IncompletelyScheduledTasks />
-
-    <Schedule />
-
+  <div class="container-full">
+    TODO: to drawer
     <Logout />
+
+    <div class="mdc-layout-grid">
+      <div class="mdc-layout-grid__inner">
+        <div
+            class="
+              task-cell
+              mdc-layout-grid__cell
+              mdc-layout-grid__cell--span-3-desktop
+              mdc-layout-grid__cell--span-12-tablet
+              mdc-layout-grid__cell--span-12-phone">
+          <Tasks />
+        </div>
+        <div
+            class="
+              schedule-cell
+              mdc-layout-grid__cell
+              mdc-layout-grid__cell--span-9-desktop
+              mdc-layout-grid__cell--span-12-tablet
+              mdc-layout-grid__cell--span-12-phone">
+          <Schedule />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
 import { fetchUser } from '@/api/user'
-import IncompletelyScheduledTasks from '@/components/IncompletelyScheduledTasks'
-import MissedTaskChunks from '@/components/MissedTaskChunks'
-import NewTask from '@/components/NewTask'
+import Tasks from '@/components/Tasks'
 import Logout from '@/components/Logout'
 import Schedule from '@/components/Schedule'
-import Sync from '@/components/Sync'
 
 export default {
   name: 'MainPage',
   components: {
-    IncompletelyScheduledTasks,
     Logout,
-    MissedTaskChunks,
-    NewTask,
     Schedule,
-    Sync
+    Tasks
   },
   created: function () {
     this.fetchData()
