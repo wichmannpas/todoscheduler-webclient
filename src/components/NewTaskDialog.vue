@@ -67,7 +67,7 @@
         </section>
         <footer class="mdc-dialog__footer">
           <button
-              @click="closeModal"
+              @click="closeDialog"
               ref="cancel"
               type="button"
               class="
@@ -159,7 +159,7 @@ export default {
             this.loading = false
             Vue.set(this, 'errors', [])
 
-            this.closeModal()
+            this.closeDialog()
           }).catch((response) => {
             this.loading = false
 
@@ -169,7 +169,7 @@ export default {
           this.loading = false
           Vue.set(this, 'errors', [])
 
-          this.closeModal()
+          this.closeDialog()
         }
       }).catch((response) => {
         this.loading = false
@@ -177,7 +177,7 @@ export default {
         Vue.set(this, 'errors', Object.keys(response))
       })
     },
-    closeModal () {
+    closeDialog () {
       this.$emit('close')
     }
   }

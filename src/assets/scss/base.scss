@@ -64,6 +64,10 @@ a {
   text-align: right;
 }
 
+.full-width {
+  width: 100%;
+}
+
 .full-width-text-field {
   display: block;
   width: 100%;
@@ -80,4 +84,13 @@ a {
 
 .mdc-dialog__body--big {
   max-height: 55em !important;
+}
+
+.material-icons.headline-icon {
+  position: relative;
+  top: 0.2em;
+}
+
+.c-hand {
+  cursor: pointer;
 }

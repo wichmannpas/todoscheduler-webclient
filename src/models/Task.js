@@ -9,6 +9,8 @@ import {
   primitive
 } from 'serializr'
 
+import { prettyDate } from '@/utils'
+
 class Task {
   id = -1
   name = ''
@@ -37,8 +39,15 @@ class Task {
   unscheduledDuration () {
     return this.duration.sub(this.scheduledDuration)
   }
-  incompletelyScheduled () {
-    return this.unscheduledDuration().toNumber() > 0
+  completelyScheduled () {
+    return this.scheduledDuration.comparedTo(this.duration) === 0
+  }
+  unfinishedDuration () {
+    return this.duration.sub(this.finishedDuration)
+  }
+  finished () {
+    return (this.completelyScheduled() &&
+      this.finishedDuration.comparedTo(this.duration) === 0)
   }
 
   // TODO: use today argument (from store)
@@ -46,6 +55,11 @@ class Task {
     let today = new Date()
 
     return isAfter(this.start, today)
+  }
+
+  // TODO: use today argument (from store)
+  prettyStart () {
+    return prettyDate(this.start)
   }
 
   /**
