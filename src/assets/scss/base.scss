@@ -24,6 +24,12 @@ body {
   }
 }
 
+.container {
+  max-width: 1200px;
+  margin: 5em auto 0 auto;
+  padding: 0 1em;
+}
+
 .container-slim {
   max-width: 500px;
   margin: 5em auto 0 auto;
