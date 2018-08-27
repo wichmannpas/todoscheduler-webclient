@@ -1,8 +1,5 @@
 <template>
   <div class="container-full">
-    TODO: to drawer
-    <Logout />
-
     <div class="mdc-layout-grid">
       <div class="mdc-layout-grid__inner">
         <div
@@ -30,13 +27,11 @@
 <script>
 import { fetchUser } from '@/api/user'
 import Tasks from '@/components/Tasks'
-import Logout from '@/components/Logout'
 import Schedule from '@/components/Schedule'
 
 export default {
   name: 'MainPage',
   components: {
-    Logout,
     Schedule,
     Tasks
   },

@@ -1,13 +1,10 @@
 <template>
-  <div class="logout">
-    <a
-        class="c-hand tooltip tooltip-right"
-        data-tooltip="Logout"
-        @click="logout">
-      <font-awesome-icon
-          icon="sign-out-alt" />
-    </a>
-  </div>
+  <a
+      class="c-hand"
+      @click="logout">
+    <i class="material-icons mdc-list-item__graphic" aria-hidden="true">exit_to_app</i>
+    Log out
+  </a>
 </template>
 
 <script>
