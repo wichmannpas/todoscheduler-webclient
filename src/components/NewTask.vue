@@ -3,7 +3,7 @@
     <button
         ref="newTask"
         @click="dialogActive = true"
-        class="mdc-button">
+        class="mdc-button full-width">
       <i class="material-icons mdc-button__icon" aria-hidden="true">add</i>
       New Task
     </button>

@@ -1,71 +1,112 @@
 <template>
   <form
+      style="position: relative"
       @submit.prevent="scheduleTask">
-    <div class="form-group">
-      <label class="form-label">
-        Schedule for
-      </label>
+
+    <!-- TODO: Move scheduleFor (including another time date input) into a dedicated component and reuse it //-->
+    <div
+        ref="scheduleFor"
+        class="mdc-select full-width-text-field">
       <select
           v-model="scheduleFor"
-          v-bind:class="[
-            { 'is-error': errors.indexOf('day') >= 0 }
-          ]"
-          class="form-select">
+          class="mdc-select__native-control">
         <option value="today">Today</option>
         <option value="tomorrow">Tomorrow</option>
         <option value="next_free_capacity">Next Free Capacity</option>
         <option value="another_time">Another Time</option>
       </select>
+      <label class="mdc-floating-label mdc-floating-label--float-above">
+        Schedule for
+      </label>
+      <div class="mdc-line-ripple"></div>
+    </div>
+
+    <div
+        :class="{ hidden: scheduleFor !== 'another_time' }"
+        class="mdc-text-field full-width-text-field">
       <input
           @keyup.enter="scheduleTask"
           v-model="scheduleForDate"
-          v-bind:class="[
-            { 'is-error': errors.indexOf('day') >= 0 }
-          ]"
-          v-if="scheduleFor === 'another_time'"
           type="date"
-          class="form-input"
-          placeholder="Schedule for date"
-          required />
+          class="mdc-text-field__input" />
+      <label
+          class="mdc-floating-label mdc-floating-label--float-above"
+          for="task-start">
+        Schedule for date
+      </label>
     </div>
-    <div
-        class="input-group">
-      <input
-          ref="duration"
-          v-model="duration"
-          v-bind:class="[
-            { 'is-error': errors.indexOf('duration') >= 0 }
-          ]"
-          type="number"
-          class="
-            align-right
-            form-input"
-            placeholder="Duration"
-            step="0.01"
-            required />
-      <span class="input-group-addon">h</span>
+    <p
+        v-if="errors.indexOf('day') >= 0"
+        class="
+          mdc-text-field-helper-text
+          mdc-text-field-helper-text--validation-msg
+          mdc-text-field-helper-text--persistent
+          error">
+      This date is invalid.
+    </p>
 
-    </div>
     <div
-        v-if="loading"
-        class="loading loading-lg">
+        ref="duration"
+        class="
+          mdc-text-field
+          full-width-text-field
+          mdc-text-field--with-trailing-icon">
+      <input
+          id="task-duration"
+          ref="durationInput"
+          v-model="duration"
+          :disabled="loading"
+          type="number"
+          step="0.01"
+          class="
+            mdc-text-field__input
+            align-right" />
+      <label
+          class="mdc-floating-label"
+          for="task-duration">
+        Duration
+      </label>
+      <span
+          class="mdc-text-field__icon mdc-text-field__text"
+          tabindex="-1">h</span>
+      <div class="mdc-line-ripple"></div>
     </div>
+    <p
+        v-if="errors.indexOf('duration') >= 0"
+        class="
+          mdc-text-field-helper-text
+          mdc-text-field-helper-text--validation-msg
+          mdc-text-field-helper-text--persistent
+          error">
+      This duration is invalid.
+    </p>
+
+    <Loading v-if="loading" />
   </form>
 </template>
 
 <script>
+import { select, textField } from 'material-components-web'
 import Vue from 'vue'
 
 import { scheduleTask } from '@/api/task'
+import Loading from '@/components/Loading'
 import { formatDayString } from '@/utils'
 
 export default {
   name: 'ScheduleTaskForm',
+  components: {
+    Loading
+  },
   props: [
     'task'
   ],
   data: function () {
     return {
+      ui: {
+        scheduleForInput: null,
+        durationInput: null
+      },
       loading: false,
       scheduleFor: 'today',
       scheduleForDate: formatDayString(new Date()),
@@ -78,7 +119,14 @@ export default {
     this.$parent.$on('schedule', this.scheduleTask)
   },
   mounted: function () {
-    this.$refs.duration.focus()
+    if (this.ui.scheduleForInput === null) {
+      this.ui.scheduleForInput = new select.MDCSelect(this.$refs.scheduleFor)
+    }
+    if (this.ui.durationInput === null) {
+      this.ui.durationInput = new textField.MDCTextField(this.$refs.duration)
+    }
+
+    this.$refs.durationInput.focus()
   },
   methods: {
     scheduleTask () {

@@ -34,6 +34,31 @@ function naturalDay (day) {
   return format(day, 'MMM. D, YYYY')
 }
 
+function prettyDate (day) {
+  if (isToday(day)) {
+    return 'today'
+  } else if (isTomorrow(day)) {
+    return 'tomorrow'
+  }
+
+  // TODO: use today from store
+  let today = new Date()
+
+  // ensure date is not modified
+  today = new Date(today.getTime())
+  // use start of day
+  today.setHours(0)
+  today.setMinutes(0)
+  today.setSeconds(0)
+
+  let dayDelta = differenceInDays(day, today)
+  if (dayDelta <= 25 && dayDelta >= 0) {
+    // use i18next with plural
+    return 'in ' + dayDelta.toString() + ' day' + (dayDelta === 1 ? '' : 's')
+  }
+  return 'on ' + format(day, 'MMMM D, YYYY')
+}
+
 function isPastDay (day) {
   return isPast(new Date(format(day, 'YYYY-MM-DD') + 'T23:59:59'))
 }
@@ -73,5 +98,6 @@ export {
   insertIndex,
   isPastDay,
   naturalDay,
-  parseDayString
+  parseDayString,
+  prettyDate
 }
