@@ -10,7 +10,7 @@
 
     <div
         ref="username"
-        class="mdc-text-field mdc-text-field--box register-text-field">
+        class="mdc-text-field mdc-text-field--box full-width-text-field">
       <input
           id="register-username"
           type="text"
@@ -63,7 +63,7 @@
 
     <div
         ref="password"
-        class="mdc-text-field mdc-text-field--box register-text-field">
+        class="mdc-text-field mdc-text-field--box full-width-text-field">
       <input
           id="register-password"
           type="password"
@@ -98,7 +98,7 @@
 
     <div
         ref="password2"
-        class="mdc-text-field mdc-text-field--box register-text-field">
+        class="mdc-text-field mdc-text-field--box full-width-text-field">
       <input
           id="register-password2"
           type="password"
@@ -151,8 +151,6 @@ import { ripple, textField } from 'material-components-web'
 import { login, register } from '@/api/auth'
 import Loading from '@/components/Loading'
 import { showSnackbar } from '@/snackbar'
-
-import '@/assets/scss/register.scss'
 
 export default {
   name: 'Register',

@@ -7,7 +7,7 @@
 
     <div
         ref="username"
-        class="mdc-text-field mdc-text-field--box login-text-field">
+        class="mdc-text-field mdc-text-field--box full-width-text-field">
       <input
           id="login-username"
           type="text"
@@ -22,7 +22,7 @@
     </div>
     <div
         ref="password"
-        class="mdc-text-field mdc-text-field--box login-text-field">
+        class="mdc-text-field mdc-text-field--box full-width-text-field">
       <input
           id="login-password"
           type="password"
@@ -58,8 +58,6 @@ import { checkAuth } from '@/api'
 import { login } from '@/api/auth'
 import Loading from '@/components/Loading'
 import { showSnackbar } from '@/snackbar'
-
-import '@/assets/scss/login.scss'
 
 export default {
   name: 'Login',

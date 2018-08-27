@@ -1,13 +1,10 @@
 <template>
-  <div>
-    <a
-        class="c-hand tooltip tooltip-right"
-        data-tooltip="Synchronize now"
-        @click="sync">
-      <font-awesome-icon
-          icon="sync" />
-    </a>
-  </div>
+  <a
+      @click="sync"
+      class="material-icons mdc-top-app-bar__action-item"
+      aria-label="Synchronize now"
+      alt="Synchronize now"
+    >refresh</a>
 </template>
 
 <script>

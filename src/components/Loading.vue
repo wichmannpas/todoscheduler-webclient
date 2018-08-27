@@ -1,6 +1,3 @@
-/**
-  * Taken from https://codepen.io/mrrocks/pen/EiplA
-  */
 <template>
   <div class="loading">
     <svg
@@ -23,6 +20,10 @@
 </template>
 
 <script>
+/**
+  * Taken from https://codepen.io/mrrocks/pen/EiplA
+  */
+
 import '@/assets/scss/loading.scss'
 
 export default {

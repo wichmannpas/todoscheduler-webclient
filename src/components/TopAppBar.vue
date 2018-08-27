@@ -42,6 +42,11 @@
           <span class="mdc-top-app-bar__title">
             TodoScheduler
           </span>
+          <section
+              class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end"
+              role="toolbar">
+            <Sync />
+          </section>
         </section>
       </div>
     </header>
@@ -52,9 +57,13 @@
 import { drawer, topAppBar } from 'material-components-web'
 
 import { USE_IMPRINT } from '@/config'
+import Sync from '@/components/Sync'
 
 export default {
   name: 'TopAppBar',
+  components: {
+    Sync
+  },
   data: function () {
     return {
       ui: {
