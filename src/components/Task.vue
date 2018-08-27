@@ -1,5 +1,6 @@
 <template>
   <li
+      @click="editTask"
       class="mdc-list-item">
     <span
         v-if="task.finished()"
@@ -49,56 +50,51 @@
       </span>
     </span>
     <span class="mdc-list-item__meta">
-      <a class="task-edit tooltip"
-          @click="editModalActive = true"
-          data-tooltip="Edit task">
-        <font-awesome-icon
-            icon="pencil-alt" />
-      </a>
       <a
+          v-if="!task.completelyScheduled()"
           @click="completeTask()"
-          class="tooltip"
+          class="task-action tooltip tooltip-left"
           data-tooltip="Complete task">
         <font-awesome-icon
             icon="check" />
       </a>
       <a
           v-if="!task.completelyScheduled()"
-          @click="$emit('scheduleTask', task)"
-          class="task-schedule tooltip"
+          @click="scheduleTask"
+          class="task-action tooltip tooltip-left"
           data-tooltip="Schedule">
         <font-awesome-icon
             icon="play" />
       </a>
     </span>
-
-    <EditTaskModal
-        @close="editModalActive = false"
-        v-if="editModalActive"
-        v-bind:task="task"
-    />
-
   </li>
 </template>
 
 <script>
 import { completeTask } from '@/api/task'
-import EditTaskModal from '@/components/EditTaskModal'
 
 export default {
   name: 'Task',
   props: [
     'task'
   ],
-  data: function () {
-    return {
-      editModalActive: false
-    }
-  },
-  components: {
-    EditTaskModal
-  },
   methods: {
+    editTask (event) {
+      if (
+        event.target.classList.contains('task-action') ||
+        event.target.parentElement.classList.contains('task-action') ||
+        event.target.parentElement.parentElement.classList.contains('task-action') ||
+        event.target.parentElement.parentElement.parentElement.classList.contains('task-action')
+      ) {
+        // another action button was clicked, do not edit
+        return
+      }
+
+      this.$emit('editTask', this.task)
+    },
+    scheduleTask () {
+      this.$emit('scheduleTask', this.task)
+    },
     completeTask () {
       completeTask(this.$store, this.task)
     }
