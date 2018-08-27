@@ -9,11 +9,16 @@
 
 <script>
 import { fetchUser } from '@/api/user'
+import { showSnackbar } from '@/snackbar'
 
 export default {
   name: 'Sync',
   methods: {
     sync () {
+      showSnackbar({
+        message: 'Synchronizing now ...'
+      })
+
       fetchUser().then(user => {
         this.$store.commit('setUser', user)
       })
