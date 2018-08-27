@@ -77,7 +77,7 @@
       <input
           id="task-start"
           ref="startInput"
-          :value="value.start"
+          :value="startString"
           @input="updateTask"
           @keyup.enter="$emit('submit')"
           :disabled="loading"
