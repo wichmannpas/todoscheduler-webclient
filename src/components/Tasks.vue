@@ -19,6 +19,7 @@
       </h3>
       <TaskList
           v-if="show.openTasks"
+          @editTask="editTask"
           @scheduleTask="scheduleTask"
           :tasks="openTasks" />
 
@@ -35,6 +36,7 @@
       </h3>
       <TaskList
           v-if="show.futureTasks"
+          @editTask="editTask"
           @scheduleTask="scheduleTask"
           :tasks="futureTasks" />
 
@@ -51,20 +53,26 @@
       </h3>
       <TaskList
           v-if="show.completelyScheduledTasks"
+          @editTask="editTask"
           @scheduleTask="scheduleTask"
           :tasks="completelyScheduledTasks" />
     </div>
 
+    <EditTaskDialog
+        @close="editDialogActive = false"
+        v-if="editDialogActive"
+        :task="editedTask" />
     <ScheduleTaskDialog
         @close="scheduleDialogActive = false"
         v-if="scheduleDialogActive"
-        v-bind:task="task" />
+        :task="scheduledTask" />
   </div>
   <Loading
       v-else />
 </template>
 
 <script>
+import EditTaskDialog from '@/components/EditTaskDialog'
 import Loading from '@/components/Loading'
 import MissedTaskChunks from '@/components/MissedTaskChunks'
 import NewTask from '@/components/NewTask'
@@ -74,6 +82,7 @@ import TaskList from '@/components/TaskList'
 export default {
   name: 'Tasks',
   components: {
+    EditTaskDialog,
     Loading,
     MissedTaskChunks,
     NewTask,
@@ -82,8 +91,10 @@ export default {
   },
   data: function () {
     return {
+      editDialogActive: false,
       scheduleDialogActive: false,
-      task: null,
+      editedTask: null,
+      scheduledTask: null,
       show: {
         openTasks: true,
         futureTasks: false,
@@ -108,13 +119,21 @@ export default {
     }
   },
   methods: {
+    editTask (task) {
+      if (this.editDialogActive === true) {
+        console.warn('not opening edit dialog as it is already active')
+        return
+      }
+      this.editDialogActive = true
+      this.editedTask = task
+    },
     scheduleTask (task) {
       if (this.scheduleDialogActive === true) {
         console.warn('not opening schedule dialog as it is already active')
         return
       }
       this.scheduleDialogActive = true
-      this.task = task
+      this.scheduledTask = task
     }
   }
 }

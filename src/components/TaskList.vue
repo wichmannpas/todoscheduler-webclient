@@ -7,6 +7,7 @@
         v-for="task in tasks"
         :key="task.id"
         :task="task"
+        @editTask="editTask"
         @scheduleTask="scheduleTask" />
   </ul>
 </template>
@@ -37,6 +38,9 @@ export default {
     }
   },
   methods: {
+    editTask (task) {
+      this.$emit('editTask', task)
+    },
     scheduleTask (task) {
       this.$emit('scheduleTask', task)
     }

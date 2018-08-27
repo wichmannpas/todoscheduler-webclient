@@ -58,7 +58,7 @@
             :icon="['far', 'copy']" />
       </a>
       <a
-          @click="editModalActive = true"
+          @click="editDialogActive = true"
           class="
             task-edit
             tooltip tooltip-right"
@@ -138,9 +138,9 @@
             icon="plus" />
       </a>
     </span>
-    <EditTaskModal
-        @close="editModalActive = false"
-        v-if="editModalActive"
+    <EditTaskDialog
+        @close="editDialogActive = false"
+        v-if="editDialogActive"
         v-bind:task="chunk.task($store)"
     />
   </span>
@@ -156,7 +156,7 @@ import {
   splitTaskChunk,
   updateTaskChunkDay
 } from '@/api/taskchunk'
-import EditTaskModal from '@/components/EditTaskModal'
+import EditTaskDialog from '@/components/EditTaskDialog'
 import { dayDelta } from '@/utils'
 
 import '@/assets/scss/taskchunk.scss'
@@ -164,7 +164,7 @@ import '@/assets/scss/taskchunk.scss'
 export default {
   name: 'TaskChunk',
   components: {
-    EditTaskModal
+    EditTaskDialog
   },
   props: [
     'chunk'
@@ -172,7 +172,7 @@ export default {
   data: function () {
     return {
       loading: false,
-      editModalActive: false
+      editDialogActive: false
     }
   },
   computed: {
