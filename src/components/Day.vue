@@ -23,7 +23,8 @@
       <TaskChunk
         v-for="chunk in taskChunks"
         v-bind:key="chunk.id"
-        v-bind:chunk="chunk"/>
+        v-bind:chunk="chunk"
+        @editTask="editTask" />
     </div>
     <div class="footer">
       <span class="float-right">
@@ -87,6 +88,11 @@ export default {
     today () {
       // TODO: use today from store
       return isToday(this.day)
+    }
+  },
+  methods: {
+    editTask (task) {
+      this.$emit('editTask', task)
     }
   }
 }

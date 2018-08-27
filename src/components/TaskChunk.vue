@@ -55,7 +55,7 @@
             :icon="['far', 'copy']" />
       </a>
       <a
-          @click="editDialogActive = true"
+          @click="$emit('editTask', chunk.task($store))"
           class="
             task-edit
             tooltip tooltip-right"
@@ -137,11 +137,6 @@
     </span>
     <Loading
         v-if="loading" />
-    <EditTaskDialog
-        @close="editDialogActive = false"
-        v-if="editDialogActive"
-        v-bind:task="chunk.task($store)"
-    />
   </span>
 </template>
 
@@ -155,7 +150,6 @@ import {
   splitTaskChunk,
   updateTaskChunkDay
 } from '@/api/taskchunk'
-import EditTaskDialog from '@/components/EditTaskDialog'
 import Loading from '@/components/Loading'
 import { dayDelta } from '@/utils'
 
@@ -164,7 +158,6 @@ import '@/assets/scss/taskchunk.scss'
 export default {
   name: 'TaskChunk',
   components: {
-    EditTaskDialog,
     Loading
   },
   props: [
@@ -172,8 +165,7 @@ export default {
   ],
   data: function () {
     return {
-      loading: false,
-      editDialogActive: false
+      loading: false
     }
   },
   computed: {
