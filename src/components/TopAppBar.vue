@@ -9,7 +9,7 @@
             TodoScheduler
           </div>
         </header>
-        <nav id="icon-with-text-demo" class="mdc-drawer__content mdc-list">
+        <nav class="mdc-drawer__content mdc-list">
           <router-link
               @click.native="ui.drawer.open = false"
               :to="{ name: 'main' }"
@@ -23,6 +23,11 @@
               class="mdc-list-item">
             <i class="material-icons mdc-list-item__graphic" aria-hidden="true">location_city</i>Imprint
           </router-link>
+        </nav>
+        <nav class="mdc-drawer__content mdc-list">
+          <Logout
+              @click.native="ui.drawer.open = false"
+               class="mdc-list-item" />
         </nav>
       </nav>
     </aside>
@@ -57,11 +62,13 @@
 import { drawer, topAppBar } from 'material-components-web'
 
 import { USE_IMPRINT } from '@/config'
+import Logout from '@/components/Logout'
 import Sync from '@/components/Sync'
 
 export default {
   name: 'TopAppBar',
   components: {
+    Logout,
     Sync
   },
   data: function () {
