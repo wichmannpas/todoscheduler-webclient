@@ -9,9 +9,6 @@
         { height: (chunk.duration.toNumber() * 4).toString() + 'em' }
       ]">
     <strong>{{ chunk.task($store).name }}</strong>
-    <span
-      v-if="loading"
-      class="loading loading-lg"></span>
     <span class="float-right">
       {{ chunk.duration.toNumber() }}h
       <span v-if="chunk.task($store).duration.toNumber() !== chunk.duration.toNumber()">
@@ -138,6 +135,8 @@
             icon="plus" />
       </a>
     </span>
+    <Loading
+        v-if="loading" />
     <EditTaskDialog
         @close="editDialogActive = false"
         v-if="editDialogActive"
@@ -157,6 +156,7 @@ import {
   updateTaskChunkDay
 } from '@/api/taskchunk'
 import EditTaskDialog from '@/components/EditTaskDialog'
+import Loading from '@/components/Loading'
 import { dayDelta } from '@/utils'
 
 import '@/assets/scss/taskchunk.scss'
@@ -164,7 +164,8 @@ import '@/assets/scss/taskchunk.scss'
 export default {
   name: 'TaskChunk',
   components: {
-    EditTaskDialog
+    EditTaskDialog,
+    Loading
   },
   props: [
     'chunk'
@@ -185,7 +186,7 @@ export default {
         this.chunk, 1) !== null
     },
     canBeSplit () {
-      return this.chunk.duration.comparedTo(1) > 0
+      return !this.chunk.finished && this.chunk.duration.comparedTo(1) > 0
     }
   },
   methods: {

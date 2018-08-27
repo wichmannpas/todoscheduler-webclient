@@ -45,7 +45,7 @@
         </span>
         <span
             v-else-if="task.unfinishedDuration().comparedTo(0) > 0">
-          ({{ task.unfinishedDuration().toNumber() }}h unfinished)
+          ({{ task.unfinishedDuration().toNumber() }}h remaining)
         </span>
       </span>
     </span>

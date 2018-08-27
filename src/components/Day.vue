@@ -1,46 +1,42 @@
 <template>
-    <div
-        class="
-          column
-          col-3
-          col-md-6
-          col-sm-12"
-        v-bind:class="[
-          { 'past-day': past },
-          { 'current-day': today },
-          { 'overloaded-day': overloaded }
-        ]">
-      <div class="header">
-        {{ naturalDay }}
-        <span class="float-right">
-          {{ maxDuration.toNumber() }}h
-          <span
-              class="tooltip tooltip-left"
-                data-tooltip="Max duration for this day">
-            <font-awesome-icon
-                icon="clock"
-            />
-          </span>
-      </span>
-      </div>
-      <div class="body">
-        <TaskChunk
-          v-for="chunk in taskChunks"
-          v-bind:key="chunk.id"
-          v-bind:chunk="chunk"/>
-      </div>
-      <div class="footer">
-        <span class="float-right">
-          {{ unfinishedScheduledDuration.toNumber() }}h/{{ scheduledDuration.toNumber() }}h
-          <span
-              class="tooltip"
-              data-tooltip="Unfinished/total scheduled duration">
-            <font-awesome-icon
-                :icon="['far', 'clock']" />
-          </span>
+  <div
+      class="day"
+      :class="[
+        { 'past-day': past },
+        { 'current-day': today },
+        { 'overloaded-day': overloaded }
+      ]">
+    <div class="header">
+      {{ naturalDay }}
+      <span class="float-right">
+        {{ maxDuration.toNumber() }}h
+        <span
+            class="tooltip tooltip-left"
+              data-tooltip="Max duration for this day">
+          <font-awesome-icon
+              icon="clock"
+          />
         </span>
-      </div>
+    </span>
     </div>
+    <div class="body">
+      <TaskChunk
+        v-for="chunk in taskChunks"
+        v-bind:key="chunk.id"
+        v-bind:chunk="chunk"/>
+    </div>
+    <div class="footer">
+      <span class="float-right">
+        {{ unfinishedScheduledDuration.toNumber() }}h/{{ scheduledDuration.toNumber() }}h
+        <span
+            class="tooltip"
+            data-tooltip="Unfinished/total scheduled duration">
+          <font-awesome-icon
+              :icon="['far', 'clock']" />
+        </span>
+      </span>
+    </div>
+  </div>
 </template>
 
 <script>

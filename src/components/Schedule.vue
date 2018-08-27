@@ -1,30 +1,35 @@
 <template>
   <div
       v-if="ready"
-      class="schedule columns">
-    <Day
-      v-for="day in days"
-      v-bind:key="day.getTime()"
-      v-bind:day="day"
-    />
+      class="schedule mdc-layout-grid">
+    <div class="mdc-layout-grid__inner">
+      <Day
+        v-for="day in days"
+        v-bind:key="day.getTime()"
+        v-bind:day="day"
+        class="
+          mdc-layout-grid__cell--span-3-desktop
+          mdc-layout-grid__cell--span-4-tablet
+          mdc-layout-grid__cell--span-12-phone" />
+    </div>
   </div>
-  <div
-      v-else
-      class="loading loading-lg">
-  </div>
+  <Loading
+      v-else />
 </template>
 
 <script>
 import { addDays, subDays } from 'date-fns'
 
 import Day from '@/components/Day'
+import Loading from '@/components/Loading'
 
 import '@/assets/scss/schedule.scss'
 
 export default {
   name: 'Schedule',
   components: {
-    Day
+    Day,
+    Loading
   },
   computed: {
     ready () {
