@@ -80,7 +80,9 @@
         </footer>
       </div>
     </form>
-    <div class="mdc-dialog__backdrop"></div>
+    <div
+        @click="closeDialog"
+        class="mdc-dialog__backdrop"></div>
   </aside>
 </template>
 
