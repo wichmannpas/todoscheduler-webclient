@@ -47,7 +47,7 @@ export default {
         }).catch(error => {
           if (error.message === 'no auth') {
             this.$router.replace({
-              name: 'login'
+              name: 'landing'
             })
           } else {
             throw error

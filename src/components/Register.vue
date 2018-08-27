@@ -2,126 +2,173 @@
   <form
       @submit.prevent="register"
       class="form-horizontal">
-    <h3>
-      Register
-    </h3>
-
     <p>
-      Choose a username and a password to register.
+      If you do not have an account yet, use this form to create one.
+      You will need to choose a username and a password to register.
+      Registration and usage of this service is completely free.
     </p>
 
-    <div class="form-group"
-          :class="[
-            { 'has-error': errors.username }
-          ]">
-      <label class="form-label" for="register-username">Username</label>
+    <div
+        ref="username"
+        class="mdc-text-field mdc-text-field--box register-text-field">
       <input
           id="register-username"
-          name="username"
-          v-model="user.username"
-          @keydown="registerFailure = false"
           type="text"
-          class="form-input"
           :disabled="registerSuccess"
-          placeholder="Username" />
-      <p
-          v-if="errors.username && errors.username.tooShort"
-          class="form-input-hint">
-        This username is too short. It may not have less than one character.
-      </p>
-      <p
-          v-if="errors.username && errors.username.tooLong"
-          class="form-input-hint">
-        This username is too long. It may not have more than 150 characters.
-      </p>
-      <p
-          v-if="errors.username && errors.username.taken"
-          class="form-input-hint">
-        This username is already taken.
-      </p>
+          :class="{
+            'mdc-text-field--disabled': registerSuccess
+          }"
+          class="mdc-text-field__input"
+          v-model="user.username" />
+      <label
+          class="mdc-floating-label"
+          for="register-username">
+        Username
+      </label>
+      <div class="mdc-line-ripple"></div>
     </div>
+    <p
+        v-if="errors.username && errors.username.tooShort"
+        class="
+          mdc-text-field-helper-text
+          mdc-text-field-helper-text--validation-msg
+          mdc-text-field-helper-text--persistent
+          error">
+      This username is too short. It may not have less than one character.
+    </p>
+    <p
+        v-else-if="errors.username && errors.username.tooLong"
+        class="
+          mdc-text-field-helper-text
+          mdc-text-field-helper-text--validation-msg
+          mdc-text-field-helper-text--persistent
+          error">
+      This username is too long. It may not have more than 150 characters.
+    </p>
+    <p
+        v-else-if="errors.username && errors.username.taken"
+        class="
+          mdc-text-field-helper-text
+          mdc-text-field-helper-text--validation-msg
+          mdc-text-field-helper-text--persistent
+          error">
+      This username is already taken.
+    </p>
+    <p
+        v-else
+        class="mdc-text-field-helper-text"
+        aria-hidden="true">
+      You will need your username to login.
+    </p>
 
-    <div class="form-group"
-          :class="[
-            { 'has-error': errors.password }
-          ]">
-      <label class="form-label" for="register-password">Password</label>
+    <div
+        ref="password"
+        class="mdc-text-field mdc-text-field--box register-text-field">
       <input
           id="register-password"
-          name="password"
-          v-model="user.password"
-          @keydown="registerFailure = false"
           type="password"
-          class="form-input"
           :disabled="registerSuccess"
-          placeholder="Password" />
-      <p
-          v-if="errors.password && errors.password.tooShort"
-          class="form-input-hint">
-        This password is too short. It may not have less than 6 characters.
-      </p>
+          :class="{
+            'mdc-text-field--disabled': registerSuccess
+          }"
+          class="mdc-text-field__input"
+          v-model="user.password" />
+      <label
+          class="mdc-floating-label"
+          for="register-password">
+        Password
+      </label>
+      <div class="mdc-line-ripple"></div>
     </div>
+    <p
+        v-if="errors.password && errors.password.tooShort"
+        class="
+          mdc-text-field-helper-text
+          mdc-text-field-helper-text--validation-msg
+          mdc-text-field-helper-text--persistent
+          error">
+      This password is too short. It may not have less than 6 characters.
+    </p>
+    <p
+        v-else
+        class="mdc-text-field-helper-text"
+        aria-hidden="true">
+      Choose a strong password to protect your account.
+    </p>
 
-    <div class="form-group"
-          :class="[
-            { 'has-error': errors.password2 }
-          ]">
-      <label class="form-label" for="register-password2">Password <em>(repeat)</em></label>
+    <div
+        ref="password2"
+        class="mdc-text-field mdc-text-field--box register-text-field">
       <input
           id="register-password2"
-          name="password"
-          v-model="user.password2"
-          @keydown="registerFailure = false"
           type="password"
-          class="form-input"
           :disabled="registerSuccess"
-          placeholder="Password (repeat)" />
-      <p
-          v-if="errors.password2 && errors.password2.doesNotMatch"
-          class="form-input-hint">
-        This password does not match the first one.
-      </p>
+          :class="{
+            'mdc-text-field--disabled': registerSuccess
+          }"
+          class="mdc-text-field__input"
+          v-model="user.password2" />
+      <label
+          class="mdc-floating-label"
+          for="register-password2">
+        Password <em>(repeat)</em>
+      </label>
+      <div class="mdc-line-ripple"></div>
     </div>
+    <p
+        v-if="errors.password2 && errors.password2.doesNotMatch"
+        class="
+          mdc-text-field-helper-text
+          mdc-text-field-helper-text--validation-msg
+          mdc-text-field-helper-text--persistent
+          error">
+      This password does not match the first one.
+    </p>
+    <p
+        v-else
+        class="mdc-text-field-helper-text"
+        aria-hidden="true">
+      Repeat your password to make sure that you have spelled it correctly.
+    </p>
 
-    <div
-        class="loading loading-lg"
-        v-if="loading">
-    </div>
+    <Loading v-if="loading" />
 
-    <div
-        class="toast toast-error"
-        v-if="connectFailure">
-      There was a problem while trying to connect to the server.
-    </div>
-
-    <div
-        class="toast toast-success"
-        v-if="registerSuccess">
-      Your account was successfully registered.
-      You will be logged in automatically in a few seconds.
-    </div>
-
-    <div class="btn-group btn-group-block">
-      <input
+    <div class="button-container">
+      <button
+          ref="register"
           type="submit"
-          class="btn btn-primary"
-          value="Register"
-          :disabled="loading || registerSuccess" />
+          class="mdc-button mdc-button--raised"
+          :disabled="loading || registerSuccess">
+        Register
+      </button>
     </div>
   </form>
 </template>
 
 <script>
+import { ripple, textField } from 'material-components-web'
+
 import { login, register } from '@/api/auth'
+import Loading from '@/components/Loading'
+import { showSnackbar } from '@/snackbar'
+
+import '@/assets/scss/register.scss'
 
 export default {
   name: 'Register',
+  components: {
+    Loading
+  },
   data: () => {
     return {
-      registerFailure: false,
+      ui: {
+        usernameInput: null,
+        passwordInput: null,
+        password2Input: null,
+        registerButton: null
+      },
       registerSuccess: false,
       errors: {},
-      connectFailure: false,
       loading: false,
       user: {
         username: '',
@@ -130,20 +177,34 @@ export default {
       }
     }
   },
+  mounted: function () {
+    if (this.ui.usernameInput === null) {
+      this.ui.usernameInput = new textField.MDCTextField(this.$refs.username)
+    }
+    if (this.ui.passwordInput === null) {
+      this.ui.passwordInput = new textField.MDCTextField(this.$refs.password)
+    }
+    if (this.ui.password2Input === null) {
+      this.ui.password2Input = new textField.MDCTextField(this.$refs.password2)
+    }
+
+    if (this.ui.registerButton === null) {
+      this.ui.registerButton = new ripple.MDCRipple(this.$refs.register)
+    }
+  },
   methods: {
     register () {
       if (this.loading) {
         return
       }
 
-      this.connectFailure = false
       this.errors = {}
 
       if (this.user.username.length < 1) {
         this.errors.username = {
           tooShort: true
         }
-      } else if (this.user.username.length > 17) {
+      } else if (this.user.username.length > 150) {
         this.errors.username = {
           tooLong: true
         }
@@ -162,15 +223,15 @@ export default {
         return
       }
 
-      if (this.registerFailure) {
-        // no change since last attempt
-        return
-      }
-
       this.loading = true
 
       register(this.user.username, this.user.password).then(() => {
         this.registerSuccess = true
+        showSnackbar({
+          message: 'Your account was successfully registered. ' +
+            'You will be logged in automatically in a few seconds.',
+          multiline: true
+        })
         setTimeout(() => {
           login(this.user.username, this.user.password).then(() => {
             this.$router.push({
@@ -191,9 +252,10 @@ export default {
               }
             })
           })
-          this.registerFailure = true
         } else {
-          this.connectFailure = true
+          showSnackbar({
+            message: 'There was a problem while trying to connect to the server.'
+          })
         }
       }).finally(() => {
         this.loading = false

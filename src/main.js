@@ -3,8 +3,6 @@ import App from './App'
 import router from './router'
 import store from './store'
 
-import 'spectre.css/dist/spectre.css'
-
 import '@/assets/scss/base.scss'
 import '@/icons'
 
