@@ -8,6 +8,17 @@ $duration: 0.8s;
   display: flex;
   align-items: center;
   justify-content: center;
+
+  &.small {
+    position: relative;
+    display: inline;
+
+    width: 5em;
+
+    .spinner {
+      width: 5em;
+    }
+  }
 }
 
 .spinner {
