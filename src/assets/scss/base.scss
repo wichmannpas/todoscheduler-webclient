@@ -1,4 +1,40 @@
-a:hover {
+@import 'material-icons-font/material-icons-font.css';
+@import 'material-components-web/dist/material-components-web.css';
+
+
+body {
+  font-family: Roboto, sans-serif;
+}
+
+.app {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin: auto;
+
+  button {
+    margin: 3px;
+  }
+}
+
+.container-slim {
+  max-width: 500px;
+  margin: 5em auto 0 auto;
+  padding: 0 1em;
+}
+
+.error {
+  color: #FF2E2E !important;
+}
+
+a {
   cursor: pointer;
 }
 

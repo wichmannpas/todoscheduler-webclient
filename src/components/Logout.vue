@@ -19,7 +19,7 @@ export default {
     logout () {
       logout().then(() => {
         this.$router.push({
-          name: 'login'
+          name: 'landing'
         })
         this.$store.commit('reset')
       })

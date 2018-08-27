@@ -1,62 +1,78 @@
 <template>
   <form
-      class="form-horizontal"
       @submit.prevent="login">
-    <h3>
-      Login
-    </h3>
+    <p>
+      Please provide your credentials to log in.
+    </p>
 
-    <div class="form-group">
-      <label class="form-label" for="login-username">
-        Username
-      </label>
+    <div
+        ref="username"
+        class="mdc-text-field mdc-text-field--box login-text-field">
       <input
           id="login-username"
-          type="text" class="form-input"
-          placeholder="Username"
-          v-model="user.username"
-          @keydown="authFailure = false" />
+          type="text"
+          class="mdc-text-field__input"
+          v-model="user.username" />
+      <label
+          class="mdc-floating-label"
+          for="login-username">
+        Username
+      </label>
+      <div class="mdc-line-ripple"></div>
     </div>
-    <div class="form-group">
-      <label class="form-label" for="loginform-password">
+    <div
+        ref="password"
+        class="mdc-text-field mdc-text-field--box login-text-field">
+      <input
+          id="login-password"
+          type="password"
+          class="mdc-text-field__input"
+          v-model="user.password" />
+      <label
+          class="mdc-floating-label"
+          for="login-password">
         Password
       </label>
-      <input
-          id="loginform-password"
-          type="password" class="form-input"
-          placeholder="Password"
-          v-model="user.password"
-          @keydown="authFailure = false" />
-    </div>
-    <div
-        class="loading loading-lg"
-        v-if="loading">
-    </div>
-    <div
-        class="toast toast-warning"
-        v-if="authFailure">
-      Login with username “<em>{{ user.username }}</em>” failed.
+      <div class="mdc-line-ripple"></div>
     </div>
 
-    <div class="btn-group btn-group-block">
-      <input
+    <Loading
+        v-if="loading" />
+
+    <div class="button-container">
+      <button
+          ref="login"
           type="submit"
-          class="btn btn-primary"
-          value="Login"
-          :disabled="loading" />
+          class="mdc-button mdc-button--raised"
+          :disabled="loading">
+        Login
+      </button>
     </div>
   </form>
 </template>
 
 <script>
+import { ripple, textField } from 'material-components-web'
+
 import { checkAuth } from '@/api'
 import { login } from '@/api/auth'
+import Loading from '@/components/Loading'
+import { showSnackbar } from '@/snackbar'
+
+import '@/assets/scss/login.scss'
 
 export default {
-  name: 'LoginForm',
+  name: 'Login',
+  components: {
+    Loading
+  },
   data: function () {
     return {
-      authFailure: false,
+      ui: {
+        usernameInput: null,
+        passwordInput: null,
+        loginButton: null
+      },
       loading: false,
       user: {
         username: '',
@@ -69,26 +85,42 @@ export default {
     // TODO: do not explicitly check auth here but rely on store to check authentication
     checkAuth().then((auth) => {
       if (auth) {
-        this.$router.push('/')
+        this.$router.push({ name: 'main' })
       }
     })
   },
+  mounted: function () {
+    if (this.ui.usernameInput === null) {
+      this.ui.usernameInput = new textField.MDCTextField(this.$refs.username)
+    }
+    if (this.ui.passwordInput === null) {
+      this.ui.passwordInput = new textField.MDCTextField(this.$refs.password)
+    }
+
+    if (this.ui.loginButton === null) {
+      this.ui.loginButton = new ripple.MDCRipple(this.$refs.login)
+    }
+  },
   methods: {
     login () {
-      this.authFailure = false
       this.loading = true
       login(this.user.username, this.user.password).then(
         () => {
-          this.authFailure = false
           console.log('successfully authenticated')
-          this.$router.push('/')
-        }).catch(
-        (error) => {
-          if (error) {
-            console.error(error)
-            this.authFailure = true
-          }
-        }).finally(() => {
+          this.$router.push({ name: 'main' })
+        }
+      ).catch(error => {
+        if (error.message === 'invalid credentials') {
+          showSnackbar({
+            message: 'Login with the provided credentials failed.'
+          })
+        } else {
+          console.warn(error)
+          showSnackbar({
+            message: 'There was a problem while trying to connect to the server.'
+          })
+        }
+      }).finally(() => {
         this.loading = false
       })
     }

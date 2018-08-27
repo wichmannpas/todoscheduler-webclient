@@ -17,14 +17,13 @@ function login (username, password) {
         resolve()
       }).catch(
       function (error) {
-        console.error(error)
         let response = error.response
         let statusCode
         if (response !== undefined) {
           statusCode = response.status
         }
-        if (statusCode === 400) {
-          reject(Error('invalid credentials'))
+        if (statusCode === 401) {
+          return reject(Error('invalid credentials'))
         }
 
         reject(error)
