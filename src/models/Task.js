@@ -127,7 +127,7 @@ class Task {
     // priority equals, use fourth criterion
 
     // fourth criterion: name
-    return this.name.localeCompare(other)
+    return this.name.localeCompare(other.name)
   }
 }
 
