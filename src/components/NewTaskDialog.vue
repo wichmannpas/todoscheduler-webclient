@@ -63,6 +63,12 @@
             <div class="mdc-line-ripple"></div>
           </div>
 
+          <div
+              v-if="schedule && longDuration"
+              class="warning">
+            You are about to schedule a very long duration to a single day!
+          </div>
+
           <Loading v-if="loading" />
         </section>
         <footer class="mdc-dialog__footer">
@@ -144,6 +150,11 @@ export default {
 
     if (this.ui.scheduleForSelect === null) {
       this.ui.scheduleForSelect = new select.MDCSelect(this.$refs.scheduleFor)
+    }
+  },
+  computed: {
+    longDuration () {
+      return this.task.duration > this.$store.state.user.user.workhoursWeekday.toNumber()
     }
   },
   methods: {

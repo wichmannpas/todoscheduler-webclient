@@ -81,6 +81,12 @@
       This duration is invalid.
     </p>
 
+    <div
+        v-if="longDuration"
+        class="warning">
+      You are about to schedule a very long duration to a single day!
+    </div>
+
     <Loading v-if="loading" />
   </form>
 </template>
@@ -127,6 +133,11 @@ export default {
     }
 
     this.$refs.durationInput.focus()
+  },
+  computed: {
+    longDuration () {
+      return this.duration > this.$store.state.user.user.workhoursWeekday.toNumber()
+    }
   },
   methods: {
     scheduleTask () {
