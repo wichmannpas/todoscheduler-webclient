@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-import { addDays } from 'date-fns'
+import { addDays, subDays } from 'date-fns'
 import Decimal from 'decimal.js-light'
 
 import { fetchTaskChunks } from '@/api/taskchunk'
@@ -8,6 +8,7 @@ import { formatDayString, insertIndex } from '@/utils'
 
 export default {
   state: {
+    firstDisplayedDay: null,
     ready: false,
     taskChunks: {},
     dayOrders: {}
@@ -184,6 +185,9 @@ export default {
       Vue.delete(
         state.taskChunks,
         taskChunkId)
+    },
+    setFirstDisplayedDay (state, day) {
+      Vue.set(state, 'firstDisplayedDay', day)
     }
   },
   actions: {
@@ -209,29 +213,45 @@ export default {
      */
     fetchTaskChunks (
       { commit, state },
-      { today, minDate, maxDate, pastDays, futureDays }
+      { today, minDate, maxDate, pastDays, futureDays, incremental }
     ) {
       if (today === undefined) {
         today = new Date()
       }
+
+      let firstDay = state.firstDisplayedDay
+      if (firstDay === null) {
+        firstDay = subDays(today, 1)
+      }
+
       if (minDate === undefined) {
         if (pastDays === undefined) {
           pastDays = 1
         }
-        minDate = addDays(today, -pastDays)
+        minDate = subDays(firstDay, pastDays)
       }
       if (maxDate === undefined) {
         if (futureDays === undefined) {
-          futureDays = 7
+          futureDays = 8
         }
-        maxDate = addDays(today, futureDays)
+        maxDate = addDays(firstDay, futureDays)
       }
 
       fetchTaskChunks(
         formatDayString(minDate),
         formatDayString(maxDate)
       ).then(taskChunks => {
-        commit('setTaskChunks', taskChunks)
+        if (incremental !== true) {
+          commit('setTaskChunks', taskChunks)
+        } else {
+          commit('addUpdateTaskChunks', taskChunks)
+        }
+      })
+    },
+    navigateToDay ({ commit, dispatch }, day) {
+      commit('setFirstDisplayedDay', day)
+      dispatch('fetchTaskChunks', {
+        incremental: true
       })
     }
   }
