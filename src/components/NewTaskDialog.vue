@@ -132,6 +132,7 @@ export default {
       task: {
         name: '',
         duration: 1,
+        priority: 5,
         start: null
       }
     }

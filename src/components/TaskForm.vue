@@ -70,6 +70,33 @@
     </p>
 
     <div
+        ref="priority"
+        class="mdc-slider mdc-slider--discrete"
+        tabindex="0"
+        role="slider"
+        aria-valuemin="0"
+        aria-valuemax="10"
+        :aria-valuenow="value.priority"
+        aria-label="Task Priority">
+      <div class="mdc-slider__track-container">
+        <div class="mdc-slider__track"></div>
+      </div>
+      <div class="mdc-slider__thumb-container">
+        <div class="mdc-slider__pin">
+          <span class="mdc-slider__pin-value-marker"></span>
+        </div>
+        <svg class="mdc-slider__thumb" width="21" height="21">
+          <circle cx="10.5" cy="10.5" r="7.875"></circle>
+        </svg>
+        <div class="mdc-slider__focus-ring"></div>
+      </div>
+      <label
+          class="mdc-floating-label mdc-floating-label--float-above">
+        Priority
+      </label>
+    </div>
+
+    <div
         ref="start"
         class="
           mdc-text-field
@@ -134,7 +161,7 @@
 </template>
 
 <script>
-import { textField } from 'material-components-web'
+import { slider, textField } from 'material-components-web'
 
 import { formatDayString } from '@/utils'
 
@@ -150,7 +177,8 @@ export default {
     return {
       ui: {
         nameInput: null,
-        durationInput: null
+        durationInput: null,
+        prioritySlider: null
       }
     }
   },
@@ -160,6 +188,10 @@ export default {
     }
     if (this.ui.durationInput === null) {
       this.ui.durationInput = new textField.MDCTextField(this.$refs.duration)
+    }
+    if (this.ui.prioritySlider === null) {
+      this.ui.prioritySlider = new slider.MDCSlider(this.$refs.priority)
+      this.ui.prioritySlider.listen('MDCSlider:change', () => this.updateTask())
     }
 
     if (this.autofocus) {
@@ -193,6 +225,7 @@ export default {
       this.$emit('input', {
         name: this.$refs.nameInput.value,
         duration: this.$refs.durationInput.value,
+        priority: this.$refs.priority.getAttribute('aria-valuenow'),
         deadline: deadline,
         start: start
       })

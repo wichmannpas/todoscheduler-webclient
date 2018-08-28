@@ -15,10 +15,34 @@ class Task {
   id = -1
   name = ''
   duration = Decimal(0)
+  priority = 5
   start = null
   deadline = null
   scheduledDuration = Decimal(0)
   finishedDuration = Decimal(0)
+
+  priorityString () {
+    switch (this.priority) {
+      case 0:
+        return 'lowest'
+      case 1:
+      case 2:
+        return 'lower'
+      case 3:
+      case 4:
+        return 'low'
+      case 5:
+        return 'medium'
+      case 6:
+      case 7:
+        return 'high'
+      case 8:
+      case 9:
+        return 'higher'
+      case 10:
+        return 'highest'
+    }
+  }
 
   /**
    * Returns the default schedule duration of the user if the
@@ -125,6 +149,7 @@ createModelSchema(Task, {
     val => { return val.toFixed() },
     val => { return new Decimal(val) }
   ),
+  priority: primitive(),
   start: date(),
   deadline: date(),
   scheduledDuration: alias('scheduled_duration', custom(
