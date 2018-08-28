@@ -9,6 +9,8 @@
               mdc-layout-grid__cell--span-3-desktop
               mdc-layout-grid__cell--span-12-tablet
               mdc-layout-grid__cell--span-12-phone">
+          <MissedTaskChunks />
+
           <Tasks />
         </div>
         <div
@@ -26,12 +28,14 @@
 </template>
 <script>
 import { fetchUser } from '@/api/user'
-import Tasks from '@/components/Tasks'
+import MissedTaskChunks from '@/components/MissedTaskChunks'
 import Schedule from '@/components/Schedule'
+import Tasks from '@/components/Tasks'
 
 export default {
   name: 'MainPage',
   components: {
+    MissedTaskChunks,
     Schedule,
     Tasks
   },

@@ -1,0 +1,10 @@
+.missed-task-chunks {
+  background: #FFE6B9;
+
+  padding: 0.5em;
+
+  @media (min-width: 840px) {
+    max-height: 15em;
+    overflow-y: auto;
+  }
+}
