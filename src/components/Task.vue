@@ -45,12 +45,13 @@
         </span>
         takes {{ task.duration.toNumber() }}h
         <span
-            v-if="task.unscheduledDuration().comparedTo(0) > 0 && task.unfinishedDuration().comparedTo(0) > 0">
-          ({{ task.unscheduledDuration().toNumber() }}h unscheduled, {{ task.unfinishedDuration().toNumber() }}h remaining)
+            v-if="task.unscheduledDuration().comparedTo(0) > 0 && (task.unscheduledDuration().comparedTo(task.unfinishedDuration()) === 0 || task.unscheduledDuration().comparedTo(0) === 0)">
+          <!-- shown when unscheduled duration is positive and remaining either 0 or equal to unscheduled //-->
+          ({{ task.unscheduledDuration().toNumber() }}h unscheduled)
         </span>
         <span
-            v-else-if="task.unscheduledDuration().comparedTo(0) > 0">
-          ({{ task.unscheduledDuration().toNumber() }}h unscheduled)
+            v-else-if="task.unscheduledDuration().comparedTo(0) > 0 && task.unfinishedDuration().comparedTo(0) > 0">
+          ({{ task.unscheduledDuration().toNumber() }}h unscheduled, {{ task.unfinishedDuration().toNumber() }}h remaining)
         </span>
         <span
             v-else-if="task.unfinishedDuration().comparedTo(0) > 0">
