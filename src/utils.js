@@ -9,6 +9,9 @@ import {
 } from 'date-fns'
 
 function formatDayString (day) {
+  if (day === null) {
+    return null
+  }
   return format(day, 'YYYY-MM-DD')
 }
 

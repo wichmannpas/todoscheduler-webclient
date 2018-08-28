@@ -3,6 +3,7 @@ import { deserialize } from 'serializr'
 
 import { API_URL } from '@/config'
 import { ensureAuthToken, handleGenericErrors } from '@/api'
+import { formatDayString } from '@/utils'
 import Task from '@/models/Task'
 import TaskChunk from '@/models/TaskChunk'
 
@@ -85,8 +86,8 @@ function createTask (store, task) {
     axios.post(API_URL + '/task/task/', {
       name: task.name,
       duration: task.duration,
-      deadline: task.deadline,
-      start: task.start
+      deadline: formatDayString(task.deadline),
+      start: formatDayString(task.start)
     }).then(function (response) {
       if (response.status === 201) {
         let task = deserialize(Task, response.data)
@@ -108,8 +109,8 @@ function updateTask (store, task) {
     axios.put(API_URL + '/task/task/' + task.id.toString() + '/', {
       name: task.name,
       duration: task.duration,
-      deadline: task.deadline,
-      start: task.start
+      deadline: formatDayString(task.deadline),
+      start: formatDayString(task.start)
     }).then(function (response) {
       if (response.status === 200) {
         store.commit('updateTask', deserialize(Task, response.data))
