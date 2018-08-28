@@ -1,23 +1,28 @@
 <template>
-  <div
-      v-if="ready"
-      class="schedule mdc-layout-grid">
-    <div class="mdc-layout-grid__inner">
-      <Day
-        v-for="day in days"
-        :key="day.getTime()"
-        :day="day"
-        @editTask="editTask"
-        class="
-          mdc-layout-grid__cell--span-3-desktop
-          mdc-layout-grid__cell--span-4-tablet
-          mdc-layout-grid__cell--span-12-phone" />
+  <div v-if="ready">
+    <ScheduleNavigation
+        @navigate="navigate"
+        :firstDay="firstDay" />
+    <div
+        class="schedule mdc-layout-grid">
+      <div class="mdc-layout-grid__inner">
+
+        <Day
+          v-for="day in days"
+          :key="day.getTime()"
+          :day="day"
+          @editTask="editTask"
+          class="
+            mdc-layout-grid__cell--span-3-desktop
+            mdc-layout-grid__cell--span-4-tablet
+            mdc-layout-grid__cell--span-12-phone" />
+      </div>
+      <EditTaskDialog
+          @close="editDialogActive = false"
+          v-if="editDialogActive"
+          v-bind:task="editedTask"
+      />
     </div>
-    <EditTaskDialog
-        @close="editDialogActive = false"
-        v-if="editDialogActive"
-        v-bind:task="editedTask"
-    />
   </div>
   <Loading
       v-else />
@@ -29,15 +34,17 @@ import { addDays, subDays } from 'date-fns'
 import Day from '@/components/Day'
 import EditTaskDialog from '@/components/EditTaskDialog'
 import Loading from '@/components/Loading'
+import ScheduleNavigation from '@/components/ScheduleNavigation'
 
 import '@/assets/scss/schedule.scss'
 
 export default {
   name: 'Schedule',
   components: {
-    EditTaskDialog,
     Day,
-    Loading
+    EditTaskDialog,
+    Loading,
+    ScheduleNavigation
   },
   data: function () {
     return {
@@ -50,11 +57,18 @@ export default {
       return this.$store.state.task.ready && this.$store.state.taskchunk.ready
     },
     days () {
+      return this.getListOfDays(this.firstDay, 8)
+    },
+    firstDay () {
+      let day = this.$store.state.taskchunk.firstDisplayedDay
+      if (day === null) {
+        return this.yesterday
+      }
+      return day
+    },
+    yesterday () {
       // TODO: use today from a store to make it reactive
-      let today = new Date()
-      let yesterday = subDays(today, 1)
-
-      return this.getListOfDays(yesterday, 8)
+      return subDays(new Date(), 1)
     }
   },
   methods: {
@@ -76,6 +90,9 @@ export default {
         day = addDays(day, 1)
       }
       return result
+    },
+    navigate (firstDay) {
+      this.$store.dispatch('navigateToDay', firstDay)
     }
   }
 }

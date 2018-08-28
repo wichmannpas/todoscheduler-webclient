@@ -104,3 +104,10 @@ a {
 .float-right {
   float: right;
 }
+
+.flex-align-center {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
