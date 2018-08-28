@@ -3,8 +3,6 @@
       v-if="ready">
     <NewTask />
 
-    <MissedTaskChunks />
-
     <div class="mdc-list-group">
       <h3
           @click="show.openTasks = !show.openTasks"
@@ -74,7 +72,6 @@
 <script>
 import EditTaskDialog from '@/components/EditTaskDialog'
 import Loading from '@/components/Loading'
-import MissedTaskChunks from '@/components/MissedTaskChunks'
 import NewTask from '@/components/NewTask'
 import ScheduleTaskDialog from '@/components/ScheduleTaskDialog'
 import TaskList from '@/components/TaskList'
@@ -84,7 +81,6 @@ export default {
   components: {
     EditTaskDialog,
     Loading,
-    MissedTaskChunks,
     NewTask,
     ScheduleTaskDialog,
     TaskList
