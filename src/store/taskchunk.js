@@ -11,7 +11,8 @@ export default {
     firstDisplayedDay: null,
     ready: false,
     taskChunks: {},
-    dayOrders: {}
+    dayOrders: {},
+    highlightedChunks: {}
   },
   getters: {
     finishedScheduledDurationForDay: (state, getters) => (day) =>
@@ -188,6 +189,9 @@ export default {
     },
     setFirstDisplayedDay (state, day) {
       Vue.set(state, 'firstDisplayedDay', day)
+    },
+    setChunkHighlight (state, { chunk, highlighted }) {
+      Vue.set(state.highlightedChunks, chunk.id, highlighted)
     }
   },
   actions: {
@@ -253,6 +257,18 @@ export default {
       dispatch('fetchTaskChunks', {
         incremental: true
       })
+    },
+    highlightChunk ({ commit }, chunk) {
+      commit('setChunkHighlight', {
+        chunk: chunk,
+        highlighted: true
+      })
+      setTimeout(function () {
+        commit('setChunkHighlight', {
+          chunk: chunk,
+          highlighted: false
+        })
+      }, 3000)
     }
   }
 }

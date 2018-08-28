@@ -7,12 +7,22 @@ span.task-chunk {
 
   margin: 0.3em 0;
   padding: 0.2em;
-}
 
-span.task-chunk.finished {
-  background: #a4ffa0;
-}
+  &.finished {
+    background: #a4ffa0;
+  }
 
-span.task-chunk.overdue {
-  background: #ffb0a4;
+  &.overdue {
+    background: #ffb0a4;
+  }
+
+  &.highlighted {
+    animation: 0.4s blink infinite alternate;
+
+    @keyframes blink {
+      to {
+        background: #ffce1f;
+      }
+    }
+  }
 }
