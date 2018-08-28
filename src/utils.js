@@ -60,7 +60,14 @@ function prettyDate (day) {
     // use i18next with plural
     return 'in ' + dayDelta.toString() + ' day' + (dayDelta === 1 ? '' : 's')
   }
-  return 'on ' + format(day, 'MMMM D, YYYY')
+  let result = 'on ' + format(day, 'MMMM D')
+
+  let year = format(day, 'YYYY')
+  if (year !== format(today, 'YYYY')) {
+    result += ' ' + year
+  }
+
+  return result
 }
 
 function isPastDay (day) {
