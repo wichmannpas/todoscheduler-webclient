@@ -22,6 +22,23 @@
           :tasks="openTasks" />
 
       <h3
+          @click="show.activeTasks = !show.activeTasks"
+          class="mdc-list-group__subheader c-hand">
+        <i
+            v-if="show.activeTasks"
+            class="material-icons headline-icon">expand_less</i>
+        <i
+            v-else
+            class="material-icons headline-icon">expand_more</i>
+        Active Tasks
+      </h3>
+      <TaskList
+          v-if="show.activeTasks"
+          @editTask="editTask"
+          @scheduleTask="scheduleTask"
+          :tasks="activeTasks" />
+
+      <h3
           @click="show.futureTasks = !show.futureTasks"
           class="mdc-list-group__subheader c-hand">
         <i
@@ -39,21 +56,21 @@
           :tasks="futureTasks" />
 
       <h3
-          @click="show.completelyScheduledTasks = !show.completelyScheduledTasks"
+          @click="show.finishedTasks = !show.finishedTasks"
           class="mdc-list-group__subheader c-hand">
         <i
-            v-if="show.completelyScheduledTasks"
+            v-if="show.finishedTasks"
             class="material-icons headline-icon">expand_less</i>
         <i
             v-else
             class="material-icons headline-icon">expand_more</i>
-        Completely Scheduled Tasks
+        Finished Tasks
       </h3>
       <TaskList
-          v-if="show.completelyScheduledTasks"
+          v-if="show.finishedTasks"
           @editTask="editTask"
           @scheduleTask="scheduleTask"
-          :tasks="completelyScheduledTasks" />
+          :tasks="finishedTasks" />
     </div>
 
     <EditTaskDialog
@@ -92,9 +109,10 @@ export default {
       editedTask: null,
       scheduledTask: null,
       show: {
+        activeTasks: false,
         openTasks: true,
         futureTasks: false,
-        completelyScheduledTasks: false
+        finishedTasks: false
       }
     }
   },
@@ -102,16 +120,17 @@ export default {
     ready () {
       return this.$store.state.task.ready
     },
-    completelyScheduledTasks () {
-      return this.$store.getters.completelyScheduledTasks
+    activeTasks () {
+      return this.$store.getters.activeTasks
     },
-    openTasks () {
-      return this.$store.getters.incompletelyScheduledTasks.filter(
-        task => !task.startInFuture())
+    finishedTasks () {
+      return this.$store.getters.finishedTasks
     },
     futureTasks () {
-      return this.$store.getters.incompletelyScheduledTasks.filter(
-        task => task.startInFuture())
+      return this.$store.getters.futureTasks
+    },
+    openTasks () {
+      return this.$store.getters.openTasks
     }
   },
   methods: {
