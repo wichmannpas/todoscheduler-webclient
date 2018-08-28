@@ -110,6 +110,29 @@ function insertIndex (items, newItem, index) {
   return items.length
 }
 
+function priorityString (priority) {
+  switch (priority) {
+    case 0:
+      return 'lowest'
+    case 1:
+    case 2:
+      return 'lower'
+    case 3:
+    case 4:
+      return 'low'
+    case 5:
+      return 'medium'
+    case 6:
+    case 7:
+      return 'high'
+    case 8:
+    case 9:
+      return 'higher'
+    default:
+      return 'highest'
+  }
+}
+
 export {
   dayDelta,
   formatDayString,
@@ -117,5 +140,6 @@ export {
   isPastDay,
   naturalDay,
   parseDayString,
-  prettyDate
+  prettyDate,
+  priorityString
 }

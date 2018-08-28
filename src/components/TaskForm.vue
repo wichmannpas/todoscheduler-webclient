@@ -95,6 +95,7 @@
         Priority
       </label>
     </div>
+    {{ priorityString }}
 
     <div
         ref="start"
@@ -163,7 +164,7 @@
 <script>
 import { slider, textField } from 'material-components-web'
 
-import { formatDayString } from '@/utils'
+import { formatDayString, priorityString } from '@/utils'
 
 export default {
   name: 'TaskForm',
@@ -179,7 +180,8 @@ export default {
         nameInput: null,
         durationInput: null,
         prioritySlider: null
-      }
+      },
+      priority: this.value.priority
     }
   },
   mounted: function () {
@@ -210,6 +212,9 @@ export default {
         return null
       }
       return formatDayString(this.value.start)
+    },
+    priorityString () {
+      return priorityString(this.priority)
     }
   },
   methods: {
@@ -222,10 +227,11 @@ export default {
       if (start === '') {
         start = null
       }
+      this.priority = parseInt(this.$refs.priority.getAttribute('aria-valuenow'))
       this.$emit('input', {
         name: this.$refs.nameInput.value,
         duration: this.$refs.durationInput.value,
-        priority: this.$refs.priority.getAttribute('aria-valuenow'),
+        priority: this.priority,
         deadline: deadline,
         start: start
       })

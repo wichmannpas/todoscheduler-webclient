@@ -9,7 +9,7 @@ import {
   primitive
 } from 'serializr'
 
-import { prettyDate } from '@/utils'
+import { prettyDate, priorityString } from '@/utils'
 
 class Task {
   id = -1
@@ -22,26 +22,7 @@ class Task {
   finishedDuration = Decimal(0)
 
   priorityString () {
-    switch (this.priority) {
-      case 0:
-        return 'lowest'
-      case 1:
-      case 2:
-        return 'lower'
-      case 3:
-      case 4:
-        return 'low'
-      case 5:
-        return 'medium'
-      case 6:
-      case 7:
-        return 'high'
-      case 8:
-      case 9:
-        return 'higher'
-      default:
-        return 'highest'
-    }
+    return priorityString(this.priority)
   }
 
   /**
