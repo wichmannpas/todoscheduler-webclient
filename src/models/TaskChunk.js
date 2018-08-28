@@ -1,3 +1,4 @@
+import { isAfter } from 'date-fns'
 import Decimal from 'decimal.js-light'
 
 import { isPastDay, naturalDay } from '@/utils'
@@ -24,6 +25,17 @@ class TaskChunk {
 
   past () {
     return isPastDay(this.day)
+  }
+  missesDeadline (store) {
+    if (this.task.deadline === null) {
+      return false
+    }
+    let task = this.task(store)
+    if (task.deadline === null) {
+      return false
+    }
+
+    return isAfter(this.day, this.task(store).deadline)
   }
   missed () {
     return !this.finished && this.past()
