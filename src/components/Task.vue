@@ -37,7 +37,7 @@
         <span
             :class="{
               warning: task.deadlineWarning() && task.deadlineInFuture(),
-              error: !task.deadlineInFuture()
+              error: !task.deadlineInFuture() && !task.finished()
             }"
             v-else-if="task.deadline !== null">
           due {{ task.prettyDeadline() }}
