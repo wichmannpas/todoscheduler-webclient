@@ -3,6 +3,7 @@
       ref="list"
       class="mdc-list mdc-list--dense mdc-list--two-line">
     <li
+        @click="navigateToChunk(chunk)"
         v-for="chunk in missedTaskChunks"
         :key="chunk.id"
         class="mdc-list-item">
@@ -38,6 +39,7 @@
 </template>
 
 <script>
+import { subDays } from 'date-fns'
 import { list } from 'material-components-web'
 
 import { deleteTaskChunk, finishTaskChunk } from '@/api/taskchunk'
@@ -65,6 +67,10 @@ export default {
         this.$store,
         chunk,
         true)
+    },
+    navigateToChunk (chunk) {
+      this.$store.dispatch('navigateToDay', subDays(chunk.day, 1))
+      this.$store.dispatch('highlightChunk', chunk)
     },
     postponeChunk (chunk) {
       deleteTaskChunk(

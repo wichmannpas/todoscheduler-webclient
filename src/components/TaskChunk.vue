@@ -2,6 +2,7 @@
   <span
       v-bind:class="[
         'task-chunk',
+        { highlighted: chunk.highlighted($store) },
         { finished: chunk.finished },
         { overdue: chunk.overdue }
       ]"

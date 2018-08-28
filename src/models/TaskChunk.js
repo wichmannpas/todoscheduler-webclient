@@ -44,6 +44,10 @@ class TaskChunk {
     return naturalDay(this.day)
   }
 
+  highlighted (store) {
+    return store.state.taskchunk.highlightedChunks[this.id] === true
+  }
+
   /**
    * Compare to another task chunk.
    * returns negative values if < other
