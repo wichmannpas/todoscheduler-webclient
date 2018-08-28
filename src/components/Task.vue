@@ -43,6 +43,7 @@
           due {{ task.prettyDeadline() }}
           &bull;
         </span>
+        {{ task.priorityString() }} &bull;
         takes {{ task.duration.toNumber() }}h
         <span
             v-if="task.unscheduledDuration().comparedTo(0) > 0 && (task.unscheduledDuration().comparedTo(task.unfinishedDuration()) === 0 || task.unscheduledDuration().comparedTo(0) === 0)">

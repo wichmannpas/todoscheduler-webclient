@@ -39,7 +39,7 @@ class Task {
       case 8:
       case 9:
         return 'higher'
-      case 10:
+      default:
         return 'highest'
     }
   }
