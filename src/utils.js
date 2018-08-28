@@ -31,10 +31,17 @@ function naturalDay (day) {
   // TODO: use today from store
   let today = new Date()
   let dayDelta = differenceInDays(day, today)
-  if (dayDelta <= 7 && dayDelta >= 0) {
+  if (dayDelta <= 6 && dayDelta >= 0) {
     return format(day, 'dddd')
   }
-  return format(day, 'MMM. D, YYYY')
+  let result = format(day, 'MMMM D')
+
+  let year = format(day, 'YYYY')
+  if (year !== format(today, 'YYYY')) {
+    result += ', ' + year
+  }
+
+  return result
 }
 
 function prettyDate (day) {
@@ -60,7 +67,7 @@ function prettyDate (day) {
     // use i18next with plural
     return 'in ' + dayDelta.toString() + ' day' + (dayDelta === 1 ? '' : 's')
   }
-  let result = 'on ' + format(day, 'MMMM D')
+  let result = 'on ' + format(day, 'MMM. D')
 
   let year = format(day, 'YYYY')
   if (year !== format(today, 'YYYY')) {
