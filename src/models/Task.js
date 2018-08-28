@@ -118,7 +118,15 @@ class Task {
     }
     // start equals, use third criterion
 
-    // third criterion: name
+    // third criterion: priority
+    if (this.priority > other.priority) {
+      return -1
+    } else if (this.priority < other.priority) {
+      return 1
+    }
+    // priority equals, use fourth criterion
+
+    // fourth criterion: name
     return this.name.localeCompare(other)
   }
 }
