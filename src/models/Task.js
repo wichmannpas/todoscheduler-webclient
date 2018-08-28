@@ -89,19 +89,7 @@ class Task {
    * positive values if > other
    */
   compareTo (other) {
-    // first criterion: start
-    if (this.start === null && other.start !== null) {
-      return -1
-    } else if (this.start !== null && other.start === null) {
-      return 1
-    } else if (this.start < other.start) {
-      return -1
-    } else if (this.start > other.start) {
-      return 1
-    }
-    // start equals, use second criterion
-
-    // second criterion: deadline
+    // first criterion: deadline
     if (this.deadline === null && other.deadline !== null) {
       return 1
     } else if (this.deadline !== null && other.deadline === null) {
@@ -111,7 +99,19 @@ class Task {
     } else if (this.deadline > other.deadline) {
       return 1
     }
-    // deadline equals, use third criterion
+    // deadline equals, use second criterion
+
+    // second criterion: start
+    if (this.start === null && other.start !== null) {
+      return -1
+    } else if (this.start !== null && other.start === null) {
+      return 1
+    } else if (this.start < other.start) {
+      return -1
+    } else if (this.start > other.start) {
+      return 1
+    }
+    // start equals, use third criterion
 
     // third criterion: name
     return this.name.localeCompare(other)
