@@ -86,6 +86,7 @@ function createTask (store, task) {
     axios.post(API_URL + '/task/task/', {
       name: task.name,
       duration: task.duration,
+      priority: task.priority,
       deadline: formatDayString(task.deadline),
       start: formatDayString(task.start)
     }).then(function (response) {
@@ -109,6 +110,7 @@ function updateTask (store, task) {
     axios.put(API_URL + '/task/task/' + task.id.toString() + '/', {
       name: task.name,
       duration: task.duration,
+      priority: task.priority,
       deadline: formatDayString(task.deadline),
       start: formatDayString(task.start)
     }).then(function (response) {
