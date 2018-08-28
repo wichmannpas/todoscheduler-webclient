@@ -47,6 +47,7 @@ function prettyDate (day) {
   // ensure date is not modified
   today = new Date(today.getTime())
   // use start of day
+  // TODO: use start of day in today supplied from store
   today.setHours(0)
   today.setMinutes(0)
   today.setSeconds(0)

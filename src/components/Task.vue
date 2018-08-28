@@ -34,6 +34,15 @@
           starts {{ task.prettyStart() }}
           &bull;
         </span>
+        <span
+            :class="{
+              warning: task.deadlineWarning() && task.deadlineInFuture(),
+              error: !task.deadlineInFuture()
+            }"
+            v-else-if="task.deadline !== null">
+          due {{ task.prettyDeadline() }}
+          &bull;
+        </span>
         takes {{ task.duration.toNumber() }}h
         <span
             v-if="task.unscheduledDuration().comparedTo(0) > 0 && task.unfinishedDuration().comparedTo(0) > 0">

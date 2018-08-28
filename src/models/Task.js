@@ -1,4 +1,4 @@
-import { isAfter } from 'date-fns'
+import { differenceInDays, isAfter } from 'date-fns'
 import Decimal from 'decimal.js-light'
 import {
   alias,
@@ -16,6 +16,7 @@ class Task {
   name = ''
   duration = Decimal(0)
   start = null
+  deadline = null
   scheduledDuration = Decimal(0)
   finishedDuration = Decimal(0)
 
@@ -58,8 +59,27 @@ class Task {
   }
 
   // TODO: use today argument (from store)
+  deadlineInFuture () {
+    let today = new Date()
+
+    return isAfter(this.deadline, today)
+  }
+
+  // TODO: use today argument (from store)
   prettyStart () {
     return prettyDate(this.start)
+  }
+
+  // TODO: use today argument (from store)
+  prettyDeadline () {
+    return prettyDate(this.deadline)
+  }
+
+  // TODO: use today argument (from store)
+  deadlineWarning () {
+    let today = new Date()
+
+    return !this.completelyScheduled() && differenceInDays(this.deadline, today) < 3
   }
 
   /**
@@ -81,8 +101,20 @@ class Task {
     }
     // start equals, use second criterion
 
-    // second criterion: name
-    return this.name > other.name
+    // second criterion: deadline
+    if (this.deadline === null && other.deadline !== null) {
+      return 1
+    } else if (this.deadline !== null && other.deadline === null) {
+      return -1
+    } else if (this.deadline < other.deadline) {
+      return -1
+    } else if (this.deadline > other.deadline) {
+      return 1
+    }
+    // deadline equals, use third criterion
+
+    // third criterion: name
+    return this.name.localeCompare(other)
   }
 }
 
@@ -94,6 +126,7 @@ createModelSchema(Task, {
     val => { return new Decimal(val) }
   ),
   start: date(),
+  deadline: date(),
   scheduledDuration: alias('scheduled_duration', custom(
     val => { return val.toFixed() },
     val => { return new Decimal(val) }
