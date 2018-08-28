@@ -87,7 +87,9 @@ a {
 }
 
 .mdc-dialog__body--big {
-  max-height: 55em !important;
+  @media (min-height: 650px) {
+    max-height: none !important;
+  }
 }
 
 .material-icons.headline-icon {

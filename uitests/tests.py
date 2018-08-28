@@ -6,7 +6,7 @@ from decimal import Decimal
 from time import sleep
 from subprocess import DEVNULL, Popen
 
-from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate, get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.servers.basehttp import ThreadedWSGIServer
 from django.db.models import Q
@@ -25,6 +25,11 @@ class SeleniumTest(LiveServerTestCase):
     host = '127.0.0.1'
     port = 8000
     frontend_port = 8080
+
+    def setUp(self):
+        # ensure local storage is cleared
+        self.selenium.get(self.frontend_url)
+        self.selenium.execute_script('window.localStorage.clear()')
 
     @classmethod
     def setUpClass(cls):
@@ -66,7 +71,6 @@ class LoginPageTest(SeleniumTest):
     def test_login(self):
         user = get_user_model().objects.create(
             username='admin',
-            email='admin@localhost',
             workhours_weekday=Decimal(8),
             workhours_weekend=Decimal(4))
         user.set_password('foobar123')
@@ -75,33 +79,110 @@ class LoginPageTest(SeleniumTest):
         self.selenium.get(self.frontend_url)
         sleep(0.5)
 
-        # hash-location is #/login now
-        self.assertIn(
-            'login',
-            self.selenium.current_url)
-
-        username_input = self.selenium.find_element_by_xpath(
-            '//input[@placeholder="Username"]')
+        username_input = self.selenium.find_element_by_id('login-username')
         username_input.send_keys('admin')
-        password_input = self.selenium.find_element_by_xpath(
-            '//input[@placeholder="Password"]')
+        password_input = self.selenium.find_element_by_id('login-password')
         password_input.send_keys('foobar123')
-        login_button = self.selenium.find_element_by_xpath(
-            '//input[@value="Login"]')
+        login_button = self.selenium.find_element_by_xpath('//button[contains(.,"Login")]')
         login_button.click()
         sleep(0.5)
 
-        self.assertNotIn(
-            'login',
+        self.assertIn(
+            'main',
             self.selenium.current_url)
 
         self.assertIn(
-            'New Task',
+            'NEW TASK',
             self.selenium.find_element_by_tag_name('body').text)
+
+    def test_redirection_when_not_authenticated(self):
+        self.selenium.get(self.frontend_url + '/#/main')
+        sleep(1)
+
+        # hash-location does not contain main anymore
+        self.assertNotIn(
+            'main',
+            self.selenium.current_url)
+
+    def test_registration(self):
+        self.selenium.get(self.frontend_url)
+        sleep(0.5)
+
+        self.assertEqual(
+            get_user_model().objects.count(),
+            0)
+
+        username_input = self.selenium.find_element_by_id('register-username')
+        username_input.send_keys('admin')
+        password_input = self.selenium.find_element_by_id('register-password')
+        password_input.send_keys('foobar123')
+        password_input2 = self.selenium.find_element_by_id('register-password2')
+        password_input2.send_keys('foobar123')
+        register_button = self.selenium.find_element_by_xpath('//button[contains(.,"Register")]')
+        register_button.click()
+        sleep(3)
+
+        self.assertIn(
+            'main',
+            self.selenium.current_url)
+
+        self.assertIn(
+            'NEW TASK',
+            self.selenium.find_element_by_tag_name('body').text)
+
+        self.assertEqual(
+            get_user_model().objects.count(),
+            1)
+        user = get_user_model().objects.first()
+        self.assertEqual(
+            user.username,
+            'admin')
+        self.assertEqual(
+            authenticate(username='admin', password='foobar123'),
+            user)
+
+    def test_registration_username_taken(self):
+        user = get_user_model().objects.create(
+            username='admin',
+            workhours_weekday=Decimal(8),
+            workhours_weekend=Decimal(4))
+        user.set_password('foobar123')
+        user.save()
+
+        self.selenium.get(self.frontend_url)
+        sleep(0.5)
+
+        self.assertEqual(
+            get_user_model().objects.count(),
+            1)
+
+        username_input = self.selenium.find_element_by_id('register-username')
+        username_input.send_keys('admin')
+        password_input = self.selenium.find_element_by_id('register-password')
+        password_input.send_keys('bazqux')
+        password_input2 = self.selenium.find_element_by_id('register-password2')
+        password_input2.send_keys('bazqux')
+        register_button = self.selenium.find_element_by_xpath('//button[contains(.,"Register")]')
+        register_button.click()
+        sleep(3)
+
+        self.assertNotIn(
+            'main',
+            self.selenium.current_url)
+
+        self.assertIn(
+            'already taken',
+            self.selenium.find_element_by_tag_name('body').text)
+
+        self.assertEqual(
+            get_user_model().objects.count(),
+            1)
 
 
 class AuthenticatedSeleniumTest(SeleniumTest):
     def setUp(self):
+        super().setUp()
+
         self.user = get_user_model().objects.create(
             username='admin',
             email='admin@localhost',
@@ -115,23 +196,21 @@ class AuthenticatedSeleniumTest(SeleniumTest):
             'window.localStorage.setItem("authToken", "{}")'.format(token))
 
 
-class OverviewTest(AuthenticatedSeleniumTest):
+class MainPageTest(AuthenticatedSeleniumTest):
     def test_new_task(self):
         self.assertEqual(Task.objects.count(), 0)
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
-        new_task_link = self.selenium.find_element_by_link_text('New Task')
+        new_task_link = self.selenium.find_element_by_xpath('//button[contains(., "New Task")]')
         new_task_link.click()
         sleep(0.1)
-        name_input = self.selenium.find_element_by_xpath(
-            '//input[@placeholder="Name"]')
+        name_input = self.selenium.find_element_by_id('task-name')
         name_input.send_keys('Testtask')
-        duration_input = self.selenium.find_element_by_xpath(
-            '//input[@placeholder="Duration"]')
+        duration_input = self.selenium.find_element_by_id('task-duration')
         duration_input.clear()
         duration_input.send_keys('42.2')
-        self.selenium.find_element_by_xpath('//button[contains(text(), "Create Task")]').click()
+        self.selenium.find_element_by_xpath('//button[contains(@class, "mdc-dialog__footer__button--accept")]').click()
         sleep(0.5)
 
         self.assertEqual(Task.objects.count(), 1)
@@ -145,14 +224,12 @@ class OverviewTest(AuthenticatedSeleniumTest):
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
-        new_task_link = self.selenium.find_element_by_link_text('New Task')
+        new_task_link = self.selenium.find_element_by_xpath('//button[contains(., "New Task")]')
         new_task_link.click()
         sleep(0.1)
-        name_input = self.selenium.find_element_by_xpath(
-            '//input[@placeholder="Name"]')
+        name_input = self.selenium.find_element_by_id('task-name')
         name_input.send_keys('Testtask')
-        duration_input = self.selenium.find_element_by_xpath(
-            '//input[@placeholder="Duration"]')
+        duration_input = self.selenium.find_element_by_id('task-duration')
         duration_input.clear()
         duration_input.send_keys('42.2')
         duration_input.send_keys(Keys.ENTER)
@@ -169,14 +246,12 @@ class OverviewTest(AuthenticatedSeleniumTest):
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
-        new_task_link = self.selenium.find_element_by_link_text('New Task')
+        new_task_link = self.selenium.find_element_by_xpath('//button[contains(., "New Task")]')
         new_task_link.click()
         sleep(0.1)
-        name_input = self.selenium.find_element_by_xpath(
-            '//input[@placeholder="Name"]')
+        name_input = self.selenium.find_element_by_id('task-name')
         name_input.send_keys('Testtask')
-        duration_input = self.selenium.find_element_by_xpath(
-            '//input[@placeholder="Duration"]')
+        duration_input = self.selenium.find_element_by_id('task-duration')
         duration_input.clear()
         duration_input.send_keys('42.2')
         name_input.send_keys(Keys.ENTER)
@@ -195,19 +270,17 @@ class OverviewTest(AuthenticatedSeleniumTest):
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
-        new_task_link = self.selenium.find_element_by_link_text('New Task')
+        new_task_link = self.selenium.find_element_by_xpath('//button[contains(., "New Task")]')
         new_task_link.click()
         sleep(0.1)
-        name_input = self.selenium.find_element_by_xpath(
-            '//input[@placeholder="Name"]')
+        name_input = self.selenium.find_element_by_id('task-name')
         name_input.send_keys('Testtask')
-        duration_input = self.selenium.find_element_by_xpath(
-            '//input[@placeholder="Duration"]')
+        duration_input = self.selenium.find_element_by_id('task-duration')
         duration_input.clear()
         duration_input.send_keys('42.2')
-        schedule_checkbox = self.selenium.find_element_by_class_name('form-switch')
+        schedule_checkbox = self.selenium.find_element_by_id('task-schedule')
         schedule_checkbox.click()
-        self.selenium.find_element_by_xpath('//button[contains(text(), "Create Task")]').click()
+        self.selenium.find_element_by_xpath('//button[contains(@class, "mdc-dialog__footer__button--accept")]').click()
         sleep(0.5)
 
         self.assertEqual(Task.objects.count(), 1)
@@ -228,22 +301,20 @@ class OverviewTest(AuthenticatedSeleniumTest):
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
-        new_task_link = self.selenium.find_element_by_link_text('New Task')
+        new_task_link = self.selenium.find_element_by_xpath('//button[contains(., "New Task")]')
         new_task_link.click()
         sleep(0.1)
-        name_input = self.selenium.find_element_by_xpath(
-            '//input[@placeholder="Name"]')
+        name_input = self.selenium.find_element_by_id('task-name')
         name_input.send_keys('Testtask')
-        duration_input = self.selenium.find_element_by_xpath(
-            '//input[@placeholder="Duration"]')
+        duration_input = self.selenium.find_element_by_id('task-duration')
         duration_input.clear()
         duration_input.send_keys('42.2')
-        schedule_checkbox = self.selenium.find_element_by_class_name('form-switch')
+        schedule_checkbox = self.selenium.find_element_by_id('task-schedule')
         schedule_checkbox.click()
-        schedule_for = self.selenium.find_element_by_xpath('//div[contains(@class, "modal-body")]//select')
+        schedule_for = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]//select')
         Select(schedule_for).select_by_visible_text(
             'Tomorrow')
-        self.selenium.find_element_by_xpath('//button[contains(text(), "Create Task")]').click()
+        self.selenium.find_element_by_xpath('//button[contains(@class, "mdc-dialog__footer__button--accept")]').click()
         sleep(0.5)
 
         self.assertEqual(Task.objects.count(), 1)
@@ -262,22 +333,20 @@ class OverviewTest(AuthenticatedSeleniumTest):
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
-        new_task_link = self.selenium.find_element_by_link_text('New Task')
+        new_task_link = self.selenium.find_element_by_xpath('//button[contains(., "New Task")]')
         new_task_link.click()
         sleep(0.1)
-        name_input = self.selenium.find_element_by_xpath(
-            '//input[@placeholder="Name"]')
+        name_input = self.selenium.find_element_by_id('task-name')
         name_input.send_keys('Testtask')
-        duration_input = self.selenium.find_element_by_xpath(
-            '//input[@placeholder="Duration"]')
+        duration_input = self.selenium.find_element_by_id('task-duration')
         duration_input.clear()
         duration_input.send_keys('-42.2')
-        self.selenium.find_element_by_xpath('//button[contains(text(), "Create Task")]').click()
+        self.selenium.find_element_by_xpath('//button[contains(@class, "mdc-dialog__footer__button--accept")]').click()
         sleep(0.5)
 
         self.assertIn(
-            'is-error',
-            duration_input.get_attribute('class'))
+            'This duration is invalid.',
+            self.selenium.find_element_by_class_name('mdc-dialog__surface').get_attribute('innerHTML'))
         self.assertEqual(Task.objects.count(), 0)
 
     def test_new_task_with_start_date(self):
@@ -285,19 +354,17 @@ class OverviewTest(AuthenticatedSeleniumTest):
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
-        new_task_link = self.selenium.find_element_by_link_text('New Task')
+        new_task_link = self.selenium.find_element_by_xpath('//button[contains(., "New Task")]')
         new_task_link.click()
         sleep(0.1)
-        name_input = self.selenium.find_element_by_xpath(
-            '//input[@placeholder="Name"]')
+        name_input = self.selenium.find_element_by_id('task-name')
         name_input.send_keys('Testtask')
-        duration_input = self.selenium.find_element_by_xpath(
-            '//input[@placeholder="Duration"]')
+        duration_input = self.selenium.find_element_by_id('task-duration')
         duration_input.clear()
         duration_input.send_keys('42.2')
-        start_input = self.selenium.find_element_by_xpath('//input[@type="date" and @placeholder="Start"]')
+        start_input = self.selenium.find_element_by_id('task-start')
         start_input.send_keys('05/02/2018')
-        self.selenium.find_element_by_xpath('//button[contains(text(), "Create Task")]').click()
+        self.selenium.find_element_by_xpath('//button[contains(@class, "mdc-dialog__footer__button--accept")]').click()
         sleep(0.5)
 
         self.assertEqual(Task.objects.count(), 1)
@@ -332,22 +399,23 @@ class OverviewTest(AuthenticatedSeleniumTest):
         edit_task_link = self.selenium.find_elements_by_xpath('//a[@data-tooltip="Edit task"]')[0]
         edit_task_link.click()
         sleep(0.1)
-        scheduled_display = self.selenium.find_element_by_xpath('//div[@class="content"]/p')
+        scheduled_display = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]/section/div/div/div[contains(@class, "mdc-layout-grid__cell--span-7")][1]')
         self.assertIn(
-            'Scheduled: 3h',
+            '3h',
             scheduled_display.get_attribute('innerHTML'))
+        finished_display = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]/section/div/div/div[contains(@class, "mdc-layout-grid__cell--span-7")][2]')
         self.assertIn(
-            '1h finished',
-            scheduled_display.get_attribute('innerHTML'))
-        duration_input = self.selenium.find_element_by_xpath('//div[@class="content"]//input[@placeholder="Duration"]')
+            '1h',
+            finished_display.get_attribute('innerHTML'))
+        duration_input = self.selenium.find_element_by_id('task-duration')
         duration_input.clear()
         duration_input.send_keys('1')  # invalid, 3 hours are already scheduled
-        self.selenium.find_element_by_xpath('//button[contains(text(), "Update Task")]').click()
+        self.selenium.find_element_by_xpath('//button[contains(@class, "mdc-dialog__footer__button--accept")]').click()
         sleep(0.5)
 
         self.assertIn(
-            'is-error',
-            duration_input.get_attribute('class'))
+            'This duration is invalid.',
+            self.selenium.find_element_by_class_name('mdc-dialog__surface').get_attribute('innerHTML'))
 
         task.refresh_from_db()
         # the duration was not changed
@@ -377,17 +445,18 @@ class OverviewTest(AuthenticatedSeleniumTest):
         edit_task_link = self.selenium.find_elements_by_xpath('//a[@data-tooltip="Edit task"]')[0]
         edit_task_link.click()
         sleep(0.1)
-        scheduled_display = self.selenium.find_element_by_xpath('//div[@class="content"]/p')
+        scheduled_display = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]/section/div/div/div[contains(@class, "mdc-layout-grid__cell--span-7")][1]')
         self.assertIn(
-            'Scheduled: 3h',
+            '3h',
             scheduled_display.get_attribute('innerHTML'))
+        finished_display = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]/section/div/div/div[contains(@class, "mdc-layout-grid__cell--span-7")][2]')
         self.assertIn(
-            '1h finished',
-            scheduled_display.get_attribute('innerHTML'))
-        duration_input = self.selenium.find_element_by_xpath('//div[@class="content"]//input[@placeholder="Duration"]')
+            '1h',
+            finished_display.get_attribute('innerHTML'))
+        duration_input = self.selenium.find_element_by_id('task-duration')
         duration_input.clear()
         duration_input.send_keys('42')
-        self.selenium.find_element_by_xpath('//button[contains(text(), "Update Task")]').click()
+        self.selenium.find_element_by_xpath('//button[contains(@class, "mdc-dialog__footer__button--accept")]').click()
         sleep(0.5)
 
         task.refresh_from_db()
@@ -420,17 +489,18 @@ class OverviewTest(AuthenticatedSeleniumTest):
         edit_task_link = self.selenium.find_elements_by_xpath('//a[@data-tooltip="Edit task"]')[0]
         edit_task_link.click()
         sleep(0.1)
-        scheduled_display = self.selenium.find_element_by_xpath('//div[@class="content"]/p')
+        scheduled_display = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]/section/div/div/div[contains(@class, "mdc-layout-grid__cell--span-7")][1]')
         self.assertIn(
-            'Scheduled: 3h',
+            '3h',
             scheduled_display.get_attribute('innerHTML'))
+        finished_display = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]/section/div/div/div[contains(@class, "mdc-layout-grid__cell--span-7")][2]')
         self.assertIn(
-            '1h finished',
-            scheduled_display.get_attribute('innerHTML'))
-        name_input = self.selenium.find_element_by_xpath('//div[@class="content"]//input[@placeholder="Name"]')
+            '1h',
+            finished_display.get_attribute('innerHTML'))
+        name_input = self.selenium.find_element_by_id('task-name')
         name_input.clear()
         name_input.send_keys('Edited Task')
-        self.selenium.find_element_by_xpath('//button[contains(text(), "Update Task")]').click()
+        self.selenium.find_element_by_xpath('//button[contains(@class, "mdc-dialog__footer__button--accept")]').click()
         sleep(0.5)
 
         task.refresh_from_db()
@@ -463,20 +533,21 @@ class OverviewTest(AuthenticatedSeleniumTest):
         edit_task_link = self.selenium.find_elements_by_xpath('//a[@data-tooltip="Edit task"]')[0]
         edit_task_link.click()
         sleep(0.1)
-        scheduled_display = self.selenium.find_element_by_xpath('//div[@class="content"]/p')
+        scheduled_display = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]/section/div/div/div[contains(@class, "mdc-layout-grid__cell--span-7")][1]')
         self.assertIn(
-            'Scheduled: 3h',
+            '3h',
             scheduled_display.get_attribute('innerHTML'))
+        finished_display = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]/section/div/div/div[contains(@class, "mdc-layout-grid__cell--span-7")][2]')
         self.assertIn(
-            '1h finished',
-            scheduled_display.get_attribute('innerHTML'))
-        name_input = self.selenium.find_element_by_xpath('//div[@class="content"]//input[@placeholder="Name"]')
+            '1h',
+            finished_display.get_attribute('innerHTML'))
+        name_input = self.selenium.find_element_by_id('task-name')
         name_input.clear()
         name_input.send_keys('Edited Task')
-        duration_input = self.selenium.find_element_by_xpath('//div[@class="content"]//input[@placeholder="Duration"]')
+        duration_input = self.selenium.find_element_by_id('task-duration')
         duration_input.clear()
         duration_input.send_keys('42')
-        self.selenium.find_element_by_xpath('//button[contains(text(), "Update Task")]').click()
+        self.selenium.find_element_by_xpath('//button[contains(@class, "mdc-dialog__footer__button--accept")]').click()
         sleep(0.5)
 
         task.refresh_from_db()
@@ -509,16 +580,17 @@ class OverviewTest(AuthenticatedSeleniumTest):
         edit_task_link = self.selenium.find_elements_by_xpath('//a[@data-tooltip="Edit task"]')[0]
         edit_task_link.click()
         sleep(0.1)
-        scheduled_display = self.selenium.find_element_by_xpath('//div[@class="content"]/p')
+        scheduled_display = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]/section/div/div/div[contains(@class, "mdc-layout-grid__cell--span-7")][1]')
         self.assertIn(
-            'Scheduled: 3h',
+            '3h',
             scheduled_display.get_attribute('innerHTML'))
+        finished_display = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]/section/div/div/div[contains(@class, "mdc-layout-grid__cell--span-7")][2]')
         self.assertIn(
-            '1h finished',
-            scheduled_display.get_attribute('innerHTML'))
-        start_input = self.selenium.find_element_by_xpath('//input[@type="date" and @placeholder="Start"]')
+            '1h',
+            finished_display.get_attribute('innerHTML'))
+        start_input = self.selenium.find_element_by_id('task-start')
         start_input.send_keys('05/02/2018')
-        self.selenium.find_element_by_xpath('//button[contains(text(), "Update Task")]').click()
+        self.selenium.find_element_by_xpath('//button[contains(@class, "mdc-dialog__footer__button--accept")]').click()
         sleep(0.5)
 
         task.refresh_from_db()
@@ -546,18 +618,17 @@ class OverviewTest(AuthenticatedSeleniumTest):
         schedule_link = self.selenium.find_element_by_xpath('//a[@data-tooltip="Schedule"]')
         schedule_link.click()
         sleep(0.1)
-        modal_body = self.selenium.find_element_by_xpath('//div[contains(@class, "modal-body")]')
+        modal_body = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]')
         self.assertIn(
             'Testtask',
             modal_body.get_attribute('innerHTML'))
         self.assertIn(
             '5h',
             modal_body.get_attribute('innerHTML'))
-        duration_input = self.selenium.find_element_by_xpath(
-            '//div[contains(@class, "modal-body")]//input[@placeholder="Duration"]')
+        duration_input = self.selenium.find_element_by_id('task-duration')
         duration_input.clear()
         duration_input.send_keys('1')
-        self.selenium.find_element_by_xpath('//input[@value="Schedule"]').click()
+        self.selenium.find_element_by_xpath('//button[contains(@class, "mdc-dialog__footer__button--accept")]').click()
         sleep(0.5)
 
         self.assertEqual(task.chunks.count(), 1)
@@ -580,15 +651,14 @@ class OverviewTest(AuthenticatedSeleniumTest):
         schedule_link = self.selenium.find_element_by_xpath('//a[@data-tooltip="Schedule"]')
         schedule_link.click()
         sleep(0.1)
-        modal_body = self.selenium.find_element_by_xpath('//div[contains(@class, "modal-body")]')
+        modal_body = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]')
         self.assertIn(
             'Testtask',
             modal_body.get_attribute('innerHTML'))
         self.assertIn(
             '5h',
             modal_body.get_attribute('innerHTML'))
-        duration_input = self.selenium.find_element_by_xpath(
-            '//div[contains(@class, "modal-body")]//input[@placeholder="Duration"]')
+        duration_input = self.selenium.find_element_by_id('task-duration')
         duration_input.clear()
         duration_input.send_keys('1')
         duration_input.send_keys(Keys.ENTER)
@@ -614,21 +684,20 @@ class OverviewTest(AuthenticatedSeleniumTest):
         schedule_link = self.selenium.find_element_by_xpath('//a[@data-tooltip="Schedule"]')
         schedule_link.click()
         sleep(0.1)
-        modal_body = self.selenium.find_element_by_xpath('//div[contains(@class, "modal-body")]')
+        modal_body = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]')
         self.assertIn(
             'Testtask',
             modal_body.get_attribute('innerHTML'))
         self.assertIn(
             '5h',
             modal_body.get_attribute('innerHTML'))
-        duration_input = self.selenium.find_element_by_xpath(
-            '//div[contains(@class, "modal-body")]//input[@placeholder="Duration"]')
+        duration_input = self.selenium.find_element_by_id('task-duration')
         duration_input.clear()
         duration_input.send_keys('1')
-        schedule_for = self.selenium.find_element_by_xpath('//div[contains(@class, "modal-body")]//select')
+        schedule_for = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]//select')
         Select(schedule_for).select_by_visible_text(
             'Tomorrow')
-        self.selenium.find_element_by_xpath('//input[@value="Schedule"]').click()
+        self.selenium.find_element_by_xpath('//button[contains(@class, "mdc-dialog__footer__button--accept")]').click()
         sleep(0.5)
 
         self.assertEqual(task.chunks.count(), 1)
@@ -663,21 +732,20 @@ class OverviewTest(AuthenticatedSeleniumTest):
         schedule_link = self.selenium.find_element_by_xpath('//a[@data-tooltip="Schedule"]')
         schedule_link.click()
         sleep(0.1)
-        modal_body = self.selenium.find_element_by_xpath('//div[contains(@class, "modal-body")]')
+        modal_body = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]')
         self.assertIn(
             'Testtask',
             modal_body.get_attribute('innerHTML'))
         self.assertIn(
             '5h',
             modal_body.get_attribute('innerHTML'))
-        duration_input = self.selenium.find_element_by_xpath(
-            '//div[contains(@class, "modal-body")]//input[@placeholder="Duration"]')
+        duration_input = self.selenium.find_element_by_id('task-duration')
         duration_input.clear()
         duration_input.send_keys('1')
-        schedule_for = self.selenium.find_element_by_xpath('//div[contains(@class, "modal-body")]//select')
+        schedule_for = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]//select')
         Select(schedule_for).select_by_visible_text(
             'Next Free Capacity')
-        self.selenium.find_element_by_xpath('//input[@value="Schedule"]').click()
+        self.selenium.find_element_by_xpath('//button[contains(@class, "mdc-dialog__footer__button--accept")]').click()
         sleep(0.5)
 
         self.assertEqual(task.chunks.count(), 1)
@@ -700,25 +768,24 @@ class OverviewTest(AuthenticatedSeleniumTest):
         schedule_link = self.selenium.find_element_by_xpath('//a[@data-tooltip="Schedule"]')
         schedule_link.click()
         sleep(0.1)
-        modal_body = self.selenium.find_element_by_xpath('//div[contains(@class, "modal-body")]')
+        modal_body = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]')
         self.assertIn(
             'Testtask',
             modal_body.get_attribute('innerHTML'))
         self.assertIn(
             '5h',
             modal_body.get_attribute('innerHTML'))
-        duration_input = self.selenium.find_element_by_xpath(
-            '//div[contains(@class, "modal-body")]//input[@placeholder="Duration"]')
+        duration_input = self.selenium.find_element_by_id('task-duration')
         duration_input.clear()
         duration_input.send_keys('1')
-        schedule_for = self.selenium.find_element_by_xpath('//div[contains(@class, "modal-body")]//select')
+        schedule_for = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]//select')
         Select(schedule_for).select_by_visible_text(
             'Another Time')
         date_input = self.selenium.find_element_by_xpath(
-            '//div[contains(@class, "modal-body")]//input[@placeholder="Schedule for date"]')
+            '//div[@class="mdc-dialog__surface"]//input[@type="date"]')
         date_input.send_keys(Keys.DELETE)
         date_input.send_keys('01/02/2017')
-        self.selenium.find_element_by_xpath('//input[@value="Schedule"]').click()
+        self.selenium.find_element_by_xpath('//button[contains(@class, "mdc-dialog__footer__button--accept")]').click()
         sleep(0.5)
 
         self.assertEqual(task.chunks.count(), 1)
@@ -741,22 +808,21 @@ class OverviewTest(AuthenticatedSeleniumTest):
         schedule_link = self.selenium.find_element_by_xpath('//a[@data-tooltip="Schedule"]')
         schedule_link.click()
         sleep(0.1)
-        modal_body = self.selenium.find_element_by_xpath('//div[contains(@class, "modal-body")]')
+        modal_body = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]')
         self.assertIn(
             'Testtask',
             modal_body.get_attribute('innerHTML'))
         self.assertIn(
             '5h',
             modal_body.get_attribute('innerHTML'))
-        duration_input = self.selenium.find_element_by_xpath(
-            '//div[contains(@class, "modal-body")]//input[@placeholder="Duration"]')
+        duration_input = self.selenium.find_element_by_id('task-duration')
         duration_input.clear()
         duration_input.send_keys('1')
-        schedule_for = self.selenium.find_element_by_xpath('//div[contains(@class, "modal-body")]//select')
+        schedule_for = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]//select')
         Select(schedule_for).select_by_visible_text(
             'Another Time')
         date_input = self.selenium.find_element_by_xpath(
-            '//div[contains(@class, "modal-body")]//input[@placeholder="Schedule for date"]')
+            '//div[@class="mdc-dialog__surface"]//input[@type="date"]')
         date_input.send_keys(Keys.DELETE)
         date_input.send_keys('01/02/2017')
         date_input.send_keys(Keys.ENTER)
@@ -782,24 +848,23 @@ class OverviewTest(AuthenticatedSeleniumTest):
         schedule_link = self.selenium.find_element_by_xpath('//a[@data-tooltip="Schedule"]')
         schedule_link.click()
         sleep(0.1)
-        modal_body = self.selenium.find_element_by_xpath('//div[contains(@class, "modal-body")]')
+        modal_body = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]')
         self.assertIn(
             'Testtask',
             modal_body.get_attribute('innerHTML'))
         self.assertIn(
             '5h',
             modal_body.get_attribute('innerHTML'))
-        duration_input = self.selenium.find_element_by_xpath(
-            '//div[contains(@class, "modal-body")]//input[@placeholder="Duration"]')
+        duration_input = self.selenium.find_element_by_id('task-duration')
         duration_input.clear()
         duration_input.send_keys('-1')
-        schedule_for = self.selenium.find_element_by_xpath('//div[contains(@class, "modal-body")]//select')
-        self.selenium.find_element_by_xpath('//input[@value="Schedule"]').click()
+        schedule_for = self.selenium.find_element_by_xpath('//div[@class="mdc-dialog__surface"]//select')
+        self.selenium.find_element_by_xpath('//button[contains(@class, "mdc-dialog__footer__button--accept")]').click()
         sleep(0.5)
 
         self.assertIn(
-            'is-error',
-            duration_input.get_attribute('class'))
+            'This duration is invalid.',
+            self.selenium.find_element_by_class_name('mdc-dialog__surface').get_attribute('innerHTML'))
 
         self.assertEqual(task.chunks.count(), 0)
 
@@ -1132,7 +1197,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
         sleep(0.5)
 
         self.assertIn(
-            'There are unfinished scheduled tasks for past days!',
+            'You missed these task chunks!',
             self.selenium.execute_script('return document.documentElement.innerHTML'))
 
         self.selenium.find_element_by_css_selector('[data-tooltip="Done"]').click()
@@ -1156,7 +1221,7 @@ class OverviewTest(AuthenticatedSeleniumTest):
         sleep(0.5)
 
         self.assertIn(
-            'There are unfinished scheduled tasks for past days!',
+            'You missed these task chunks!',
             self.selenium.page_source)
 
         self.selenium.find_element_by_css_selector('[data-tooltip="Postpone to another day"]').click()
