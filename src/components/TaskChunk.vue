@@ -8,6 +8,14 @@
       v-bind:style="[
         { height: (chunk.duration.toNumber() * 4).toString() + 'em' }
       ]">
+    <span
+        class="tooltip tooltip-right warning"
+        data-tooltip="This task chunk misses the deadline"
+        v-if="chunk.missesDeadline($store)">
+      <i class="material-icons">
+        warning
+      </i>
+    </span>
     <strong>{{ chunk.task($store).name }}</strong>
     <span class="float-right">
       {{ chunk.duration.toNumber() }}h
