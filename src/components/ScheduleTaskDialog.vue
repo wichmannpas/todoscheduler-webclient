@@ -35,6 +35,21 @@
                     align-right">
                 {{ task.name }}
               </div>
+              <div
+                  v-if="task.deadline !== null"
+                  class="mdc-layout-grid__cell mdc-layout-grid__cell--span-5">
+                <strong>
+                  Deadline
+                </strong>
+              </div>
+              <div
+                  v-if="task.deadline !== null"
+                  class="
+                    mdc-layout-grid__cell
+                    mdc-layout-grid__cell--span-7
+                    align-right">
+                {{ task.prettyDeadline() }}
+              </div>
               <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-5">
                 <strong>
                   Unscheduled Duration
