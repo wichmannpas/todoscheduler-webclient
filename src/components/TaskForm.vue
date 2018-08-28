@@ -99,6 +99,37 @@
           error">
       This start date is invalid.
     </p>
+
+    <div
+        ref="deadline"
+        class="
+          mdc-text-field
+          full-width-text-field">
+      <input
+          id="task-deadline"
+          ref="deadlineInput"
+          :value="deadlineString"
+          @input="updateTask"
+          @keyup.enter="$emit('submit')"
+          :disabled="loading"
+          type="date"
+          class="
+            mdc-text-field__input" />
+      <label
+          class="mdc-floating-label mdc-floating-label--float-above"
+          for="task-deadline">
+        Deadline
+      </label>
+    </div>
+    <p
+        v-if="errors.indexOf('deadline') >= 0"
+        class="
+          mdc-text-field-helper-text
+          mdc-text-field-helper-text--validation-msg
+          mdc-text-field-helper-text--persistent
+          error">
+      This deadline is invalid.
+    </p>
   </form>
 </template>
 
@@ -136,6 +167,12 @@ export default {
     }
   },
   computed: {
+    deadlineString () {
+      if (this.value.deadline === null) {
+        return null
+      }
+      return formatDayString(this.value.deadline)
+    },
     startString () {
       if (this.value.start === null) {
         return null
@@ -145,6 +182,10 @@ export default {
   },
   methods: {
     updateTask () {
+      let deadline = this.$refs.deadlineInput.value
+      if (deadline === '') {
+        deadline = null
+      }
       let start = this.$refs.startInput.value
       if (start === '') {
         start = null
@@ -152,6 +193,7 @@ export default {
       this.$emit('input', {
         name: this.$refs.nameInput.value,
         duration: this.$refs.durationInput.value,
+        deadline: deadline,
         start: start
       })
     }

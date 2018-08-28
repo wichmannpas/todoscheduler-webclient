@@ -85,6 +85,7 @@ function createTask (store, task) {
     axios.post(API_URL + '/task/task/', {
       name: task.name,
       duration: task.duration,
+      deadline: task.deadline,
       start: task.start
     }).then(function (response) {
       if (response.status === 201) {
@@ -107,6 +108,7 @@ function updateTask (store, task) {
     axios.put(API_URL + '/task/task/' + task.id.toString() + '/', {
       name: task.name,
       duration: task.duration,
+      deadline: task.deadline,
       start: task.start
     }).then(function (response) {
       if (response.status === 200) {
