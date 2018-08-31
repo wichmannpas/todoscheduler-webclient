@@ -44,22 +44,20 @@ export default {
   },
   methods: {
     fetchData () {
-      if (!this.$store.state.user.ready) {
-        fetchUser().then(user => {
-          this.$store.commit('setUser', user)
+      fetchUser().then(user => {
+        this.$store.commit('setUser', user)
 
-          // fetch remaining data
-          this.$store.dispatch('fetchData')
-        }).catch(error => {
-          if (error.message === 'no auth') {
-            this.$router.replace({
-              name: 'landing'
-            })
-          } else {
-            throw error
-          }
-        })
-      }
+        // fetch remaining data
+        this.$store.dispatch('fetchData')
+      }).catch(error => {
+        if (error.message === 'no auth') {
+          this.$router.replace({
+            name: 'landing'
+          })
+        } else {
+          throw error
+        }
+      })
     }
   }
 }

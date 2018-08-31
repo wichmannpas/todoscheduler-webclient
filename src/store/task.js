@@ -6,6 +6,7 @@ import { insertIndex } from '@/utils'
 export default {
   state: {
     ready: false,
+    fetched: false,
     tasks: {},
     taskOrder: []
   },
@@ -25,6 +26,9 @@ export default {
   mutations: {
     reset (state) {
       state.ready = false
+    },
+    setTasksFetched (state) {
+      state.fetched = true
     },
     /**
      * requires no redundant tasks to be present
@@ -93,7 +97,7 @@ export default {
         options = {}
       }
 
-      if (state.ready && options.ignoreReady !== true) {
+      if (state.ready && state.fetched && options.ignoreReady !== true) {
         return
       }
 
@@ -102,6 +106,7 @@ export default {
           tasks: tasks,
           today: rootState.time.today
         })
+        commit('setTasksFetched')
       })
     }
   }

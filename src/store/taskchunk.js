@@ -10,6 +10,7 @@ export default {
   state: {
     firstDisplayedDay: null,
     ready: false,
+    fetched: false,
     taskChunks: {},
     dayOrders: {},
     highlightedChunks: {}
@@ -65,6 +66,9 @@ export default {
   mutations: {
     reset (state) {
       state.ready = false
+    },
+    setTaskChunksFetched (state) {
+      state.fetched = true
     },
     /**
      * requires no redundant taskChunks to be present
@@ -200,7 +204,7 @@ export default {
         options = {}
       }
 
-      if (state.ready && options.ignoreReady !== true) {
+      if (state.ready && state.fetched && options.ignoreReady !== true) {
         return
       }
 
@@ -252,6 +256,7 @@ export default {
             today: today
           })
         }
+        commit('setTaskChunksFetched')
       })
     },
     navigateToDay ({ commit, dispatch, rootState }, day) {
