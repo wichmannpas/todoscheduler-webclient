@@ -1,5 +1,8 @@
 <template>
   <div class="container-full">
+    <Offline
+        v-if="!$store.state.general.online" />
+
     <div class="mdc-layout-grid">
       <div class="mdc-layout-grid__inner">
         <div
@@ -29,6 +32,7 @@
 <script>
 import { fetchUser } from '@/api/user'
 import MissedTaskChunks from '@/components/MissedTaskChunks'
+import Offline from '@/components/Offline'
 import Schedule from '@/components/Schedule'
 import Tasks from '@/components/Tasks'
 
@@ -36,6 +40,7 @@ export default {
   name: 'MainPage',
   components: {
     MissedTaskChunks,
+    Offline,
     Schedule,
     Tasks
   },
