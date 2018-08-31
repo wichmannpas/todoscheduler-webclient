@@ -25,7 +25,9 @@
         <div class="mdc-chip__text">
           Next week
         </div>
-        <i class="material-icons mdc-chip__icon mdc-chip__icon--trailing">
+        <i
+            ref="trailingChipIcon"
+            class="material-icons mdc-chip__icon">
           navigate_next
         </i>
       </div>
@@ -53,6 +55,10 @@ export default {
   mounted: function () {
     if (this.ui.chipSet === null) {
       this.ui.chipSet = new chips.MDCChipSet(this.$refs.chipSet)
+
+      // the trailing icon removes the chip from the set by default, thus
+      // the --trailing class must be added after initializing MDCChipSet
+      this.$refs.trailingChipIcon.classList.add('mdc-chip__icon--trailing')
     }
   },
   methods: {
