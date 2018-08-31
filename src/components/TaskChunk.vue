@@ -10,14 +10,17 @@
         { height: (chunk.duration.toNumber() * 4).toString() + 'em' }
       ]">
     <span
-        class="tooltip tooltip-right warning"
-        data-tooltip="This task chunk misses the deadline"
-        v-if="chunk.missesDeadline($store)">
-      <i class="material-icons">
-        warning
-      </i>
+        class="chunk-title">
+      <span
+          class="tooltip tooltip-right warning"
+          data-tooltip="This task chunk misses the deadline"
+          v-if="chunk.missesDeadline($store)">
+        <i class="material-icons">
+          warning
+        </i>
+      </span>
+      {{ chunk.task($store).name }}
     </span>
-    <strong>{{ chunk.task($store).name }}</strong>
     <span class="float-right">
       {{ chunk.duration.toNumber() }}h
       <span v-if="chunk.task($store).duration.toNumber() !== chunk.duration.toNumber()">
