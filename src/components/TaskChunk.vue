@@ -13,7 +13,7 @@
         class="chunk-title">
       <span
           class="tooltip tooltip-right warning"
-          data-tooltip="This task chunk misses the deadline"
+          data-tooltip="Misses deadline"
           v-if="chunk.missesDeadline($store)">
         <i class="material-icons">
           warning
