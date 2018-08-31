@@ -19,6 +19,8 @@ export default {
     TopAppBar
   },
   created: function () {
+    this.$store.dispatch('setTimeUpdateInterval')
+
     window.handleMissingAuth = () => {
       if (this.$route.name !== 'landing') {
         console.warn('auth no longer active, redirecting to landing page')

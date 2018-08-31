@@ -44,7 +44,10 @@ function completeTask (store, task) {
         duration: duration
       }).then(function (response) {
         if (response.status === 200) {
-          store.commit('updateTask', deserialize(Task, response.data))
+          store.commit('updateTask', {
+            task: deserialize(Task, response.data),
+            today: store.state.time.today
+          })
           resolve()
         } else {
           reject(response.data)
@@ -66,8 +69,14 @@ function scheduleTask (store, task, day, duration) {
       duration: duration
     }).then(function (response) {
       if (response.status === 201) {
-        store.commit('updateTask', deserialize(Task, response.data.task))
-        store.commit('addTaskChunk', deserialize(TaskChunk, response.data))
+        store.commit('updateTask', {
+          task: deserialize(Task, response.data.task),
+          today: store.state.time.today
+        })
+        store.commit('addTaskChunk', {
+          taskChunk: deserialize(TaskChunk, response.data),
+          today: store.state.time.today
+        })
 
         resolve()
       } else {
@@ -92,7 +101,10 @@ function createTask (store, task) {
     }).then(function (response) {
       if (response.status === 201) {
         let task = deserialize(Task, response.data)
-        store.commit('addTask', task)
+        store.commit('addTask', {
+          task: task,
+          today: store.state.time.today
+        })
         resolve(task)
       } else {
         reject(response.data)
@@ -115,7 +127,10 @@ function updateTask (store, task) {
       start: formatDayString(task.start)
     }).then(function (response) {
       if (response.status === 200) {
-        store.commit('updateTask', deserialize(Task, response.data))
+        store.commit('updateTask', {
+          task: deserialize(Task, response.data),
+          today: store.state.time.today
+        })
         resolve()
       } else {
         reject(response.data)
@@ -133,7 +148,10 @@ function changeTaskDuration (store, task, newDuration) {
     axios.patch(API_URL + '/task/task/' + task.id.toString() + '/', {
       duration: newDuration
     }).then(function (response) {
-      store.commit('updateTask', deserialize(Task, response.data))
+      store.commit('updateTask', {
+        task: deserialize(Task, response.data),
+        today: store.state.time.today
+      })
 
       resolve()
     }).catch(error => handleGenericErrors(error, resolve, reject))

@@ -1,4 +1,4 @@
-import { differenceInDays, isAfter } from 'date-fns'
+import { differenceInDays } from 'date-fns'
 import Decimal from 'decimal.js-light'
 import {
   alias,
@@ -9,7 +9,7 @@ import {
   primitive
 } from 'serializr'
 
-import { prettyDate, priorityString } from '@/utils'
+import { isAfterDay, prettyDate, priorityString } from '@/utils'
 
 class Task {
   id = -1
@@ -56,34 +56,29 @@ class Task {
       this.finishedDuration.comparedTo(this.duration) === 0)
   }
 
-  // TODO: use today argument (from store)
-  startInFuture () {
-    let today = new Date()
-
-    return isAfter(this.start, today)
+  startInFuture (today) {
+    if (this.start === null) {
+      return
+    }
+    return isAfterDay(this.start, today)
   }
 
-  // TODO: use today argument (from store)
-  deadlineInFuture () {
-    let today = new Date()
-
-    return isAfter(this.deadline, today)
+  deadlineInFuture (today) {
+    if (this.deadline === null) {
+      return
+    }
+    return isAfterDay(this.deadline, today)
   }
 
-  // TODO: use today argument (from store)
-  prettyStart () {
-    return prettyDate(this.start)
+  prettyStart (today) {
+    return prettyDate(this.start, today)
   }
 
-  // TODO: use today argument (from store)
-  prettyDeadline () {
-    return prettyDate(this.deadline)
+  prettyDeadline (today) {
+    return prettyDate(this.deadline, today)
   }
 
-  // TODO: use today argument (from store)
-  deadlineWarning () {
-    let today = new Date()
-
+  deadlineWarning (today) {
     return !this.completelyScheduled() && differenceInDays(this.deadline, today) < 3
   }
 
@@ -93,7 +88,7 @@ class Task {
    * 0 if = other
    * positive values if > other
    */
-  compareTo (other) {
+  compareTo (other, today) {
     // first criterion: deadline
     if (this.deadline === null && other.deadline !== null) {
       return 1
@@ -107,13 +102,13 @@ class Task {
     // deadline equals, use second criterion
 
     // second criterion: start
-    if (this.start === null && other.start !== null && other.startInFuture()) {
+    if (this.start === null && other.start !== null && other.startInFuture(today)) {
       return -1
-    } else if (this.start !== null && this.startInFuture() && other.start === null) {
+    } else if (this.start !== null && this.startInFuture(today) && other.start === null) {
       return 1
-    } else if (other.startInFuture() && this.start < other.start) {
+    } else if (other.startInFuture(today) && this.start < other.start) {
       return -1
-    } else if (this.startInFuture() && this.start > other.start) {
+    } else if (this.startInFuture(today) && this.start > other.start) {
       return 1
     }
     // start equals, use third criterion

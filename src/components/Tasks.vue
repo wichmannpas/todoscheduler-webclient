@@ -143,10 +143,10 @@ export default {
       return this.$store.getters.finishedTasks
     },
     futureTasks () {
-      return this.$store.getters.futureTasks
+      return this.$store.getters.futureTasks(this.$store.state.time.today)
     },
     openTasks () {
-      return this.$store.getters.openTasks
+      return this.$store.getters.openTasks(this.$store.state.time.today)
     }
   },
   methods: {

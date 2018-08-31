@@ -49,7 +49,6 @@ export default {
           this.$store.commit('setUser', user)
 
           // fetch remaining data
-          // TODO: supply today from store
           this.$store.dispatch('fetchData')
         }).catch(error => {
           if (error.message === 'no auth') {

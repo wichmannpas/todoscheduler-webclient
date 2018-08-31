@@ -19,12 +19,16 @@ export default {
         message: 'Synchronizing now ...'
       })
 
+      this.$store.dispatch('updateToday')
+
       fetchUser().then(user => {
         this.$store.commit('setUser', user)
       })
 
-      // TODO: supply today from store
-      this.$store.dispatch('fetchData', { ignoreReady: true })
+      this.$store.dispatch('fetchData', {
+        today: this.$store.state.time.today,
+        ignoreReady: true
+      })
     }
   }
 }

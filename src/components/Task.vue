@@ -13,7 +13,7 @@
       done
     </span>
     <span
-        v-else-if="task.startInFuture()"
+        v-else-if="task.startInFuture($store.state.time.today)"
         class="material-icons mdc-list-item__graphics">
       brightness_3
     </span>
@@ -30,17 +30,17 @@
       <span
           class="mdc-list-item__secondary-text">
         <span
-            v-if="task.start !== null && task.startInFuture()">
-          starts {{ task.prettyStart() }}
+            v-if="task.start !== null && task.startInFuture($store.state.time.today)">
+          starts {{ task.prettyStart($store.state.time.today) }}
           &bull;
         </span>
         <span
             :class="{
-              warning: task.deadlineWarning() && task.deadlineInFuture(),
-              error: !task.deadlineInFuture() && !task.finished()
+              warning: task.deadlineWarning($store.state.time.today) && task.deadlineInFuture($store.state.time.today),
+              error: !task.deadlineInFuture($store.state.time.today) && !task.finished()
             }"
             v-else-if="task.deadline !== null">
-          due {{ task.prettyDeadline() }}
+          due {{ task.prettyDeadline($store.state.time.today) }}
           &bull;
         </span>
         {{ task.priorityString() }} &bull;

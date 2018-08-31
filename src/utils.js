@@ -1,12 +1,18 @@
-import {
-  differenceInDays,
-  format,
-  isPast,
-  isToday,
-  isTomorrow,
-  isYesterday,
-  parse
-} from 'date-fns'
+import { differenceInDays, format, parse } from 'date-fns'
+
+/**
+ * Set all values of a Date object with higher precision than day to zero.
+ *
+ * Date is modified in-place. For convenience, the date object is returned.
+ */
+function dayOfDate (date) {
+  date.setHours(0)
+  date.setMinutes(0)
+  date.setSeconds(0)
+  date.setMilliseconds(0)
+
+  return date
+}
 
 function formatDayString (day) {
   if (day === null) {
@@ -19,17 +25,21 @@ function parseDayString (day) {
   return parse(day)
 }
 
-function naturalDay (day) {
-  if (isYesterday(day)) {
+function naturalDay (day, today) {
+  day = dayOfDate(new Date(day.getTime()))
+  let dayTime = day.getTime()
+
+  let todayTime = today.getTime()
+  let yesterdayTime = todayTime - 86400000
+  let tomorrowTime = todayTime + 86400000
+  if (yesterdayTime === dayTime) {
     return 'yesterday'
-  } else if (isToday(day)) {
+  } else if (todayTime === dayTime) {
     return 'today'
-  } else if (isTomorrow(day)) {
+  } else if (tomorrowTime === dayTime) {
     return 'tomorrow'
   }
 
-  // TODO: use today from store
-  let today = new Date()
   let dayDelta = differenceInDays(day, today)
   if (dayDelta <= 6 && dayDelta >= 0) {
     return format(day, 'dddd')
@@ -44,23 +54,17 @@ function naturalDay (day) {
   return result
 }
 
-function prettyDate (day) {
-  if (isToday(day)) {
+function prettyDate (day, today) {
+  day = dayOfDate(new Date(day.getTime()))
+  let dayTime = day.getTime()
+
+  let todayTime = today.getTime()
+  let tomorrowTime = todayTime + 86400000
+  if (todayTime === dayTime) {
     return 'today'
-  } else if (isTomorrow(day)) {
+  } else if (tomorrowTime === dayTime) {
     return 'tomorrow'
   }
-
-  // TODO: use today from store
-  let today = new Date()
-
-  // ensure date is not modified
-  today = new Date(today.getTime())
-  // use start of day
-  // TODO: use start of day in today supplied from store
-  today.setHours(0)
-  today.setMinutes(0)
-  today.setSeconds(0)
 
   let dayDelta = differenceInDays(day, today)
   if (dayDelta <= 25 && dayDelta >= 0) {
@@ -77,8 +81,27 @@ function prettyDate (day) {
   return result
 }
 
-function isPastDay (day) {
-  return isPast(new Date(format(day, 'YYYY-MM-DD') + 'T23:59:59'))
+function isBeforeDay (day, other) {
+  day = dayOfDate(new Date(day.getTime()))
+  other = dayOfDate(new Date(other.getTime()))
+  let dayTime = day.getTime()
+  let otherTime = other.getTime()
+  return dayTime < otherTime
+}
+
+function isAfterDay (day, other) {
+  day = dayOfDate(new Date(day.getTime()))
+  other = dayOfDate(new Date(other.getTime()))
+  let dayTime = day.getTime()
+  let otherTime = other.getTime()
+  return dayTime > otherTime
+}
+
+function isToday (day, today) {
+  day = dayOfDate(new Date(day.getTime()))
+  let dayTime = day.getTime()
+  let todayTime = today.getTime()
+  return dayTime === todayTime
 }
 
 /**
@@ -92,17 +115,18 @@ function dayDelta (day, delta) {
 /**
  * Get the index at which to insert the id of a new item into an Array of
  * item ids based on the compareTo method.
+ * The optional today argument is passed on as second parameter to compareTo.
  *
  * The index is used to look up the items based on their ids.
  *
  * If an equal item exists, the new item is inserted *after* the
  * existing item.
  */
-function insertIndex (items, newItem, index) {
+function insertIndex (items, newItem, index, today) {
   for (let i = 0; i < items.length; i++) {
     let item = index[items[i]]
 
-    if (item.compareTo(newItem) > 0) {
+    if (item.compareTo(newItem, today) > 0) {
       return i
     }
   }
@@ -135,9 +159,12 @@ function priorityString (priority) {
 
 export {
   dayDelta,
+  dayOfDate,
   formatDayString,
   insertIndex,
-  isPastDay,
+  isAfterDay,
+  isBeforeDay,
+  isToday,
   naturalDay,
   parseDayString,
   prettyDate,

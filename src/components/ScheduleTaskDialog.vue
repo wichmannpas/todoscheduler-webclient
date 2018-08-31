@@ -48,7 +48,7 @@
                     mdc-layout-grid__cell
                     mdc-layout-grid__cell--span-7
                     align-right">
-                {{ task.prettyDeadline() }}
+                {{ task.prettyDeadline($store.state.time.today) }}
               </div>
               <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-5">
                 <strong>

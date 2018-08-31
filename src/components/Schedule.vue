@@ -67,8 +67,7 @@ export default {
       return day
     },
     yesterday () {
-      // TODO: use today from a store to make it reactive
-      return subDays(new Date(), 1)
+      return subDays(this.$store.state.time.today, 1)
     }
   },
   methods: {

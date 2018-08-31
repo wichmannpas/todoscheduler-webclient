@@ -1,7 +1,6 @@
-import { isAfter } from 'date-fns'
 import Decimal from 'decimal.js-light'
 
-import { isPastDay, naturalDay } from '@/utils'
+import { isAfterDay, isBeforeDay, naturalDay } from '@/utils'
 import {
   alias,
   createModelSchema,
@@ -23,8 +22,8 @@ class TaskChunk {
     return store.state.task.tasks[this.taskId]
   }
 
-  past () {
-    return isPastDay(this.day)
+  past (today) {
+    return isBeforeDay(this.day, today)
   }
   missesDeadline (store) {
     if (this.task.deadline === null) {
@@ -35,13 +34,13 @@ class TaskChunk {
       return false
     }
 
-    return isAfter(this.day, this.task(store).deadline)
+    return isAfterDay(this.day, this.task(store).deadline)
   }
   missed () {
     return !this.finished && this.past()
   }
-  naturalDay () {
-    return naturalDay(this.day)
+  naturalDay (today) {
+    return naturalDay(this.day, today)
   }
 
   highlighted (store) {

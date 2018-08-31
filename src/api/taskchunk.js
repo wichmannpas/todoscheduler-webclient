@@ -42,7 +42,10 @@ function deleteTaskChunk (store, chunk, postpone) {
         task.duration = task.duration.sub(chunk.duration)
       }
       if (task.duration.comparedTo(0) > 0) {
-        store.commit('updateTask', task)
+        store.commit('updateTask', {
+          task: task,
+          today: store.state.time.today
+        })
       } else {
         // no duration left, task was deleted
         store.commit('deleteTask', task.id)
@@ -58,8 +61,14 @@ function changeTaskChunkDuration (store, chunk, newDuration) {
     axios.patch(API_URL + '/task/chunk/' + chunk.id.toString() + '/', {
       duration: newDuration
     }).then(function (response) {
-      store.commit('updateTaskChunk', deserialize(TaskChunk, response.data))
-      store.commit('updateTask', deserialize(Task, response.data.task))
+      store.commit('updateTaskChunk', {
+        taskChunk: deserialize(TaskChunk, response.data),
+        today: store.state.time.today
+      })
+      store.commit('updateTask', {
+        task: deserialize(Task, response.data.task),
+        today: store.state.time.today
+      })
 
       resolve()
     }).catch(error => handleGenericErrors(error, resolve, reject))
@@ -71,9 +80,15 @@ function exchangeTaskChunk (store, chunk, exchange) {
     axios.patch(API_URL + '/task/chunk/' + chunk.id.toString() + '/', {
       day_order: exchange.dayOrder
     }).then(function (response) {
-      store.commit('updateTaskChunk', deserialize(TaskChunk, response.data))
+      store.commit('updateTaskChunk', {
+        taskChunk: deserialize(TaskChunk, response.data),
+        today: store.state.time.today
+      })
       exchange.dayOrder = chunk.dayOrder
-      store.commit('updateTaskChunk', exchange)
+      store.commit('updateTaskChunk', {
+        taskChunk: exchange,
+        today: store.state.time.today
+      })
 
       resolve()
     }).catch(error => handleGenericErrors(error, resolve, reject))
@@ -85,8 +100,14 @@ function finishTaskChunk (store, chunk, newState) {
     axios.patch(API_URL + '/task/chunk/' + chunk.id.toString() + '/', {
       finished: newState
     }).then(function (response) {
-      store.commit('updateTaskChunk', deserialize(TaskChunk, response.data))
-      store.commit('updateTask', deserialize(Task, response.data.task))
+      store.commit('updateTaskChunk', {
+        taskChunk: deserialize(TaskChunk, response.data),
+        today: store.state.time.today
+      })
+      store.commit('updateTask', {
+        task: deserialize(Task, response.data.task),
+        today: store.state.time.today
+      })
 
       resolve()
     }).catch(error => handleGenericErrors(error, resolve, reject))
@@ -100,7 +121,10 @@ function splitTaskChunk (store, chunk) {
     ).then(function (response) {
       store.commit(
         'addUpdateTaskChunks',
-        response.data.map(raw => deserialize(TaskChunk, raw)))
+        {
+          taskChunks: response.data.map(raw => deserialize(TaskChunk, raw)),
+          today: store.state.time.today
+        })
 
       resolve()
     }).catch(error => handleGenericErrors(error, resolve, reject))
@@ -112,7 +136,10 @@ function updateTaskChunkDay (store, chunk, newDay) {
     axios.patch(API_URL + '/task/chunk/' + chunk.id.toString() + '/', {
       day: newDay
     }).then(function (response) {
-      store.commit('updateTaskChunk', deserialize(TaskChunk, response.data))
+      store.commit('updateTaskChunk', {
+        taskChunk: deserialize(TaskChunk, response.data),
+        today: store.state.time.today
+      })
 
       resolve()
     }).catch(error => handleGenericErrors(error, resolve, reject))

@@ -59,8 +59,8 @@ export default {
       }
       return null
     },
-    missedTaskChunks: (state) => Object.values(state.taskChunks).filter(
-      chunk => !chunk.finished && chunk.past())
+    missedTaskChunks: (state) => today => Object.values(state.taskChunks).filter(
+      chunk => !chunk.finished && chunk.past(today))
   },
   mutations: {
     reset (state) {
@@ -69,7 +69,7 @@ export default {
     /**
      * requires no redundant taskChunks to be present
      */
-    setTaskChunks (state, taskChunks) {
+    setTaskChunks (state, { taskChunks, today }) {
       state.taskChunks = {}
       state.dayOrders = {}
 
@@ -85,7 +85,7 @@ export default {
         }
 
         state.dayOrders[day].splice(
-          insertIndex(state.dayOrders[day], taskChunk, state.taskChunks),
+          insertIndex(state.dayOrders[day], taskChunk, state.taskChunks, today),
           0,
           taskChunk.id
         )
@@ -96,7 +96,7 @@ export default {
     /**
      * add specified task chunks, previously removing them if they exist
      */
-    addUpdateTaskChunks (state, taskChunks) {
+    addUpdateTaskChunks (state, { taskChunks, today }) {
       taskChunks.forEach(taskChunk => {
         let oldTaskChunk = state.taskChunks[taskChunk.id]
 
@@ -117,7 +117,7 @@ export default {
           Vue.set(state.dayOrders, day, [])
         }
         state.dayOrders[day].splice(
-          insertIndex(state.dayOrders[day], taskChunk, state.taskChunks),
+          insertIndex(state.dayOrders[day], taskChunk, state.taskChunks, today),
           0,
           taskChunk.id
         )
@@ -125,7 +125,7 @@ export default {
 
       state.ready = true
     },
-    addTaskChunk (state, taskChunk) {
+    addTaskChunk (state, { taskChunk, today }) {
       if (state.taskChunks[taskChunk.id] !== undefined) {
         // task chunk exists already
         return
@@ -141,12 +141,12 @@ export default {
         Vue.set(state.dayOrders, day, [])
       }
       state.dayOrders[day].splice(
-        insertIndex(state.dayOrders[day], taskChunk, state.taskChunks),
+        insertIndex(state.dayOrders[day], taskChunk, state.taskChunks, today),
         0,
         taskChunk.id
       )
     },
-    updateTaskChunk (state, taskChunk) {
+    updateTaskChunk (state, { taskChunk, today }) {
       let oldTaskChunk = state.taskChunks[taskChunk.id]
       let oldDay = formatDayString(oldTaskChunk.day)
       Vue.delete(
@@ -163,7 +163,7 @@ export default {
         Vue.set(state.dayOrders, day, [])
       }
       state.dayOrders[day].splice(
-        insertIndex(state.dayOrders[day], taskChunk, state.taskChunks),
+        insertIndex(state.dayOrders[day], taskChunk, state.taskChunks, today),
         0,
         taskChunk.id
       )
@@ -195,7 +195,7 @@ export default {
     }
   },
   actions: {
-    fetchData ({ commit, dispatch, state }, options) {
+    fetchData ({ commit, dispatch, rootState, state }, options) {
       if (options === undefined) {
         options = {}
       }
@@ -205,7 +205,7 @@ export default {
       }
 
       dispatch('fetchTaskChunks', {
-        today: options.today
+        today: rootState.time.today
       })
     },
     /**
@@ -219,10 +219,6 @@ export default {
       { commit, state },
       { today, minDate, maxDate, pastDays, futureDays, incremental }
     ) {
-      if (today === undefined) {
-        today = new Date()
-      }
-
       let firstDay = state.firstDisplayedDay
       if (firstDay === null) {
         firstDay = subDays(today, 1)
@@ -246,16 +242,23 @@ export default {
         formatDayString(maxDate)
       ).then(taskChunks => {
         if (incremental !== true) {
-          commit('setTaskChunks', taskChunks)
+          commit('setTaskChunks', {
+            taskChunks: taskChunks,
+            today: today
+          })
         } else {
-          commit('addUpdateTaskChunks', taskChunks)
+          commit('addUpdateTaskChunks', {
+            taskChunks: taskChunks,
+            today: today
+          })
         }
       })
     },
-    navigateToDay ({ commit, dispatch }, day) {
+    navigateToDay ({ commit, dispatch, rootState }, day) {
       commit('setFirstDisplayedDay', day)
       dispatch('fetchTaskChunks', {
-        incremental: true
+        incremental: true,
+        today: rootState.time.today
       })
     },
     highlightChunk ({ commit }, chunk) {

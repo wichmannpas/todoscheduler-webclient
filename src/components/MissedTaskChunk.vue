@@ -10,7 +10,7 @@
         {{ chunk.task($store).name }}
       </span>
       <span class="mdc-list-item__secondary-text">
-        scheduled for {{ chunk.naturalDay() }}
+        scheduled for {{ chunk.naturalDay($store.state.time.today) }}
       </span>
     </span>
     <span class="mdc-list-item__meta">
