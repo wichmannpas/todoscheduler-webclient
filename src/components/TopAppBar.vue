@@ -26,8 +26,9 @@
         </nav>
         <nav class="mdc-drawer__content mdc-list">
           <Logout
+              v-if="$store.state.user.authenticated"
               @click.native="ui.drawer.open = false"
-               class="mdc-list-item" />
+              class="mdc-list-item" />
         </nav>
       </nav>
     </aside>
@@ -50,7 +51,8 @@
           <section
               class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end"
               role="toolbar">
-            <Sync />
+            <Sync
+                v-if="$store.state.user.authenticated" />
           </section>
         </section>
       </div>
