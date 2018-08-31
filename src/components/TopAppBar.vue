@@ -18,10 +18,10 @@
           </router-link>
           <router-link
               @click.native="ui.drawer.open = false"
-              :to="{ name: 'imprint' }"
-              v-if="useImprint"
+              :to="{ name: 'legalStatement' }"
+              v-if="useLegalStatement"
               class="mdc-list-item">
-            <i class="material-icons mdc-list-item__graphic" aria-hidden="true">location_city</i>Imprint
+            <i class="material-icons mdc-list-item__graphic" aria-hidden="true">location_city</i>Legal Statement
           </router-link>
         </nav>
         <nav class="mdc-drawer__content mdc-list">
@@ -63,7 +63,7 @@
 <script>
 import { drawer, topAppBar } from 'material-components-web'
 
-import { USE_IMPRINT } from '@/config'
+import { USE_LEGAL_STATEMENT } from '@/config'
 import Logout from '@/components/Logout'
 import Sync from '@/components/Sync'
 
@@ -82,8 +82,8 @@ export default {
     }
   },
   computed: {
-    useImprint: function () {
-      return USE_IMPRINT
+    useLegalStatement: function () {
+      return USE_LEGAL_STATEMENT
     }
   },
   mounted: function () {

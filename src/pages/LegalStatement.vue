@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h1>
-      Imprint
+      Legal Statement
     </h1>
 
     <h2>
@@ -10,23 +10,24 @@
     <p>
       This site is operated by:
     </p>
-    <pre>{{ imprintAddress }}</pre>
+    <pre>{{ address }}</pre>
     <p>
       No guarantees of any kind are provided.
       You use this service on your own accord.
       The operator might shut this instance down at any moment without notice.
+      The data privacy statement applies.
     </p>
   </div>
 </template>
 
 <script>
-import { IMPRINT_ADDRESS } from '@/config'
+import { OPERATOR_ADDRESS } from '@/config'
 
 export default {
-  name: 'Login',
+  name: 'LegalStatement',
   computed: {
-    imprintAddress: function () {
-      return IMPRINT_ADDRESS
+    address: function () {
+      return OPERATOR_ADDRESS
     }
   }
 }
