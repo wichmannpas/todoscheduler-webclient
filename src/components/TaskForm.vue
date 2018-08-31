@@ -126,6 +126,9 @@
           mdc-text-field-helper-text--persistent
           error">
       This start date is invalid.
+      <span v-if="errors.indexOf('deadline') >= 0">
+        Please make sure that it is not after the deadline.
+      </span>
     </p>
 
     <div
@@ -157,6 +160,9 @@
           mdc-text-field-helper-text--persistent
           error">
       This deadline is invalid.
+      <span v-if="errors.indexOf('start') >= 0">
+        Please make sure that it is not before the start date.
+      </span>
     </p>
   </form>
 </template>
