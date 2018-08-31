@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import Imprint from '@/pages/Imprint'
 import LandingPage from '@/pages/LandingPage'
+import LegalStatement from '@/pages/LegalStatement'
 import MainPage from '@/pages/MainPage'
 
 Vue.use(VueRouter)
@@ -20,9 +20,9 @@ export default new VueRouter({
       component: MainPage
     },
     {
-      path: '/imprint',
-      name: 'imprint',
-      component: Imprint
+      path: '/legal',
+      name: 'legalStatement',
+      component: LegalStatement
     }
   ]
 })
