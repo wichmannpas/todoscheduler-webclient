@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
+import offlinePlugin from './offline'
+
 import taskchunk from './taskchunk'
 import task from './task'
 import time from './time'
@@ -14,5 +16,8 @@ export default new Vuex.Store({
     task,
     time,
     user
-  }
+  },
+  plugins: [
+    offlinePlugin
+  ]
 })

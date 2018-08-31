@@ -58,6 +58,10 @@ function deleteTaskChunk (store, chunk, postpone) {
 
 function changeTaskChunkDuration (store, chunk, newDuration) {
   return new Promise(function (resolve, reject) {
+    if (!ensureAuthToken()) {
+      reject(new Error('no auth'))
+    }
+
     axios.patch(API_URL + '/task/chunk/' + chunk.id.toString() + '/', {
       duration: newDuration
     }).then(function (response) {
@@ -77,6 +81,10 @@ function changeTaskChunkDuration (store, chunk, newDuration) {
 
 function exchangeTaskChunk (store, chunk, exchange) {
   return new Promise(function (resolve, reject) {
+    if (!ensureAuthToken()) {
+      reject(new Error('no auth'))
+    }
+
     axios.patch(API_URL + '/task/chunk/' + chunk.id.toString() + '/', {
       day_order: exchange.dayOrder
     }).then(function (response) {
@@ -97,6 +105,10 @@ function exchangeTaskChunk (store, chunk, exchange) {
 
 function finishTaskChunk (store, chunk, newState) {
   return new Promise(function (resolve, reject) {
+    if (!ensureAuthToken()) {
+      reject(new Error('no auth'))
+    }
+
     axios.patch(API_URL + '/task/chunk/' + chunk.id.toString() + '/', {
       finished: newState
     }).then(function (response) {
@@ -116,6 +128,10 @@ function finishTaskChunk (store, chunk, newState) {
 
 function splitTaskChunk (store, chunk) {
   return new Promise(function (resolve, reject) {
+    if (!ensureAuthToken()) {
+      reject(new Error('no auth'))
+    }
+
     axios.post(
       API_URL + '/task/chunk/' + chunk.id.toString() + '/split/'
     ).then(function (response) {
@@ -133,6 +149,10 @@ function splitTaskChunk (store, chunk) {
 
 function updateTaskChunkDay (store, chunk, newDay) {
   return new Promise(function (resolve, reject) {
+    if (!ensureAuthToken()) {
+      reject(new Error('no auth'))
+    }
+
     axios.patch(API_URL + '/task/chunk/' + chunk.id.toString() + '/', {
       day: newDay
     }).then(function (response) {
