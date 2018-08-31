@@ -41,9 +41,9 @@
 </template>
 
 <script>
-import { isToday, isWeekend } from 'date-fns'
+import { isWeekend } from 'date-fns'
 
-import { isPastDay, naturalDay } from '@/utils'
+import { isBeforeDay, isToday, naturalDay } from '@/utils'
 import TaskChunk from '@/components/TaskChunk'
 
 export default {
@@ -56,8 +56,7 @@ export default {
   ],
   computed: {
     naturalDay () {
-      // TODO: use today from store
-      return naturalDay(this.day)
+      return naturalDay(this.day, this.$store.state.time.today)
     },
 
     taskChunks () {
@@ -82,12 +81,10 @@ export default {
     },
 
     past () {
-      // TODO: use today from store
-      return isPastDay(this.day)
+      return isBeforeDay(this.day, this.$store.state.time.today)
     },
     today () {
-      // TODO: use today from store
-      return isToday(this.day)
+      return isToday(this.day, this.$store.state.time.today)
     }
   },
   methods: {

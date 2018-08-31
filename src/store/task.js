@@ -19,8 +19,8 @@ export default {
 
     activeTasks: (state, getters) => getters.completelyScheduledTasks.filter(task => !task.finished()),
     finishedTasks: (state, getters) => getters.completelyScheduledTasks.filter(task => task.finished()),
-    futureTasks: (state, getters) => getters.incompletelyScheduledTasks.filter(task => task.startInFuture()),
-    openTasks: (state, getters) => getters.incompletelyScheduledTasks.filter(task => !task.startInFuture())
+    futureTasks: (state, getters) => today => getters.incompletelyScheduledTasks.filter(task => task.startInFuture(today)),
+    openTasks: (state, getters) => today => getters.incompletelyScheduledTasks.filter(task => !task.startInFuture(today))
   },
   mutations: {
     reset (state) {
@@ -29,7 +29,7 @@ export default {
     /**
      * requires no redundant tasks to be present
      */
-    setTasks (state, tasks) {
+    setTasks (state, { tasks, today }) {
       state.tasks = {}
       state.taskOrder = []
 
@@ -40,7 +40,7 @@ export default {
       // is fully populated
       tasks.forEach(task => {
         state.taskOrder.splice(
-          insertIndex(state.taskOrder, task, state.tasks),
+          insertIndex(state.taskOrder, task, state.tasks, today),
           0,
           task.id
         )
@@ -48,32 +48,32 @@ export default {
 
       state.ready = true
     },
-    addTask (state, task) {
+    addTask (state, { task, today }) {
       if (state.tasks[task.id] !== undefined) {
         // task exists already
         return
       }
 
       state.taskOrder.splice(
-        insertIndex(state.taskOrder, task, state.tasks),
+        insertIndex(state.taskOrder, task, state.tasks, today),
         0,
         task.id)
       Vue.set(state.tasks, task.id, task)
     },
-    updateTask (state, task) {
+    updateTask (state, { task, today }) {
       Vue.set(
         state.tasks,
         task.id,
         task)
 
       let orderIndex = state.taskOrder.indexOf(task.id)
-      if (insertIndex(state.taskOrder, task, state.tasks) !== orderIndex + 1) {
+      if (insertIndex(state.taskOrder, task, state.tasks, today) !== orderIndex + 1) {
         // affects ordering, update taskOrder
         Vue.delete(
           state.taskOrder,
           orderIndex)
         state.taskOrder.splice(
-          insertIndex(state.taskOrder, task, state.tasks),
+          insertIndex(state.taskOrder, task, state.tasks, today),
           0,
           task.id)
       }
@@ -88,7 +88,7 @@ export default {
     }
   },
   actions: {
-    fetchData ({ commit, state }, options) {
+    fetchData ({ commit, rootState, state }, options) {
       if (options === undefined) {
         options = {}
       }
@@ -98,7 +98,10 @@ export default {
       }
 
       fetchTasks().then(tasks => {
-        commit('setTasks', tasks)
+        commit('setTasks', {
+          tasks: tasks,
+          today: rootState.time.today
+        })
       })
     }
   }

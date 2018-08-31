@@ -31,7 +31,7 @@ export default {
       return this.$store.state.task.ready
     },
     missedTaskChunks () {
-      return this.$store.getters.missedTaskChunks
+      return this.$store.getters.missedTaskChunks(this.$store.state.time.today)
     }
   }
 }
