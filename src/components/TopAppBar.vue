@@ -18,6 +18,12 @@
           </router-link>
           <router-link
               @click.native="ui.drawer.open = false"
+              :to="{ name: 'dataPrivacyStatement' }"
+              class="mdc-list-item">
+            <i class="material-icons mdc-list-item__graphic" aria-hidden="true">location_city</i>Data Privacy Statement
+          </router-link>
+          <router-link
+              @click.native="ui.drawer.open = false"
               :to="{ name: 'legalStatement' }"
               v-if="useLegalStatement"
               class="mdc-list-item">

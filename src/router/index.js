@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import LandingPage from '@/pages/LandingPage'
+import DataPrivacyStatement from '@/pages/DataPrivacyStatement'
 import LegalStatement from '@/pages/LegalStatement'
 import MainPage from '@/pages/MainPage'
 
@@ -18,6 +19,11 @@ export default new VueRouter({
       path: '/main',
       name: 'main',
       component: MainPage
+    },
+    {
+      path: '/dataPrivacy',
+      name: 'dataPrivacyStatement',
+      component: DataPrivacyStatement
     },
     {
       path: '/legal',
