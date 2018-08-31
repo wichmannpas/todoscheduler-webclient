@@ -107,13 +107,13 @@ class Task {
     // deadline equals, use second criterion
 
     // second criterion: start
-    if (this.start === null && other.start !== null) {
+    if (this.start === null && other.start !== null && other.startInFuture()) {
       return -1
-    } else if (this.start !== null && other.start === null) {
+    } else if (this.start !== null && this.startInFuture() && other.start === null) {
       return 1
-    } else if (this.start < other.start) {
+    } else if (other.startInFuture() && this.start < other.start) {
       return -1
-    } else if (this.start > other.start) {
+    } else if (this.startInFuture() && this.start > other.start) {
       return 1
     }
     // start equals, use third criterion
