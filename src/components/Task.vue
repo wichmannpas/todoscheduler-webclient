@@ -48,7 +48,10 @@
         <span
             v-if="task.unscheduledDuration().comparedTo(0) > 0 && (task.unscheduledDuration().comparedTo(task.unfinishedDuration()) === 0 || task.unscheduledDuration().comparedTo(0) === 0)">
           <!-- shown when unscheduled duration is positive and remaining either 0 or equal to unscheduled //-->
-          ({{ task.unscheduledDuration().toNumber() }}h unscheduled)
+          (<span
+               v-if="task.unscheduledDuration().comparedTo(task.duration) !== 0"
+           >{{ task.unscheduledDuration().toNumber() }}h
+           </span>unscheduled)
         </span>
         <span
             v-else-if="task.unscheduledDuration().comparedTo(0) > 0 && task.unfinishedDuration().comparedTo(0) > 0">
@@ -56,7 +59,10 @@
         </span>
         <span
             v-else-if="task.unfinishedDuration().comparedTo(0) > 0">
-          ({{ task.unfinishedDuration().toNumber() }}h remaining)
+          (<span
+               v-if="task.unfinishedDuration().comparedTo(task.duration) !== 0"
+           >{{ task.unfinishedDuration().toNumber() }}h
+           </span>remaining)
         </span>
       </span>
     </span>
