@@ -25,4 +25,14 @@ span.task-chunk {
       }
     }
   }
+
+  .chunk-title {
+    font-weight: bold;
+
+    display: inline-block;
+    width: calc(100% - 5em);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
