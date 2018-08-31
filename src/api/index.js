@@ -79,8 +79,23 @@ function handleGenericErrors (error, resolve, reject, callback, ignoreAuth) {
   }
 }
 
+function registerOnlineHandlers (commit) {
+  axios.interceptors.response.use(response => {
+    commit('setOnline', true)
+
+    return response
+  }, error => {
+    if (error.response === undefined) {
+      commit('setOnline', false)
+    }
+
+    return Promise.reject(error)
+  })
+}
+
 export {
   checkAuth,
   ensureAuthToken,
-  handleGenericErrors
+  handleGenericErrors,
+  registerOnlineHandlers
 }

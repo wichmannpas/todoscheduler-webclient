@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import { registerOnlineHandlers } from '@/api'
 import Snackbar from '@/components/Snackbar'
 import TopAppBar from '@/components/TopAppBar'
 
@@ -20,6 +21,8 @@ export default {
   },
   created: function () {
     this.$store.dispatch('setTimeUpdateInterval')
+
+    registerOnlineHandlers(this.$store.commit)
 
     window.handleMissingAuth = () => {
       if (this.$route.name !== 'landing') {
