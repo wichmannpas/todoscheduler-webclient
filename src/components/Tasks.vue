@@ -14,6 +14,10 @@
             v-else
             class="material-icons headline-icon">expand_more</i>
         Open Tasks
+        <em
+            v-if="show.openTasks">
+          ({{ openTasks.length }})
+        </em>
       </h3>
       <TaskList
           v-if="show.openTasks"
@@ -31,6 +35,10 @@
             v-else
             class="material-icons headline-icon">expand_more</i>
         Active Tasks
+        <em
+            v-if="show.activeTasks">
+          ({{ activeTasks.length }})
+        </em>
       </h3>
       <TaskList
           v-if="show.activeTasks"
@@ -48,6 +56,10 @@
             v-else
             class="material-icons headline-icon">expand_more</i>
         Future Tasks
+        <em
+            v-if="show.futureTasks">
+          ({{ futureTasks.length }})
+        </em>
       </h3>
       <TaskList
           v-if="show.futureTasks"
@@ -65,6 +77,10 @@
             v-else
             class="material-icons headline-icon">expand_more</i>
         Finished Tasks
+        <em
+            v-if="show.finishedTasks">
+          ({{ finishedTasks.length }})
+        </em>
       </h3>
       <TaskList
           v-if="show.finishedTasks"
