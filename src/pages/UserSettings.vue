@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import { fetchData } from '@/fetch'
 import ChangePasswordForm from '@/components/ChangePasswordForm'
 import UserForm from '@/components/UserForm'
 
@@ -29,6 +30,9 @@ export default {
   components: {
     ChangePasswordForm,
     UserForm
+  },
+  created: function () {
+    fetchData(this.$store, this.$router)
   }
 }
 </script>
