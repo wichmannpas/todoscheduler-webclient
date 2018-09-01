@@ -87,8 +87,8 @@ class LoginPageTest(SeleniumTest):
         login_button.click()
         sleep(0.5)
 
-        self.assertIn(
-            'main',
+        self.assertNotIn(
+            'landing',
             self.selenium.current_url)
 
         self.assertIn(
@@ -96,12 +96,12 @@ class LoginPageTest(SeleniumTest):
             self.selenium.find_element_by_tag_name('body').text)
 
     def test_redirection_when_not_authenticated(self):
-        self.selenium.get(self.frontend_url + '/#/main')
+        self.selenium.get(self.frontend_url)
         sleep(1)
 
-        # hash-location does not contain main anymore
-        self.assertNotIn(
-            'main',
+        # hash-location contain landing now
+        self.assertIn(
+            'landing',
             self.selenium.current_url)
 
     def test_registration(self):
@@ -122,8 +122,8 @@ class LoginPageTest(SeleniumTest):
         register_button.click()
         sleep(3)
 
-        self.assertIn(
-            'main',
+        self.assertNotIn(
+            'landing',
             self.selenium.current_url)
 
         self.assertIn(
@@ -166,8 +166,8 @@ class LoginPageTest(SeleniumTest):
         register_button.click()
         sleep(3)
 
-        self.assertNotIn(
-            'main',
+        self.assertIn(
+            'landing',
             self.selenium.current_url)
 
         self.assertIn(
