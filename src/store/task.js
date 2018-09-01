@@ -26,6 +26,7 @@ export default {
   mutations: {
     reset (state) {
       state.ready = false
+      state.fetched = false
     },
     setTasksFetched (state) {
       state.fetched = true
