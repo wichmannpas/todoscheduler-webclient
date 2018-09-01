@@ -10,15 +10,24 @@
 
     <UserForm
         :user="$store.state.user.user" />
+
+    <h2>
+      Change Your Password
+    </h2>
+
+    <ChangePasswordForm
+        :user="$store.state.user.user" />
   </div>
 </template>
 
 <script>
+import ChangePasswordForm from '@/components/ChangePasswordForm'
 import UserForm from '@/components/UserForm'
 
 export default {
   name: 'UserSettings',
   components: {
+    ChangePasswordForm,
     UserForm
   }
 }
