@@ -12,13 +12,13 @@ export default new VueRouter({
   routes: [
     {
       path: '/',
-      name: 'landing',
-      component: LandingPage
-    },
-    {
-      path: '/main',
       name: 'main',
       component: MainPage
+    },
+    {
+      path: '/landing',
+      name: 'landing',
+      component: LandingPage
     },
     {
       path: '/dataPrivacy',
