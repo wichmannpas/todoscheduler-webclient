@@ -147,6 +147,18 @@
             icon="plus" />
       </a>
     </span>
+    <div class="labels">
+      <span
+          v-for="label in chunk.task($store).labels($store)"
+          :key="label.id"
+          class="label"
+          :style="{
+            background: '#' + label.color,
+            color: '#' + label.invertedColor()
+          }">
+        {{ label.title }}
+      </span>
+    </div>
     <Loading
         v-if="loading" />
   </span>
