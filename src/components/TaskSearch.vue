@@ -28,6 +28,7 @@
     <TaskSearchResult
         v-if="active"
         :tasks="searchResults" />
+    <hr v-if="active" />
   </div>
 </template>
 
