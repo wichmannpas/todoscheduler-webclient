@@ -133,7 +133,8 @@ export default {
         name: '',
         duration: 1,
         priority: 5,
-        start: null
+        start: null,
+        labelIds: []
       }
     }
   },
