@@ -8,7 +8,8 @@
         <span
             class="label"
             :style="{
-              background: '#' + label.color
+              background: '#' + label.color,
+              color: '#' + label.invertedColor()
             }">
           {{ label.title }}
         </span>

@@ -103,13 +103,11 @@
 
 <script>
 import Vue from 'vue'
-import { deserialize } from 'serializr'
 import { ripple, select, switchControl } from 'material-components-web'
 
 import { createTask, scheduleTask } from '@/api/task'
 import Loading from '@/components/Loading'
 import TaskForm from '@/components/TaskForm'
-import Task from '@/models/Task'
 
 export default {
   name: 'NewTaskDialog',
@@ -162,11 +160,11 @@ export default {
     createTask () {
       this.loading = true
 
-      createTask(this.$store, this.task).then((task) => {
+      createTask(this.$store, this.task).then(task => {
         if (this.schedule) {
           scheduleTask(
             this.$store,
-            deserialize(Task, task),
+            task,
             this.scheduleFor,
             this.task.duration
           ).then((response) => {
@@ -185,10 +183,10 @@ export default {
 
           this.closeDialog()
         }
-      }).catch((response) => {
+      }).catch(error => {
         this.loading = false
 
-        Vue.set(this, 'errors', Object.keys(response))
+        Vue.set(this, 'errors', Object.keys(error))
       })
     },
     closeDialog () {

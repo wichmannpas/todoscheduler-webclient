@@ -10,6 +10,9 @@ export default {
     labels: {},
     labelOrder: []
   },
+  getters: {
+    orderedLabels: state => state.labelOrder.map(labelId => state.labels[labelId])
+  },
   mutations: {
     reset (state) {
       state.ready = false

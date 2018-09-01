@@ -1,3 +1,4 @@
+import invert from 'invert-color'
 import {
   createModelSchema,
   identifier,
@@ -18,6 +19,10 @@ class Label {
    */
   compareTo (other) {
     return this.title.localeCompare(other.title)
+  }
+
+  invertedColor () {
+    return invert(this.color, true).substring(1)
   }
 }
 

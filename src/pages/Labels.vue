@@ -53,7 +53,7 @@ export default {
   },
   computed: {
     labels () {
-      return this.$store.state.label.labels
+      return this.$store.getters.orderedLabels
     }
   },
   methods: {
