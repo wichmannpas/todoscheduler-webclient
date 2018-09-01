@@ -126,7 +126,8 @@ class Task {
   }
 
   matchesFilter (filter) {
-    return this.name.indexOf(filter) >= 0
+    let lowerFilter = filter.toLocaleLowerCase()
+    return this.name.toLocaleLowerCase().indexOf(lowerFilter) >= 0
   }
 }
 
