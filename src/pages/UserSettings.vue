@@ -8,27 +8,32 @@
       You can change the settings of your user account on this page.
     </p>
 
-    <UserForm
-        :user="$store.state.user.user" />
+    <div v-if="$store.state.user.ready">
+      <UserForm
+          :user="$store.state.user.user" />
 
-    <h2>
-      Change Your Password
-    </h2>
+      <h2>
+        Change Your Password
+      </h2>
 
-    <ChangePasswordForm
-        :user="$store.state.user.user" />
+      <ChangePasswordForm
+          :user="$store.state.user.user" />
+    </div>
+    <Loading v-else />
   </div>
 </template>
 
 <script>
 import { fetchData } from '@/fetch'
 import ChangePasswordForm from '@/components/ChangePasswordForm'
+import Loading from '@/components/Loading'
 import UserForm from '@/components/UserForm'
 
 export default {
   name: 'UserSettings',
   components: {
     ChangePasswordForm,
+    Loading,
     UserForm
   },
   created: function () {
