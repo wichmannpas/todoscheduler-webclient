@@ -48,7 +48,7 @@ function loadPersistedLabels () {
     return
   }
 
-  return labels.map(label => deserialize(Label, label))
+  return Object.values(labels).map(label => deserialize(Label, label))
 }
 
 function restoreLabels (store) {
@@ -140,10 +140,11 @@ function restoreTaskChunks (store) {
 
 const offlinePlugin = store => {
   if (restoreUser(store)) {
+    restoreLabels(store)
+
     if (restoreTasks(store)) {
       restoreTaskChunks(store)
     }
-    restoreLabels(store)
   }
 
   store.subscribe(({ type }, state) => {

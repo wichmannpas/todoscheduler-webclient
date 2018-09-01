@@ -5,6 +5,7 @@ import {
 } from 'serializr'
 
 class Label {
+  id = -1
   title = ''
   description = ''
   color = ''
@@ -21,7 +22,8 @@ class Label {
 }
 
 createModelSchema(Label, {
-  title: identifier(),
+  id: identifier(),
+  title: primitive(),
   description: primitive(),
   color: primitive()
 })
