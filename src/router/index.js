@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import LandingPage from '@/pages/LandingPage'
 import DataPrivacyStatement from '@/pages/DataPrivacyStatement'
+import LandingPage from '@/pages/LandingPage'
 import LegalStatement from '@/pages/LegalStatement'
 import MainPage from '@/pages/MainPage'
+import UserSettings from '@/pages/UserSettings'
 
 Vue.use(VueRouter)
 
@@ -29,6 +30,11 @@ export default new VueRouter({
       path: '/legal',
       name: 'legalStatement',
       component: LegalStatement
+    },
+    {
+      path: '/settings',
+      name: 'userSettings',
+      component: UserSettings
     }
   ]
 })

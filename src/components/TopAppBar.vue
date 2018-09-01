@@ -31,6 +31,13 @@
           </router-link>
         </nav>
         <nav class="mdc-drawer__content mdc-list">
+          <router-link
+              v-if="$store.state.user.authenticated"
+              @click.native="ui.drawer.open = false"
+              :to="{ name: 'userSettings' }"
+              class="mdc-list-item">
+            <i class="material-icons mdc-list-item__graphic" aria-hidden="true">settings</i>User Settings
+          </router-link>
           <Logout
               v-if="$store.state.user.authenticated"
               @click.native="ui.drawer.open = false"
