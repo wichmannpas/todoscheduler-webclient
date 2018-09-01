@@ -86,7 +86,7 @@ function loadPersistedTaskChunks () {
 
   return Object.values(taskChunks).map(
     taskchunk => {
-      taskchunk.day_oder = taskchunk.dayOrder
+      taskchunk.day_order = taskchunk.dayOrder
       taskchunk.task = {
         id: taskchunk.taskId
       }
