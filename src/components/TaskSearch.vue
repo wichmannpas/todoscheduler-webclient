@@ -16,7 +16,12 @@
           class="mdc-text-field__input">
       <label
           for="search-string"
-          class="mdc-floating-label">Search Tasks</label>
+          class="mdc-floating-label">
+        Search Tasks
+        <span v-if="active && searchResults.length > 0">
+          ({{ searchResults.length }} results)
+        </span>
+      </label>
       <div class="mdc-line-ripple"></div>
     </div>
 
