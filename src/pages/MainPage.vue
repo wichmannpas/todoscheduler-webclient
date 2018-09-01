@@ -49,20 +49,35 @@ export default {
   },
   methods: {
     fetchData () {
-      fetchUser().then(user => {
-        this.$store.commit('setUser', user)
+      let delayedFetch = true
 
-        // fetch remaining data
+      if (this.$store.state.user.ready === true) {
+        // the user has been fetched since the last page load, the data
+        // relying on can be fetched immediately
         this.$store.dispatch('fetchData')
-      }).catch(error => {
-        if (error.message === 'no auth') {
-          this.$router.replace({
-            name: 'landing'
-          })
-        } else {
-          throw error
-        }
-      })
+        delayedFetch = false
+      }
+
+      if (this.$store.state.user.fetched !== true) {
+        // the user has not been fetched yet, fetch it
+        fetchUser().then(user => {
+          this.$store.commit('setUser', user)
+          this.$store.commit('setUserFetched', user)
+
+          if (delayedFetch) {
+            // fetch remaining data
+            this.$store.dispatch('fetchData')
+          }
+        }).catch(error => {
+          if (error.message === 'no auth') {
+            this.$router.replace({
+              name: 'landing'
+            })
+          } else {
+            throw error
+          }
+        })
+      }
     }
   }
 }
