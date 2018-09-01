@@ -10,25 +10,24 @@
 
     <NewLabel />
 
-    <div v-if="$store.state.label.ready">
-      <div v-if="labels.length > 0">
-        <EditableLabel
-            v-for="label in labels"
-            :key="label.title"
-            :label="label"/>
-      </div>
-      <div v-else>
-        <em>You have no labels yet.</em>
-      </div>
-    </div>
+    <LabelList
+        v-if="$store.state.label.ready"
+        @editLabel="editLabel"
+        :labels="labels" />
     <Loading v-else />
+
+    <EditLabelDialog
+        @close="editDialogActive = false"
+        v-if="editDialogActive"
+        :label="editedLabel" />
   </div>
 </template>
 
 <script>
 import { fetchData } from '@/fetch'
 import ChangePasswordForm from '@/components/ChangePasswordForm'
-import EditableLabel from '@/components/EditableLabel'
+import EditLabelDialog from '@/components/EditLabelDialog'
+import LabelList from '@/components/LabelList'
 import Loading from '@/components/Loading'
 import NewLabel from '@/components/NewLabel'
 import UserForm from '@/components/UserForm'
@@ -37,7 +36,8 @@ export default {
   name: 'UserSettings',
   components: {
     ChangePasswordForm,
-    EditableLabel,
+    EditLabelDialog,
+    LabelList,
     Loading,
     NewLabel,
     UserForm
@@ -45,9 +45,25 @@ export default {
   created: function () {
     fetchData(this.$store, this.$router)
   },
+  data: function () {
+    return {
+      editDialogActive: false,
+      editedLabel: null
+    }
+  },
   computed: {
     labels () {
       return this.$store.state.label.labels
+    }
+  },
+  methods: {
+    editLabel (label) {
+      if (this.editDialogActive === true) {
+        console.warn('not opening edit dialog as it is already active')
+        return
+      }
+      this.editedLabel = label
+      this.editDialogActive = true
     }
   }
 }

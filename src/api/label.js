@@ -40,7 +40,29 @@ function createLabel (store, label) {
   })
 }
 
+function updateLabel (store, label) {
+  return new Promise(function (resolve, reject) {
+    if (!ensureAuthToken()) {
+      reject(new Error('no auth'))
+    }
+
+    axios.put(API_URL + '/label/label/' + label.id.toString() + '/', {
+      title: label.title,
+      description: label.description,
+      color: label.color
+    }).then(function (response) {
+      if (response.status === 200) {
+        store.commit('updateLabel', deserialize(Label, response.data))
+        resolve()
+      } else {
+        reject(response.data)
+      }
+    }).catch(error => handleGenericErrors(error, resolve, reject))
+  })
+}
+
 export {
   createLabel,
-  fetchLabels
+  fetchLabels,
+  updateLabel
 }
