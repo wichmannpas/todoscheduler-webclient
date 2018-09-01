@@ -97,7 +97,8 @@ function createTask (store, task) {
       duration: task.duration,
       priority: task.priority,
       deadline: formatDayString(task.deadline),
-      start: formatDayString(task.start)
+      start: formatDayString(task.start),
+      labels: task.labelIds
     }).then(function (response) {
       if (response.status === 201) {
         let task = deserialize(Task, response.data)
@@ -124,7 +125,8 @@ function updateTask (store, task) {
       duration: task.duration,
       priority: task.priority,
       deadline: formatDayString(task.deadline),
-      start: formatDayString(task.start)
+      start: formatDayString(task.start),
+      labels: task.labelIds
     }).then(function (response) {
       if (response.status === 200) {
         store.commit('updateTask', {

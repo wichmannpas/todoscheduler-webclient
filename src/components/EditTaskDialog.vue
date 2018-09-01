@@ -111,7 +111,7 @@ export default {
 
       let task = Object.assign({}, this.editedTask)
       task.id = this.task.id
-      updateTask(this.$store, task).then((response) => {
+      updateTask(this.$store, task).then(response => {
         this.errors = []
 
         this.closeDialog()
