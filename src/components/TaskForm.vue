@@ -164,6 +164,49 @@
         Please make sure that it is not before the start date.
       </span>
     </p>
+
+    <strong>
+      Labels
+    </strong>
+    <div v-if="availableLabels.length > 0">
+      <div
+          v-for="label in availableLabels"
+          @change="updateTask"
+          :key="label.id"
+          class="mdc-form-field">
+        <div class="mdc-checkbox">
+          <input
+              :value="label.id"
+              v-model="labelIds"
+              type="checkbox"
+              class="mdc-checkbox__native-control"
+              :id="'label-' + label.id" />
+          <div class="mdc-checkbox__background">
+            <svg class="mdc-checkbox__checkmark"
+                 viewBox="0 0 24 24">
+              <path class="mdc-checkbox__checkmark-path"
+                    fill="none"
+                    d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+            </svg>
+            <div class="mdc-checkbox__mixedmark"></div>
+          </div>
+        </div>
+        <label
+            class="label shifted-left"
+            :for="'label-' + label.id"
+            :style="{
+              background: '#' + label.color,
+              color: '#' + label.invertedColor()
+            }">
+          {{ label.title }}
+        </label>
+      </div>
+    </div>
+    <div v-else>
+      <em>
+        Create new labels in the label management accessible via the main menu.
+      </em>
+    </div>
   </form>
 </template>
 
@@ -187,6 +230,7 @@ export default {
         durationInput: null,
         prioritySlider: null
       },
+      labelIds: this.value.labelIds,
       priority: this.value.priority
     }
   },
@@ -207,6 +251,9 @@ export default {
     }
   },
   computed: {
+    availableLabels () {
+      return this.$store.getters.orderedLabels
+    },
     deadlineString () {
       if (this.value.deadline === null) {
         return null
@@ -239,7 +286,8 @@ export default {
         duration: this.$refs.durationInput.value,
         priority: this.priority,
         deadline: deadline,
-        start: start
+        start: start,
+        labelIds: this.labelIds
       })
     }
   }

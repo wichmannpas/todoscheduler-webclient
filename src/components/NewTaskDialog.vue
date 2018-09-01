@@ -29,6 +29,8 @@
               :errors="errors"
           />
 
+          <hr />
+
           <div
               ref="schedule"
               class="mdc-switch">
