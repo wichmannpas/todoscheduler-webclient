@@ -26,12 +26,15 @@ export default {
     Register
   },
   created: function () {
-    // TODO: do not explicitly check auth here but rely on store to check authentication
-    checkAuth().then((auth) => {
-      if (auth) {
-        this.$router.push({ name: 'main' })
-      }
-    })
+    if (this.$store.state.user.authenticated) {
+      this.$router.push({ name: 'main' })
+    } else {
+      checkAuth().then((auth) => {
+        if (auth) {
+          this.$router.push({ name: 'main' })
+        }
+      })
+    }
   }
 }
 </script>
