@@ -1,7 +1,7 @@
 span.task-chunk {
   display: block;
 
-  min-height: 3.5em;
+  min-height: 4.5em;
 
   background: #d0f5ff;
 
@@ -33,6 +33,11 @@ span.task-chunk {
     width: calc(100% - 5em);
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .labels {
+    margin-top: 0.5em;
     white-space: nowrap;
   }
 }
