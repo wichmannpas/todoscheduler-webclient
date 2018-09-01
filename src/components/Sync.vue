@@ -23,6 +23,7 @@ export default {
 
       fetchUser().then(user => {
         this.$store.commit('setUser', user)
+        this.$store.commit('setUserFetched', user)
       })
 
       this.$store.dispatch('fetchData', {
