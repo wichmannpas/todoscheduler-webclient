@@ -1,30 +1,18 @@
 <template>
-  <div class="container-full">
+  <div>
     <Offline
         v-if="!$store.state.general.online" />
 
-    <div class="mdc-layout-grid">
-      <div class="mdc-layout-grid__inner">
-        <div
-            class="
-              task-cell
-              mdc-layout-grid__cell
-              mdc-layout-grid__cell--span-3-desktop
-              mdc-layout-grid__cell--span-12-tablet
-              mdc-layout-grid__cell--span-12-phone">
-          <MissedTaskChunks />
+    <div class="main-content">
+      <div
+          class="tasks">
+        <MissedTaskChunks />
 
-          <Tasks />
-        </div>
-        <div
-            class="
-              schedule-cell
-              mdc-layout-grid__cell
-              mdc-layout-grid__cell--span-9-desktop
-              mdc-layout-grid__cell--span-12-tablet
-              mdc-layout-grid__cell--span-12-phone">
-          <Schedule />
-        </div>
+        <Tasks />
+      </div>
+      <div
+          class="schedule">
+        <Schedule />
       </div>
     </div>
   </div>
@@ -35,6 +23,8 @@ import MissedTaskChunks from '@/components/MissedTaskChunks'
 import Offline from '@/components/Offline'
 import Schedule from '@/components/Schedule'
 import Tasks from '@/components/Tasks'
+
+import '@/assets/scss/main.scss'
 
 export default {
   name: 'MainPage',
