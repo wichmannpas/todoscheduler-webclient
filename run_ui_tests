@@ -4,8 +4,15 @@ TMPDIR=`mktemp -d`
 DISTDIR=`pwd`/dist
 TESTDIR=`pwd`/uitests
 
+GITHUB_API_URL=https://api.github.com
+if [ -n "$GITHUB_API_AUTH" ];
+then
+  # use the provided auth token to avoid running into the rate limit
+  GITHUB_API_URL=https://${GITHUB_API_AUTH}@api.github.com
+fi
+
 MINOR_API_VERSION=`cat API_VERSION`
-API_VERSION=${MINOR_API_VERSION}.$(curl -s https://api.github.com/repos/wichmannpas/todoscheduler/releases | jq -r '.[].tag_name' | grep "^v${MINOR_API_VERSION}" | cut -d. -f3 | sort -n | tail -n1)
+API_VERSION=${MINOR_API_VERSION}.$(curl -s $GITHUB_API_URL/repos/wichmannpas/todoscheduler/releases | jq -r '.[].tag_name' | grep "^v${MINOR_API_VERSION}" | cut -d. -f3 | sort -n | tail -n1)
 
 echo Using API version ${API_VERSION}
 
