@@ -6,6 +6,7 @@ import {
   custom,
   date,
   identifier,
+  list,
   primitive
 } from 'serializr'
 
@@ -18,11 +19,16 @@ class Task {
   priority = 5
   start = null
   deadline = null
+  labelIds = []
   scheduledDuration = Decimal(0)
   finishedDuration = Decimal(0)
 
   priorityString () {
     return priorityString(this.priority)
+  }
+
+  labels (store) {
+    return this.labelIds.map(labelId => store.state.label.labels[labelId])
   }
 
   /**
@@ -141,6 +147,7 @@ createModelSchema(Task, {
   priority: primitive(),
   start: date(),
   deadline: date(),
+  labelIds: alias('labels', list(primitive())),
   scheduledDuration: alias('scheduled_duration', custom(
     val => { return val.toFixed() },
     val => { return new Decimal(val) }

@@ -26,6 +26,16 @@
       <span
           class="mdc-list-item__primary-text">
         {{ task.name }}
+        <span
+            v-for="label in task.labels($store)"
+            :key="label.id"
+            :style="{
+              background: '#' + label.color,
+              color: '#' + label.invertedColor()
+            }"
+            class="label">
+          {{ label.title }}
+        </span>
       </span>
       <span
           class="mdc-list-item__secondary-text">
