@@ -22,7 +22,7 @@ export default {
   created: function () {
     this.$store.dispatch('setTimeUpdateInterval')
 
-    registerOnlineHandlers(this.$store.commit)
+    registerOnlineHandlers(this.$store)
 
     window.handleMissingAuth = () => {
       if (this.$route.name !== 'landing') {
