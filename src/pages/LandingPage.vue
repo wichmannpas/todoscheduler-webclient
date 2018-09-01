@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import { checkAuth } from '@/api'
 import Login from '@/components/Login'
 import Register from '@/components/Register'
 
@@ -23,6 +24,14 @@ export default {
   components: {
     Login,
     Register
+  },
+  created: function () {
+    // TODO: do not explicitly check auth here but rely on store to check authentication
+    checkAuth().then((auth) => {
+      if (auth) {
+        this.$router.push({ name: 'main' })
+      }
+    })
   }
 }
 </script>

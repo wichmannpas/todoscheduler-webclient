@@ -54,7 +54,6 @@
 <script>
 import { ripple, textField } from 'material-components-web'
 
-import { checkAuth } from '@/api'
 import { login } from '@/api/auth'
 import Loading from '@/components/Loading'
 import { showSnackbar } from '@/snackbar'
@@ -77,15 +76,6 @@ export default {
         password: ''
       }
     }
-  },
-  created: function () {
-    // TODO: move auth check to LoginPage
-    // TODO: do not explicitly check auth here but rely on store to check authentication
-    checkAuth().then((auth) => {
-      if (auth) {
-        this.$router.push({ name: 'main' })
-      }
-    })
   },
   mounted: function () {
     if (this.ui.usernameInput === null) {
