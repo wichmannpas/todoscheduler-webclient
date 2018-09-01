@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import DataPrivacyStatement from '@/pages/DataPrivacyStatement'
+import Labels from '@/pages/Labels'
 import LandingPage from '@/pages/LandingPage'
 import LegalStatement from '@/pages/LegalStatement'
 import MainPage from '@/pages/MainPage'
@@ -30,6 +31,11 @@ export default new VueRouter({
       path: '/legal',
       name: 'legalStatement',
       component: LegalStatement
+    },
+    {
+      path: '/labels',
+      name: 'labels',
+      component: Labels
     },
     {
       path: '/settings',

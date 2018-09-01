@@ -1,5 +1,6 @@
 import { deserialize } from 'serializr'
 
+import Label from '@/models/Label'
 import Task from '@/models/Task'
 import TaskChunk from '@/models/TaskChunk'
 import User from '@/models/User'
@@ -29,6 +30,36 @@ function restoreUser (store) {
   console.info('restored user from local storage')
 
   return true
+}
+
+function persistLabels (state) {
+  if (state.ready !== true) {
+    localStorage.removeItem('labels')
+
+    return
+  }
+
+  localStorage.setItem('labels', JSON.stringify(state.labels))
+}
+
+function loadPersistedLabels () {
+  let labels = JSON.parse(localStorage.getItem('labels'))
+  if (labels === null) {
+    return
+  }
+
+  return labels.map(label => deserialize(Label, label))
+}
+
+function restoreLabels (store) {
+  let labels = loadPersistedLabels()
+  if (labels !== undefined) {
+    store.commit('setLabels', labels)
+    console.info('restored labels from local storage')
+    return true
+  }
+
+  return false
 }
 
 function persistTasks (state) {
@@ -112,6 +143,7 @@ const offlinePlugin = store => {
     if (restoreTasks(store)) {
       restoreTaskChunks(store)
     }
+    restoreLabels(store)
   }
 
   store.subscribe(({ type }, state) => {
@@ -121,6 +153,8 @@ const offlinePlugin = store => {
       localStorage.removeItem('taskchunks')
     } else if (type === 'setUser') {
       persistUser(state.user)
+    } else if (type.toLowerCase().indexOf('label') >= 0) {
+      persistLabels(state.label)
     } else if (type.toLowerCase().indexOf('taskchunk') >= 0) {
       persistTaskChunks(state.taskchunk)
     } else if (type.toLowerCase().indexOf('task') >= 0) {

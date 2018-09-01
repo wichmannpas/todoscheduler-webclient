@@ -34,6 +34,13 @@
           <router-link
               v-if="$store.state.user.authenticated"
               @click.native="ui.drawer.open = false"
+              :to="{ name: 'labels' }"
+              class="mdc-list-item">
+            <i class="material-icons mdc-list-item__graphic" aria-hidden="true">label</i>Manage Labels
+          </router-link>
+          <router-link
+              v-if="$store.state.user.authenticated"
+              @click.native="ui.drawer.open = false"
               :to="{ name: 'userSettings' }"
               class="mdc-list-item">
             <i class="material-icons mdc-list-item__graphic" aria-hidden="true">settings</i>User Settings
