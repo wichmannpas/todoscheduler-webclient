@@ -3,6 +3,8 @@
       v-if="ready">
     <NewTask />
 
+    <TaskSearch />
+
     <div class="mdc-list-group">
       <h3
           @click="show.openTasks = !show.openTasks"
@@ -108,6 +110,7 @@ import Loading from '@/components/Loading'
 import NewTask from '@/components/NewTask'
 import ScheduleTaskDialog from '@/components/ScheduleTaskDialog'
 import TaskList from '@/components/TaskList'
+import TaskSearch from '@/components/TaskSearch'
 
 export default {
   name: 'Tasks',
@@ -116,7 +119,8 @@ export default {
     Loading,
     NewTask,
     ScheduleTaskDialog,
-    TaskList
+    TaskList,
+    TaskSearch
   },
   data: function () {
     return {

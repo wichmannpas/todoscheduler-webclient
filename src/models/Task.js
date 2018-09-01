@@ -124,6 +124,10 @@ class Task {
     // fourth criterion: name
     return this.name.localeCompare(other.name)
   }
+
+  matchesFilter (filter) {
+    return this.name.indexOf(filter) >= 0
+  }
 }
 
 createModelSchema(Task, {

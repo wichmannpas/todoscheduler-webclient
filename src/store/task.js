@@ -11,7 +11,7 @@ export default {
     taskOrder: []
   },
   getters: {
-    orderedTasks: (state) => state.taskOrder.map(taskId => state.tasks[taskId]),
+    orderedTasks: state => state.taskOrder.map(taskId => state.tasks[taskId]),
 
     completelyScheduledTasks: (state, getters) => getters.orderedTasks.filter(
       task => task.completelyScheduled()),
@@ -21,7 +21,9 @@ export default {
     activeTasks: (state, getters) => getters.completelyScheduledTasks.filter(task => !task.finished()),
     finishedTasks: (state, getters) => getters.completelyScheduledTasks.filter(task => task.finished()),
     futureTasks: (state, getters) => today => getters.incompletelyScheduledTasks.filter(task => task.startInFuture(today)),
-    openTasks: (state, getters) => today => getters.incompletelyScheduledTasks.filter(task => !task.startInFuture(today))
+    openTasks: (state, getters) => today => getters.incompletelyScheduledTasks.filter(task => !task.startInFuture(today)),
+
+    filteredTasks: (state, getters) => filter => getters.orderedTasks.filter(task => task.matchesFilter(filter))
   },
   mutations: {
     reset (state) {
