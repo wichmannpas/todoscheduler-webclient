@@ -86,10 +86,9 @@
             icon="check" />
       </a>
       <a
-          v-if="!task.completelyScheduled()"
           @click="scheduleTask"
           class="task-action tooltip tooltip-left"
-          data-tooltip="Schedule">
+          :data-tooltip="task.completelyScheduled() ? 'Schedule more' : 'Schedule'">
         <font-awesome-icon
             icon="play" />
       </a>
