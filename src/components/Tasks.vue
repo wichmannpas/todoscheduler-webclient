@@ -3,7 +3,9 @@
       v-if="ready">
     <NewTask />
 
-    <TaskSearch />
+    <TaskSearch
+        @editTask="editTask"
+        @scheduleTask="scheduleTask" />
 
     <div class="mdc-list-group">
       <h3

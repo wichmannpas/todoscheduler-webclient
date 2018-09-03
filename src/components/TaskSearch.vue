@@ -27,6 +27,8 @@
 
     <TaskSearchResult
         v-if="active"
+        @editTask="editTask"
+        @scheduleTask="scheduleTask"
         :tasks="searchResults" />
     <hr v-if="active" />
   </div>
@@ -65,6 +67,14 @@ export default {
     },
     active () {
       return this.searchString.length > 0
+    }
+  },
+  methods: {
+    editTask (task) {
+      this.$emit('editTask', task)
+    },
+    scheduleTask (task) {
+      this.$emit('scheduleTask', task)
     }
   }
 }
