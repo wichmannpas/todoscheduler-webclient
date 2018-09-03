@@ -1,6 +1,6 @@
 {
   "name": "todoscheduler",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "Manage and schedule your tasks to increase your productivity",
   "author": "Pascal Wichmann <git@pa-w.de>",
   "private": true,
