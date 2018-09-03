@@ -39,8 +39,9 @@ class Task {
   defaultScheduleDuration (user) {
     let unscheduledDuration = this.unscheduledDuration()
     if (
-      user.defaultScheduleFullDurationMax.comparedTo(unscheduledDuration) >= 0 ||
-      user.defaultScheduleDuration.comparedTo(unscheduledDuration) >= 0
+      unscheduledDuration.comparedTo(0) > 0 &&
+      (user.defaultScheduleFullDurationMax.comparedTo(unscheduledDuration) >= 0 ||
+       user.defaultScheduleDuration.comparedTo(unscheduledDuration) >= 0)
     ) {
       return unscheduledDuration
     }
