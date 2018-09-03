@@ -2,6 +2,8 @@
   <div
       v-if="tasks.length > 0">
     <TaskList
+        @editTask="editTask"
+        @scheduleTask="scheduleTask"
         :tasks="tasks" />
   </div>
   <div v-else>
@@ -21,6 +23,14 @@ export default {
   ],
   components: {
     TaskList
+  },
+  methods: {
+    editTask (task) {
+      this.$emit('editTask', task)
+    },
+    scheduleTask (task) {
+      this.$emit('scheduleTask', task)
+    }
   }
 }
 </script>
