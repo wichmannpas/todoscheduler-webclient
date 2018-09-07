@@ -13,6 +13,7 @@
           v-model="searchString"
           id="search-string"
           type="text"
+          @keyup.escape="clearSearch"
           class="mdc-text-field__input">
       <label
           for="search-string"
@@ -22,6 +23,10 @@
           ({{ searchResults.length }} results)
         </span>
       </label>
+      <span
+          v-if="active"
+          class="textfield-clear material-icons"
+          @click="clearSearch">clear</span>
       <div class="mdc-line-ripple"></div>
     </div>
 
@@ -70,6 +75,9 @@ export default {
     }
   },
   methods: {
+    clearSearch () {
+      this.searchString = ''
+    },
     editTask (task) {
       this.$emit('editTask', task)
     },
