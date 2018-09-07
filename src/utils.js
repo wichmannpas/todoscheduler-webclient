@@ -44,7 +44,7 @@ function naturalDay (day, today) {
   if (dayDelta <= 6 && dayDelta >= 0) {
     return format(day, 'dddd')
   }
-  let result = format(day, 'MMMM D')
+  let result = format(day, 'ddd, MMMM D')
 
   let year = format(day, 'YYYY')
   if (year !== format(today, 'YYYY')) {
