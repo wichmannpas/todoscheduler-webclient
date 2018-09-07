@@ -37,7 +37,7 @@
       Furthermore, a truncated version of your IP address is stored.
       Due to the truncation, this IP address can not be affiliated with you.
       It is required to store this anonymized IP address in order to debug and resolve problems in the operation of the service.
-      In addition, this log records contain the time of your request. The log data is deleted after a month.
+      In addition, these log records contain the time of your request. The log data is deleted after a month.
     </p>
 
     <h2>
@@ -46,7 +46,7 @@
 
     <p>
       In order to protect TodoScheduler, you need to log in to this service.
-      When you do that, a unique authentication token is generated on the server that can be used by yourself to authenticate yourself against the server.
+      When you do that, a unique authentication token is generated on the server that can be used by yourself to authenticate against the server.
       This token is stored in the local storage of your browser to be able to identify you when opening TodoScheduler in a new window or within a new browser session.
     </p>
     <p>
