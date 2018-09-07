@@ -20,7 +20,7 @@
           class="mdc-floating-label">
         Search Tasks
         <span v-if="active && searchResults.length > 0">
-          ({{ searchResults.length }} results)
+          ({{ searchResults.length }} result<span v-if="searchResults.length > 1">s</span>)
         </span>
       </label>
       <span
