@@ -73,11 +73,13 @@ export default {
           label.id)
       }
     },
-    deleteLabel (state, label) {
+    deleteLabel (state, labelId) {
+      Vue.delete(
+        state.labelOrder,
+        state.labelOrder.indexOf(labelId))
       Vue.delete(
         state.labels,
-        state.labels.findIndex(lab => lab.title === label.title)
-      )
+        labelId)
     }
   },
   actions: {

@@ -28,7 +28,7 @@ class Task {
   }
 
   labels (store) {
-    return this.labelIds.map(labelId => store.state.label.labels[labelId])
+    return this.labelIds.map(labelId => store.state.label.labels[labelId]).filter(label => label !== undefined)
   }
 
   /**

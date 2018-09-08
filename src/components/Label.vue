@@ -19,10 +19,21 @@
         {{ label.description }}
       </span>
     </span>
+    <span class="mdc-list-item__meta">
+      <a
+          @click="deleteLabel"
+          class="label-action tooltip tooltip-left"
+          data-tooltip="Delete Label">
+        <font-awesome-icon
+            icon="times" />
+      </a>
+    </span>
   </li>
 </template>
 
 <script>
+import { deleteLabel } from '@/api/label'
+
 export default {
   name: 'Label',
   props: [
@@ -30,7 +41,24 @@ export default {
   ],
   methods: {
     editLabel (event) {
+      if (
+        event.target.classList.contains('label-action') ||
+        event.target.parentElement.classList.contains('label-action') ||
+        event.target.parentElement.parentElement.classList.contains('label-action') ||
+        event.target.parentElement.parentElement.parentElement.classList.contains('label-action')
+      ) {
+        // another action button was clicked, do not edit
+        return
+      }
+
       this.$emit('editLabel', this.label)
+    },
+    deleteLabel () {
+      if (!confirm('Do you really want to delete this label?')) {
+        return
+      }
+
+      deleteLabel(this.$store, this.label)
     }
   }
 }

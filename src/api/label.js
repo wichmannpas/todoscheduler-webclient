@@ -61,8 +61,26 @@ function updateLabel (store, label) {
   })
 }
 
+function deleteLabel (store, label) {
+  return new Promise(function (resolve, reject) {
+    if (!ensureAuthToken()) {
+      reject(new Error('no auth'))
+    }
+
+    axios.delete(API_URL + '/label/label/' + label.id.toString() + '/').then(response => {
+      if (response.status === 204) {
+        store.commit('deleteLabel', label.id)
+        resolve()
+      } else {
+        reject(response.data)
+      }
+    }).catch(error => handleGenericErrors(error, resolve, reject))
+  })
+}
+
 export {
   createLabel,
+  deleteLabel,
   fetchLabels,
   updateLabel
 }
