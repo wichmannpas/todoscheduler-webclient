@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { list } from 'material-components-web'
+import { MDCList } from '@material/list'
 
 import MissedTaskChunk from '@/components/MissedTaskChunk'
 
@@ -31,7 +31,7 @@ export default {
   },
   mounted: function () {
     if (this.ui.list === null) {
-      this.ui.list = new list.MDCList(this.$refs.list)
+      this.ui.list = new MDCList(this.$refs.list)
     }
   }
 }

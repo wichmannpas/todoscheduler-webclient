@@ -105,7 +105,9 @@
 
 <script>
 import Vue from 'vue'
-import { ripple, select, switchControl } from 'material-components-web'
+import { MDCRipple } from '@material/ripple'
+import { MDCSelect } from '@material/select'
+import { MDCSwitch } from '@material/switch'
 
 import { createTask, scheduleTask } from '@/api/task'
 import Loading from '@/components/Loading'
@@ -140,18 +142,18 @@ export default {
   },
   mounted: function () {
     if (this.ui.cancelButton === null) {
-      this.ui.cancelButton = new ripple.MDCRipple(this.$refs.cancel)
+      this.ui.cancelButton = new MDCRipple(this.$refs.cancel)
     }
     if (this.ui.submitButton === null) {
-      this.ui.submitButton = new ripple.MDCRipple(this.$refs.submit)
+      this.ui.submitButton = new MDCRipple(this.$refs.submit)
     }
 
     if (this.ui.scheduleSwitch === null) {
-      this.ui.scheduleSwitch = new switchControl.MDCSwitch(this.$refs.schedule)
+      this.ui.scheduleSwitch = new MDCSwitch(this.$refs.schedule)
     }
 
     if (this.ui.scheduleForSelect === null) {
-      this.ui.scheduleForSelect = new select.MDCSelect(this.$refs.scheduleFor)
+      this.ui.scheduleForSelect = new MDCSelect(this.$refs.scheduleFor)
     }
   },
   computed: {

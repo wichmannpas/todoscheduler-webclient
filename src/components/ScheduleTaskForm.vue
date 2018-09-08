@@ -92,7 +92,8 @@
 </template>
 
 <script>
-import { select, textField } from 'material-components-web'
+import { MDCSelect } from '@material/select'
+import { MDCTextField } from '@material/textfield'
 import Vue from 'vue'
 
 import { scheduleTask } from '@/api/task'
@@ -126,10 +127,10 @@ export default {
   },
   mounted: function () {
     if (this.ui.scheduleForInput === null) {
-      this.ui.scheduleForInput = new select.MDCSelect(this.$refs.scheduleFor)
+      this.ui.scheduleForInput = new MDCSelect(this.$refs.scheduleFor)
     }
     if (this.ui.durationInput === null) {
-      this.ui.durationInput = new textField.MDCTextField(this.$refs.duration)
+      this.ui.durationInput = new MDCTextField(this.$refs.duration)
     }
 
     this.$refs.durationInput.focus()

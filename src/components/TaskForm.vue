@@ -211,7 +211,8 @@
 </template>
 
 <script>
-import { slider, textField } from 'material-components-web'
+import { MDCSlider } from '@material/slider'
+import { MDCTextField } from '@material/textfield'
 
 import { formatDayString, priorityString } from '@/utils'
 
@@ -236,13 +237,13 @@ export default {
   },
   mounted: function () {
     if (this.ui.nameInput === null) {
-      this.ui.nameInput = new textField.MDCTextField(this.$refs.name)
+      this.ui.nameInput = new MDCTextField(this.$refs.name)
     }
     if (this.ui.durationInput === null) {
-      this.ui.durationInput = new textField.MDCTextField(this.$refs.duration)
+      this.ui.durationInput = new MDCTextField(this.$refs.duration)
     }
     if (this.ui.prioritySlider === null) {
-      this.ui.prioritySlider = new slider.MDCSlider(this.$refs.priority)
+      this.ui.prioritySlider = new MDCSlider(this.$refs.priority)
       this.ui.prioritySlider.listen('MDCSlider:change', () => this.updateTask())
     }
 

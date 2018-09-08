@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { textField } from 'material-components-web'
+import { MDCTextField, MDCTextFieldIcon } from '@material/textfield'
 
 import TaskSearchResult from '@/components/TaskSearchResult'
 
@@ -60,10 +60,10 @@ export default {
   },
   mounted: function () {
     if (this.ui.searchInput === null) {
-      this.ui.searchInput = new textField.MDCTextField(this.$refs.search)
+      this.ui.searchInput = new MDCTextField(this.$refs.search)
     }
     if (this.ui.searchInputIcon === null) {
-      this.ui.searchInputIcon = new textField.MDCTextFieldIcon(this.$refs.searchIcon)
+      this.ui.searchInputIcon = new MDCTextFieldIcon(this.$refs.searchIcon)
     }
   },
   computed: {

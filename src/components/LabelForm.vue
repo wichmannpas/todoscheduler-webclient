@@ -99,7 +99,7 @@
 </template>
 
 <script>
-import { textField } from 'material-components-web'
+import { MDCTextField } from '@material/textfield'
 
 import { formatDayString, priorityString } from '@/utils'
 
@@ -123,13 +123,13 @@ export default {
   },
   mounted: function () {
     if (this.ui.titleInput === null) {
-      this.ui.titleInput = new textField.MDCTextField(this.$refs.title)
+      this.ui.titleInput = new MDCTextField(this.$refs.title)
     }
     if (this.ui.descriptionInput === null) {
-      this.ui.descriptionInput = new textField.MDCTextField(this.$refs.description)
+      this.ui.descriptionInput = new MDCTextField(this.$refs.description)
     }
     if (this.ui.colorInput === null) {
-      this.ui.colorInput = new textField.MDCTextField(this.$refs.color)
+      this.ui.colorInput = new MDCTextField(this.$refs.color)
     }
 
     if (this.autofocus) {
