@@ -82,6 +82,12 @@
     </p>
 
     <div
+        v-if="missesDeadline"
+        class="error">
+      This task chunk will miss the tasks deadline.
+    </div>
+
+    <div
         v-if="longDuration"
         class="warning">
       You are about to schedule a very long duration to a single day!
@@ -92,13 +98,14 @@
 </template>
 
 <script>
+import { addDays } from 'date-fns'
 import { MDCSelect } from '@material/select'
 import { MDCTextField } from '@material/textfield'
 import Vue from 'vue'
 
 import { scheduleTask } from '@/api/task'
 import Loading from '@/components/Loading'
-import { formatDayString } from '@/utils'
+import { isAfterDay, formatDayString } from '@/utils'
 
 export default {
   name: 'ScheduleTaskForm',
@@ -138,6 +145,23 @@ export default {
   computed: {
     longDuration () {
       return this.duration > this.$store.state.user.user.workhoursWeekday.toNumber()
+    },
+    missesDeadline () {
+      if (this.task.deadline === null) {
+        // task has no deadline that can be missed
+        return false
+      }
+
+      let scheduleForDate
+      if (this.scheduleFor === 'today') {
+        scheduleForDate = this.$store.state.time.today
+      } else if (this.scheduleFor === 'tomorrow') {
+        scheduleForDate = addDays(this.$store.state.time.today, 1)
+      } else {
+        scheduleForDate = new Date(this.scheduleForDate)
+      }
+
+      return isAfterDay(scheduleForDate, this.task.deadline)
     }
   },
   methods: {
