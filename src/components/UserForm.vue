@@ -140,7 +140,8 @@
 </template>
 
 <script>
-import { ripple, textField } from 'material-components-web'
+import { MDCRipple } from '@material/ripple'
+import { MDCTextField } from '@material/textfield'
 
 import Loading from '@/components/Loading'
 import User from '@/models/User'
@@ -171,20 +172,20 @@ export default {
   },
   mounted: function () {
     if (this.ui.defaultScheduleDurationInput === null) {
-      this.ui.defaultScheduleDurationInput = new textField.MDCTextField(this.$refs.defaultScheduleDuration)
+      this.ui.defaultScheduleDurationInput = new MDCTextField(this.$refs.defaultScheduleDuration)
     }
     if (this.ui.defaultScheduleFullDurationMaxInput === null) {
-      this.ui.defaultScheduleFullDurationMaxInput = new textField.MDCTextField(this.$refs.defaultScheduleFullDurationMax)
+      this.ui.defaultScheduleFullDurationMaxInput = new MDCTextField(this.$refs.defaultScheduleFullDurationMax)
     }
     if (this.ui.workhoursWeekdayInput === null) {
-      this.ui.workhoursWeekdayInput = new textField.MDCTextField(this.$refs.workhoursWeekday)
+      this.ui.workhoursWeekdayInput = new MDCTextField(this.$refs.workhoursWeekday)
     }
     if (this.ui.workhoursWeekendInput === null) {
-      this.ui.workhoursWeekendInput = new textField.MDCTextField(this.$refs.workhoursWeekend)
+      this.ui.workhoursWeekendInput = new MDCTextField(this.$refs.workhoursWeekend)
     }
 
     if (this.ui.submitButton === null) {
-      this.ui.submitButton = new ripple.MDCRipple(this.$refs.submit)
+      this.ui.submitButton = new MDCRipple(this.$refs.submit)
     }
   },
   methods: {

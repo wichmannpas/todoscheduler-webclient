@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { snackbar } from 'material-components-web'
+import { MDCSnackbar } from '@material/snackbar'
 
 import { initSnackbar } from '@/snackbar'
 
@@ -29,7 +29,7 @@ export default {
   },
   mounted: function () {
     if (this.ui.snackbar === null) {
-      this.ui.snackbar = new snackbar.MDCSnackbar(this.$refs.snackbar)
+      this.ui.snackbar = new MDCSnackbar(this.$refs.snackbar)
       initSnackbar(this.ui.snackbar)
     }
   }

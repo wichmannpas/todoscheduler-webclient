@@ -63,7 +63,7 @@
 
 <script>
 import Vue from 'vue'
-import { ripple } from 'material-components-web'
+import { MDCRipple } from '@material/ripple'
 
 import { createLabel } from '@/api/label'
 import Loading from '@/components/Loading'
@@ -92,10 +92,10 @@ export default {
   },
   mounted: function () {
     if (this.ui.cancelButton === null) {
-      this.ui.cancelButton = new ripple.MDCRipple(this.$refs.cancel)
+      this.ui.cancelButton = new MDCRipple(this.$refs.cancel)
     }
     if (this.ui.submitButton === null) {
-      this.ui.submitButton = new ripple.MDCRipple(this.$refs.submit)
+      this.ui.submitButton = new MDCRipple(this.$refs.submit)
     }
   },
   computed: {

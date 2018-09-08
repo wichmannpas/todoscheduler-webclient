@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { ripple } from 'material-components-web'
+import { MDCRipple } from '@material/ripple'
 
 import NewLabelDialog from '@/components/NewLabelDialog'
 
@@ -34,7 +34,7 @@ export default {
   },
   mounted: function () {
     if (this.ui.newLabelButton === null) {
-      this.ui.newLabelButton = new ripple.MDCRipple(this.$refs.newLabel)
+      this.ui.newLabelButton = new MDCRipple(this.$refs.newLabel)
     }
   }
 }

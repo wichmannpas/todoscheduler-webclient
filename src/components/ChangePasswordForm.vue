@@ -78,7 +78,8 @@
 </template>
 
 <script>
-import { ripple, textField } from 'material-components-web'
+import { MDCRipple } from '@material/ripple'
+import { MDCTextField } from '@material/textfield'
 
 import Loading from '@/components/Loading'
 import { updateUser } from '@/api/user'
@@ -109,14 +110,14 @@ export default {
   },
   mounted: function () {
     if (this.ui.passwordInput === null) {
-      this.ui.passwordInput = new textField.MDCTextField(this.$refs.password)
+      this.ui.passwordInput = new MDCTextField(this.$refs.password)
     }
     if (this.ui.password2Input === null) {
-      this.ui.password2Input = new textField.MDCTextField(this.$refs.password2)
+      this.ui.password2Input = new MDCTextField(this.$refs.password2)
     }
 
     if (this.ui.submitButton === null) {
-      this.ui.submitButton = new ripple.MDCRipple(this.$refs.submit)
+      this.ui.submitButton = new MDCRipple(this.$refs.submit)
     }
   },
   methods: {

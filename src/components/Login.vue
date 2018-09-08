@@ -52,7 +52,8 @@
 </template>
 
 <script>
-import { ripple, textField } from 'material-components-web'
+import { MDCRipple } from '@material/ripple'
+import { MDCTextField } from '@material/textfield'
 
 import { login } from '@/api/auth'
 import Loading from '@/components/Loading'
@@ -79,14 +80,14 @@ export default {
   },
   mounted: function () {
     if (this.ui.usernameInput === null) {
-      this.ui.usernameInput = new textField.MDCTextField(this.$refs.username)
+      this.ui.usernameInput = new MDCTextField(this.$refs.username)
     }
     if (this.ui.passwordInput === null) {
-      this.ui.passwordInput = new textField.MDCTextField(this.$refs.password)
+      this.ui.passwordInput = new MDCTextField(this.$refs.password)
     }
 
     if (this.ui.loginButton === null) {
-      this.ui.loginButton = new ripple.MDCRipple(this.$refs.login)
+      this.ui.loginButton = new MDCRipple(this.$refs.login)
     }
   },
   methods: {

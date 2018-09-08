@@ -81,7 +81,8 @@
 </template>
 
 <script>
-import { drawer, topAppBar } from 'material-components-web'
+import { MDCTemporaryDrawer } from '@material/drawer'
+import { MDCTopAppBar } from '@material/top-app-bar'
 
 import { USE_LEGAL_STATEMENT } from '@/config'
 import Logout from '@/components/Logout'
@@ -108,11 +109,11 @@ export default {
   },
   mounted: function () {
     if (this.ui.topBar === null) {
-      this.ui.topBar = new topAppBar.MDCTopAppBar(this.$refs.topBar)
+      this.ui.topBar = new MDCTopAppBar(this.$refs.topBar)
     }
 
     if (this.ui.drawer === null) {
-      this.ui.drawer = new drawer.MDCTemporaryDrawer(this.$refs.drawer)
+      this.ui.drawer = new MDCTemporaryDrawer(this.$refs.drawer)
       this.$refs.menuButton.addEventListener('click', () => {
         this.ui.drawer.open = true
       })

@@ -38,7 +38,7 @@
 <script>
 import { addDays, subDays } from 'date-fns'
 
-import { chips } from 'material-components-web'
+import { MDCChipSet } from '@material/chips'
 
 export default {
   name: 'ScheduleNavigation',
@@ -54,7 +54,7 @@ export default {
   },
   mounted: function () {
     if (this.ui.chipSet === null) {
-      this.ui.chipSet = new chips.MDCChipSet(this.$refs.chipSet)
+      this.ui.chipSet = new MDCChipSet(this.$refs.chipSet)
 
       // the trailing icon removes the chip from the set by default, thus
       // the --trailing class must be added after initializing MDCChipSet
