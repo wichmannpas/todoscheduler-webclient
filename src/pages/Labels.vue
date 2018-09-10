@@ -33,7 +33,7 @@ import NewLabel from '@/components/NewLabel'
 import UserForm from '@/components/UserForm'
 
 export default {
-  name: 'UserSettings',
+  name: 'Labels',
   components: {
     ChangePasswordForm,
     EditLabelDialog,
