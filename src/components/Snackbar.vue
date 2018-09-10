@@ -1,36 +1,50 @@
 <template>
   <div
-      ref="snackbar"
-      class="mdc-snackbar"
+      v-if="active"
+      class="mdc-snackbar mdc-snackbar--active"
+      :class="{
+        'mdc-snackbar--multiline': multiline
+      }"
       aria-live="assertive"
-      aria-atomic="true"
-      aria-hidden="true">
+      aria-atomic="true">
     <div class="mdc-snackbar__text">
-    </div>
-    <div class="mdc-snackbar__action-wrapper">
-      <button type="button" class="mdc-snackbar__action-button"></button>
+      {{ text }}
     </div>
   </div>
 </template>
 
 <script>
-import { MDCSnackbar } from '@material/snackbar'
-
 import { initSnackbar } from '@/snackbar'
 
 export default {
   name: 'Snackbar',
   data: function () {
     return {
-      ui: {
-        snackbar: null
-      }
+      active: false,
+      text: '',
+      timeout: null
     }
   },
   mounted: function () {
-    if (this.ui.snackbar === null) {
-      this.ui.snackbar = new MDCSnackbar(this.$refs.snackbar)
-      initSnackbar(this.ui.snackbar)
+    initSnackbar(this)
+  },
+  computed: {
+    multiline () {
+      return this.text.length > 40
+    }
+  },
+  methods: {
+    show ({ message }) {
+      if (this.timeout !== null) {
+        clearTimeout(this.timeout)
+      }
+
+      this.active = true
+      this.text = message
+
+      this.timeout = setTimeout(() => {
+        this.active = false
+      }, 3000)
     }
   }
 }

@@ -228,8 +228,7 @@ export default {
         this.registerSuccess = true
         showSnackbar({
           message: 'Your account was successfully registered. ' +
-            'You will be logged in automatically in a few seconds.',
-          multiline: true
+            'You will be logged in automatically in a few seconds.'
         })
         setTimeout(() => {
           login(this.user.username, this.user.password).then(() => {
