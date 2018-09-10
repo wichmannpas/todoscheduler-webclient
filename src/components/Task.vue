@@ -1,4 +1,4 @@
-<template>
+ <template>
   <li
       @click="editTask"
       class="mdc-list-item">
@@ -76,7 +76,9 @@
         </span>
       </span>
     </span>
-    <span class="mdc-list-item__meta">
+    <span
+        v-if="enableActions"
+        class="mdc-list-item__meta">
       <a
           v-if="!task.completelyScheduled()"
           @click="completeTask()"
@@ -88,7 +90,7 @@
       <a
           @click="scheduleTask"
           class="task-action tooltip tooltip-left"
-          :data-tooltip="task.completelyScheduled() ? 'Schedule more' : 'Schedule'">
+          :data-tooltip="task.completelyScheduled() ?'Schedule more' : 'Schedule'">
         <font-awesome-icon
             icon="play" />
       </a>
@@ -101,9 +103,13 @@ import { completeTask } from '@/api/task'
 
 export default {
   name: 'Task',
-  props: [
-    'task'
-  ],
+  props: {
+    'enableActions': {
+      type: Boolean,
+      default: true
+    },
+    'task': Object
+  },
   methods: {
     editTask (event) {
       if (

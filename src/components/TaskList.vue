@@ -7,6 +7,7 @@
         v-for="task in tasks"
         :key="task.id"
         :task="task"
+        :enableActions="enableActions"
         @editTask="editTask"
         @scheduleTask="scheduleTask" />
   </ul>
@@ -23,6 +24,7 @@ export default {
     Task
   },
   props: [
+    'enableActions',
     'tasks'
   ],
   data: function () {

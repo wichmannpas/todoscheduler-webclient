@@ -56,6 +56,23 @@
               :loading="loading"
               :errors="errors"
           />
+
+          <hr />
+
+          <strong
+              @click="show.merge = !show.merge"
+              class="mdc-list-group__subheader c-hand">
+            <i
+                v-if="show.merge"
+                class="material-icons headline-icon">expand_less</i>
+            <i
+                v-else
+                class="material-icons headline-icon">expand_more</i>
+            Merge
+          </strong>
+          <MergeTask
+              v-if="show.merge"
+              :task='task'/>
         </section>
         <footer class="mdc-dialog__footer">
           <button
@@ -88,11 +105,13 @@
 
 <script>
 import { updateTask } from '@/api/task'
+import MergeTask from '@/components/MergeTask'
 import TaskForm from '@/components/TaskForm'
 
 export default {
   name: 'EditTaskDialog',
   components: {
+    MergeTask,
     TaskForm
   },
   props: [
@@ -102,7 +121,10 @@ export default {
     return {
       loading: false,
       errors: [],
-      editedTask: Object.assign({}, this.task)
+      editedTask: Object.assign({}, this.task),
+      show: {
+        merge: false
+      }
     }
   },
   methods: {

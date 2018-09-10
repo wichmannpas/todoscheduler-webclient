@@ -4,7 +4,8 @@
     <TaskList
         @editTask="editTask"
         @scheduleTask="scheduleTask"
-        :tasks="tasks" />
+        :tasks="tasks"
+        :enableActions="enableActions" />
   </div>
   <div v-else>
     <em>
@@ -19,6 +20,7 @@ import TaskList from '@/components/TaskList'
 export default {
   name: 'TaskSearchResult',
   props: [
+    'enableActions',
     'tasks'
   ],
   components: {
