@@ -27,6 +27,7 @@
       <input
           @keyup.enter="scheduleTask"
           v-model="scheduleForDate"
+          id="task-start"
           type="date"
           class="mdc-text-field__input" />
       <label
@@ -93,6 +94,28 @@
       You are about to schedule a very long duration to a single day!
     </div>
 
+    <div
+        ref="series"
+        class="mdc-switch">
+      <div class="mdc-switch__track"></div>
+      <div class="mdc-switch__thumb-underlay">
+        <div class="mdc-switch__thumb">
+            <input
+                v-model="series"
+                :disabled="loading"
+                type="checkbox"
+                id="schedule-series"
+                class="mdc-switch__native-control"
+                role="switch">
+        </div>
+      </div>
+    </div>
+    <label for="schedule-series">Create a Series</label>
+    <TaskChunkSeriesForm
+        v-if="series"
+        @submit="scheduleTask"
+        @input="seriesData = $event" />
+
     <Loading v-if="loading" />
   </form>
 </template>
@@ -100,17 +123,20 @@
 <script>
 import { addDays } from 'date-fns'
 import { MDCSelect } from '@material/select'
+import { MDCSwitch } from '@material/switch'
 import { MDCTextField } from '@material/textfield'
 import Vue from 'vue'
 
 import { scheduleTask } from '@/api/task'
+import TaskChunkSeriesForm from '@/components/TaskChunkSeriesForm'
 import Loading from '@/components/Loading'
 import { isAfterDay, formatDayString } from '@/utils'
 
 export default {
   name: 'ScheduleTaskForm',
   components: {
-    Loading
+    Loading,
+    TaskChunkSeriesForm
   },
   props: [
     'task'
@@ -119,9 +145,12 @@ export default {
     return {
       ui: {
         scheduleForInput: null,
-        durationInput: null
+        durationInput: null,
+        seriesSwitch: null
       },
       loading: false,
+      series: false,
+      seriesData: null,
       scheduleFor: 'today',
       scheduleForDate: formatDayString(new Date()),
       duration: this.task.defaultScheduleDuration(
@@ -138,6 +167,10 @@ export default {
     }
     if (this.ui.durationInput === null) {
       this.ui.durationInput = new MDCTextField(this.$refs.duration)
+    }
+
+    if (this.ui.seriesSwitch === null) {
+      this.ui.seriesSwitch = new MDCSwitch(this.$refs.series)
     }
 
     this.$refs.durationInput.focus()
