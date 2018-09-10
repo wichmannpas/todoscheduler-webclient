@@ -14,8 +14,6 @@
 </template>
 
 <script>
-import { MDCList } from '@material/list'
-
 import Task from '@/components/Task'
 
 export default {
@@ -27,18 +25,6 @@ export default {
     'enableActions',
     'tasks'
   ],
-  data: function () {
-    return {
-      ui: {
-        list: null
-      }
-    }
-  },
-  mounted: function () {
-    if (this.ui.list === null) {
-      this.ui.list = new MDCList(this.$refs.list)
-    }
-  },
   methods: {
     editTask (task) {
       this.$emit('editTask', task)

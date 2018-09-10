@@ -13,8 +13,6 @@
 </template>
 
 <script>
-import { MDCList } from '@material/list'
-
 import Label from '@/components/Label'
 
 export default {
@@ -25,18 +23,6 @@ export default {
   props: [
     'labels'
   ],
-  data: function () {
-    return {
-      ui: {
-        list: null
-      }
-    }
-  },
-  mounted: function () {
-    if (this.ui.list === null) {
-      this.ui.list = new MDCList(this.$refs.list)
-    }
-  },
   methods: {
     editLabel (label) {
       this.$emit('editLabel', label)
