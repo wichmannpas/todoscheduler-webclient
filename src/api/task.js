@@ -160,11 +160,39 @@ function changeTaskDuration (store, task, newDuration) {
   })
 }
 
+function mergeTask (store, task, mergedTask) {
+  return new Promise(function (resolve, reject) {
+    if (!ensureAuthToken()) {
+      reject(new Error('no auth'))
+    }
+
+    axios.post(API_URL + '/task/task/' + task.id.toString() + '/merge/' + mergedTask.id.toString() + '/').then(function (response) {
+      if (response.status === 200) {
+        store.commit('addUpdateTaskChunks', {
+          taskChunks: response.data.map(raw => deserialize(TaskChunk, raw)),
+          today: store.state.time.today
+        })
+
+        store.commit('deleteTask', mergedTask.id)
+        task.mergeTaskData(mergedTask)
+        store.commit('updateTask', {
+          task: task,
+          today: store.state.time.today
+        })
+        resolve()
+      } else {
+        reject(response.data)
+      }
+    }).catch(error => handleGenericErrors(error, resolve, reject))
+  })
+}
+
 export {
   changeTaskDuration,
+  completeTask,
   createTask,
   fetchTasks,
-  completeTask,
+  mergeTask,
   scheduleTask,
   updateTask
 }

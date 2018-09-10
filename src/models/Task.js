@@ -23,6 +23,15 @@ class Task {
   scheduledDuration = Decimal(0)
   finishedDuration = Decimal(0)
 
+  /**
+   * Merge data of other task into this task.
+   */
+  mergeTaskData (other) {
+    this.duration = this.duration.add(other.duration)
+    this.scheduledDuration = this.scheduledDuration.add(other.scheduledDuration)
+    this.finishedDuration = this.finishedDuration.add(other.finishedDuration)
+  }
+
   priorityString () {
     return priorityString(this.priority)
   }
