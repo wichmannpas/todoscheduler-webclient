@@ -19,12 +19,12 @@
           warning
         </i>
       </span>
-      {{ chunk.task($store).name }}
+      {{ task.name }}
     </span>
     <span class="float-right">
       {{ chunk.duration.toNumber() }}h
-      <span v-if="chunk.task($store).duration.toNumber() !== chunk.duration.toNumber()">
-        ({{ chunk.task($store).duration.toNumber() }}h)
+      <span v-if="task.duration.toNumber() !== chunk.duration.toNumber()">
+        ({{ task.duration.toNumber() }}h)
       </span>
     </span>
     <br/>
@@ -67,7 +67,7 @@
             :icon="['far', 'copy']" />
       </a>
       <a
-          @click="$emit('editTask', chunk.task($store))"
+          @click="$emit('editTask', task)"
           class="
             task-edit
             tooltip tooltip-right"
@@ -149,7 +149,7 @@
     </span>
     <div class="labels">
       <span
-          v-for="label in chunk.task($store).labels($store)"
+          v-for="label in task.labels($store)"
           :key="label.id"
           class="label"
           :style="{
@@ -203,6 +203,9 @@ export default {
     },
     canBeSplit () {
       return !this.chunk.finished && this.chunk.duration.comparedTo(1) > 0
+    },
+    task () {
+      return this.chunk.task(this.$store)
     }
   },
   methods: {
