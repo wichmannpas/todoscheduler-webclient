@@ -3,48 +3,51 @@
       style="position: relative"
       @submit.prevent="scheduleTask">
 
-    <!-- TODO: Move scheduleFor (including another time date input) into a dedicated component and reuse it //-->
     <div
-        ref="scheduleFor"
-        class="mdc-select full-width-text-field">
-      <select
-          v-model="scheduleFor"
-          class="mdc-select__native-control">
-        <option value="today">Today</option>
-        <option value="tomorrow">Tomorrow</option>
-        <option value="next_free_capacity">Next Free Capacity</option>
-        <option value="another_time">Another Time</option>
-      </select>
-      <label class="mdc-floating-label mdc-floating-label--float-above">
-        Schedule for
-      </label>
-      <div class="mdc-line-ripple"></div>
-    </div>
+        :class="{ hidden: series }">
+      <!-- TODO: Move scheduleFor (including another time date input) into a dedicated component and reuse it //-->
+      <div
+          ref="scheduleFor"
+          class="mdc-select full-width-text-field">
+        <select
+            v-model="scheduleFor"
+            class="mdc-select__native-control">
+          <option value="today">Today</option>
+          <option value="tomorrow">Tomorrow</option>
+          <option value="next_free_capacity">Next Free Capacity</option>
+          <option value="another_time">Another Time</option>
+        </select>
+        <label class="mdc-floating-label mdc-floating-label--float-above">
+          Schedule for
+        </label>
+        <div class="mdc-line-ripple"></div>
+      </div>
 
-    <div
-        :class="{ hidden: scheduleFor !== 'another_time' }"
-        class="mdc-text-field full-width-text-field">
-      <input
-          @keyup.enter="scheduleTask"
-          v-model="scheduleForDate"
-          id="task-start"
-          type="date"
-          class="mdc-text-field__input" />
-      <label
-          class="mdc-floating-label mdc-floating-label--float-above"
-          for="task-start">
-        Schedule for date
-      </label>
+      <div
+          :class="{ hidden: scheduleFor !== 'another_time' }"
+          class="mdc-text-field full-width-text-field">
+        <input
+            @keyup.enter="scheduleTask"
+            v-model="scheduleForDate"
+            id="task-start"
+            type="date"
+            class="mdc-text-field__input" />
+        <label
+            class="mdc-floating-label mdc-floating-label--float-above"
+            for="task-start">
+          Schedule for date
+        </label>
+      </div>
+      <p
+          v-if="errors.indexOf('day') >= 0"
+          class="
+            mdc-text-field-helper-text
+            mdc-text-field-helper-text--validation-msg
+            mdc-text-field-helper-text--persistent
+            error">
+        This date is invalid.
+      </p>
     </div>
-    <p
-        v-if="errors.indexOf('day') >= 0"
-        class="
-          mdc-text-field-helper-text
-          mdc-text-field-helper-text--validation-msg
-          mdc-text-field-helper-text--persistent
-          error">
-      This date is invalid.
-    </p>
 
     <div
         ref="duration"
@@ -113,6 +116,7 @@
     <label for="schedule-series">Create a Series</label>
     <TaskChunkSeriesForm
         v-if="series"
+        :errors="errors"
         @submit="scheduleTask"
         @input="seriesData = $event" />
 
@@ -128,6 +132,7 @@ import { MDCTextField } from '@material/textfield'
 import Vue from 'vue'
 
 import { scheduleTask } from '@/api/task'
+import { createTaskChunkSeries } from '@/api/taskchunk'
 import TaskChunkSeriesForm from '@/components/TaskChunkSeriesForm'
 import Loading from '@/components/Loading'
 import { isAfterDay, formatDayString } from '@/utils'
@@ -150,7 +155,7 @@ export default {
       },
       loading: false,
       series: false,
-      seriesData: null,
+      seriesData: {},
       scheduleFor: 'today',
       scheduleForDate: formatDayString(new Date()),
       duration: this.task.defaultScheduleDuration(
@@ -205,19 +210,51 @@ export default {
 
       this.loading = true
 
+      if (this.series) {
+        this.scheduleSeries()
+      } else {
+        this.scheduleSingle()
+      }
+    },
+    scheduleSingle () {
       let day = this.scheduleForDate
       if (this.scheduleFor !== 'another_time') {
         day = this.scheduleFor
       }
-      scheduleTask(this.$store, this.task, day, this.duration).then((response) => {
-        this.loading = false
+      scheduleTask(this.$store, this.task, day, this.duration).then(response => {
         Vue.set(this, 'errors', [])
 
         this.$emit('complete')
       }).catch((response) => {
-        this.loading = false
-
         Vue.set(this, 'errors', Object.keys(response))
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    scheduleSeries () {
+      let end = this.seriesData.end
+      if (end === '') {
+        end = null
+      }
+
+      createTaskChunkSeries(this.$store, this.task, {
+        duration: this.duration,
+        start: this.seriesData.start,
+        end: end,
+        rule: this.seriesData.rule,
+        intervalDays: this.seriesData.intervalDays,
+        monthlyDay: this.seriesData.monthlyDay,
+        monthlyMonths: this.seriesData.monthlyMonths,
+        monthlyweekdayWeekday: this.seriesData.monthlyweekdayWeekday,
+        monthlyweekdayNth: this.seriesData.monthlyweekdayNth
+      }).then(response => {
+        Vue.set(this, 'errors', [])
+
+        this.$emit('complete')
+      }).catch((response) => {
+        Vue.set(this, 'errors', Object.keys(response))
+      }).finally(() => {
+        this.loading = false
       })
     }
   }

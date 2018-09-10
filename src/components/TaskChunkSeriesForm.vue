@@ -1,6 +1,5 @@
 <template>
-  <form
-      @submit.prevent="$emit('submit')">
+  <div>
     You can create a series that automatically schedules recurring task chunks for this task.
 
     <div
@@ -8,8 +7,6 @@
         class="mdc-select full-width-text-field">
       <select
           v-model="rule"
-          @input="emitInput"
-          @change="emitInput"
           class="mdc-select__native-control">
         <option></option>
         <option value="interval">Interval</option>
@@ -21,15 +18,23 @@
       </label>
       <div class="mdc-line-ripple"></div>
     </div>
+    <p
+        v-if="errors.indexOf('rule') >= 0"
+        class="
+          mdc-text-field-helper-text
+          mdc-text-field-helper-text--validation-msg
+          mdc-text-field-helper-text--persistent
+          error">
+      Please make a choice.
+    </p>
 
     <div
-        v-if="rule === 'interval'"
+        :class="{ hidden: rule !== 'interval' }"
         class="mdc-text-field full-width-text-field">
       <input
           ref="intervalDaysInput"
           @keyup.enter="$emit('submit')"
-          :value="value.intervalDays"
-          @input="emitInput"
+          v-model="intervalDays"
           id="series-interval-days"
           type="number"
           min="1"
@@ -40,15 +45,23 @@
         Every … day(s)
       </label>
     </div>
+    <p
+        v-if="errors.indexOf('interval_days') >= 0"
+        class="
+          mdc-text-field-helper-text
+          mdc-text-field-helper-text--validation-msg
+          mdc-text-field-helper-text--persistent
+          error">
+      This is not a valid choice.
+    </p>
 
     <div
-        v-if="rule === 'monthly'"
+        :class="{ hidden: rule !== 'monthly' }"
         class="mdc-text-field full-width-text-field">
       <input
           ref="monthlyDayInput"
           @keyup.enter="$emit('submit')"
           v-model="monthlyDay"
-          @input="emitInput"
           id="series-monthly-day"
           type="number"
           min="1"
@@ -75,15 +88,24 @@
         </span>
       </label>
     </div>
+    <p
+        v-if="errors.indexOf('monthly_day') >= 0"
+        class="
+          mdc-text-field-helper-text
+          mdc-text-field-helper-text--validation-msg
+          mdc-text-field-helper-text--persistent
+          error">
+      This is not a valid choice.
+      Make sure that this is the same as the day of the start date, or a 31 if you want to use the last day of the month.
+    </p>
 
     <div
-        v-if="rule === 'monthlyweekday'"
+        :class="{ hidden: rule !== 'monthlyweekday' }"
         class="mdc-text-field full-width-text-field">
       <input
           ref="monthlyweekdayNthInput"
           @keyup.enter="$emit('submit')"
           v-model="monthlyweekdayNth"
-          @input="emitInput"
           id="series-monthlyweekday-nth"
           type="number"
           min="1"
@@ -110,16 +132,23 @@
         </span>
       </label>
     </div>
+    <p
+        v-if="errors.indexOf('monthlyweekday_nth') >= 0"
+        class="
+          mdc-text-field-helper-text
+          mdc-text-field-helper-text--validation-msg
+          mdc-text-field-helper-text--persistent
+          error">
+      This is not a valid choice.
+    </p>
 
     <div
-        v-if="rule === 'monthlyweekday'"
+        :class="{ hidden: rule !== 'monthlyweekday' }"
         class="mdc-select full-width-text-field">
       <select
           ref="monthlyweekdayWeekdayInput"
           id="series-monthlyweekday-weekday"
-          :value="value.monthlyweekdayWeekday"
-          @change="emitInput"
-          @input="emitInput"
+          v-model="monthlyweekdayWeekday"
           class="mdc-select__native-control">
         <option value="0">Monday</option>
         <option value="1">Tuesday</option>
@@ -135,15 +164,23 @@
         … of the month
       </label>
     </div>
+    <p
+        v-if="errors.indexOf('monthlyweekday_weekday') >= 0"
+        class="
+          mdc-text-field-helper-text
+          mdc-text-field-helper-text--validation-msg
+          mdc-text-field-helper-text--persistent
+          error">
+      This is not a valid weekday.
+    </p>
 
     <div
-        v-if="rule === 'monthly' || rule === 'monthlyweekday'"
+        :class="{ hidden: rule !== 'monthly' && rule !== 'monthlyweekday' }"
         class="mdc-text-field full-width-text-field">
       <input
           ref="monthlyMonthsInput"
           @keyup.enter="$emit('submit')"
-          :value="value.monthlyMonths"
-          @input="emitInput"
+          v-model="monthlyMonths"
           id="series-monthly-months"
           type="number"
           min="1"
@@ -154,14 +191,22 @@
         every … month(s)
       </label>
     </div>
+    <p
+        v-if="errors.indexOf('monthly_months') >= 0"
+        class="
+          mdc-text-field-helper-text
+          mdc-text-field-helper-text--validation-msg
+          mdc-text-field-helper-text--persistent
+          error">
+      This is not a valid choice.
+    </p>
 
     <div
         class="mdc-text-field full-width-text-field">
       <input
           ref="startInput"
           @keyup.enter="$emit('submit')"
-          :value="value.start"
-          @input="emitInput"
+          v-model="start"
           id="series-start"
           type="date"
           class="mdc-text-field__input" />
@@ -171,14 +216,27 @@
         starting on
       </label>
     </div>
+    <p
+        v-if="errors.indexOf('start') >= 0"
+        class="
+          mdc-text-field-helper-text
+          mdc-text-field-helper-text--validation-msg
+          mdc-text-field-helper-text--persistent
+          error">
+      This is not a valid start date.
+      It must not be in the past.
+      <span
+          v-if="errors.indexOf('end') >= 0">
+        Make sure that it is not after the end date.
+      </span>
+    </p>
 
     <div
         class="mdc-text-field full-width-text-field">
       <input
           ref="endInput"
           @keyup.enter="$emit('submit')"
-          :value="value.end"
-          @input="emitInput"
+          v-model="end"
           id="series-end"
           type="date"
           class="mdc-text-field__input" />
@@ -188,8 +246,20 @@
         until
       </label>
     </div>
-
-  </form>
+    <p
+        v-if="errors.indexOf('end') >= 0"
+        class="
+          mdc-text-field-helper-text
+          mdc-text-field-helper-text--validation-msg
+          mdc-text-field-helper-text--persistent
+          error">
+      This is not a valid end date.
+      <span
+          v-if="errors.indexOf('start') >= 0">
+        Make sure that it is not before the start date.
+      </span>
+    </p>
+  </div>
 </template>
 
 <script>
@@ -200,30 +270,21 @@ import { formatDayString } from '@/utils'
 export default {
   name: 'TaskChunkSeriesForm',
   props: {
-    value: {
-      type: Object,
-      default () {
-        return {
-          rule: '',
-          start: formatDayString(new Date()),
-          end: '',
-          intervalDays: '1',
-          monthlyDay: '1',
-          monthlyMonths: '1',
-          monthlyweekdayWeekday: '0',
-          monthlyweekdayNth: '1'
-        }
-      }
-    }
+    errors: Array
   },
   data: function () {
     return {
       ui: {
         ruleInput: null
       },
-      rule: this.value.rule,
-      monthlyDay: this.value.monthlyDay,
-      monthlyweekdayNth: this.value.weekdayNth
+      rule: '',
+      start: formatDayString(this.$store.state.time.today),
+      end: '',
+      intervalDays: '1',
+      monthlyDay: this.$store.state.time.today.getDate(),
+      monthlyMonths: '1',
+      monthlyweekdayWeekday: '0',
+      monthlyweekdayNth: '1'
     }
   },
   mounted: function () {
@@ -231,27 +292,54 @@ export default {
       this.ui.ruleInput = new MDCSelect(this.$refs.rule)
     }
   },
+  watch: {
+    rule () {
+      this.emitInput()
+    },
+    start (value) {
+      if (this.rule === 'monthly') {
+        this.monthlyDay = new Date(value).getDate()
+      }
+      this.emitInput()
+    },
+    end () {
+      this.emitInput()
+    },
+    intervalDays () {
+      this.emitInput()
+    },
+    monthlyDay () {
+      this.emitInput()
+    },
+    monthlyMonths () {
+      this.emitInput()
+    },
+    monthlyweekdayWeekday () {
+      this.emitInput()
+    },
+    monthlyweekdayNth () {
+      this.emitInput()
+    }
+  },
   methods: {
     emitInput () {
       let data = {
         rule: this.rule,
-        start: this.$refs.startInput.value,
-        end: this.$refs.endInput.value
+        start: this.start,
+        end: this.end
       }
-      if (this.$refs.intervalDaysInput !== undefined) {
-        data.intervalDays = this.$refs.intervalDaysInput.value
+      if (this.rule === 'interval') {
+        data.intervalDays = this.intervalDays
       }
-      if (this.$refs.monthlyDayInput !== undefined) {
-        data.monthlyDay = this.$refs.monthlyDayInput.value
+      if (this.rule === 'monthly') {
+        data.monthlyDay = this.monthlyDay
       }
-      if (this.$refs.monthlyMonthsInput !== undefined) {
-        data.monthlyMonths = this.$refs.monthlyMonthsInput.value
+      if (this.rule === 'monthly' || this.rule === 'monthlyweekday') {
+        data.monthlyMonths = this.monthlyMonths
       }
-      if (this.$refs.monthlyweekdayWeekdayInput !== undefined) {
-        data.monthlyweekdayWeekday = this.$refs.monthlyweekdayWeekdayInput.value
-      }
-      if (this.$refs.monthlyweekdayNthInput !== undefined) {
-        data.monthlyweekdayNth = this.$refs.monthlyweekdayNthInput.value
+      if (this.rule === 'monthlyweekday') {
+        data.monthlyweekdayWeekday = this.monthlyweekdayWeekday
+        data.monthlyweekdayNth = this.monthlyweekdayNth
       }
       this.$emit('input', data)
     }

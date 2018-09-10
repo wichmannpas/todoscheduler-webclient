@@ -166,8 +166,54 @@ function updateTaskChunkDay (store, chunk, newDay) {
   })
 }
 
+function createTaskChunkSeries (store, task, data) {
+  return new Promise(function (resolve, reject) {
+    if (!ensureAuthToken()) {
+      reject(new Error('no auth'))
+    }
+
+    axios.post(API_URL + '/task/chunk/series/', {
+      task_id: task.id,
+      duration: data.duration,
+      start: data.start,
+      end: data.end,
+      rule: data.rule,
+      interval_days: data.intervalDays,
+      monthly_day: data.monthlyDay,
+      monthly_months: data.monthlyMonths,
+      monthlyweekday_weekday: data.monthlyweekdayWeekday,
+      monthlyweekday_nth: data.monthlyweekdayNth
+    }).then(function (response) {
+      if (response.status === 201) {
+        let taskChunks = response.data.scheduled.map(raw => deserialize(TaskChunk, raw))
+
+        if (taskChunks.length > 0) {
+          store.commit('addUpdateTaskChunks', {
+            taskChunks: taskChunks,
+            today: store.state.time.today
+          })
+
+          // at least one new chunk was scheduled and the task updated
+          // we extract the task from the first scheduled chunk and update it
+          store.commit('updateTask', {
+            task: task,
+            today: store.state.time.today
+          })
+        }
+
+        // TODO: store the series in the store
+
+        resolve()
+      } else {
+        reject(response.data)
+      }
+    }).catch(error => handleGenericErrors(error, resolve, reject))
+  })
+}
+
 export {
   changeTaskChunkDuration,
+  createTaskChunkSeries,
   deleteTaskChunk,
   exchangeTaskChunk,
   fetchTaskChunks,
