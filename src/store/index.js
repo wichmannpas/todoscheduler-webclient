@@ -6,6 +6,7 @@ import offlinePlugin from './offline'
 import general from './general'
 import label from './label'
 import taskchunk from './taskchunk'
+import taskchunkseries from './taskchunkseries'
 import task from './task'
 import time from './time'
 import user from './user'
@@ -17,6 +18,7 @@ export default new Vuex.Store({
     general,
     label,
     taskchunk,
+    taskchunkseries,
     task,
     time,
     user
