@@ -10,8 +10,6 @@
 </template>
 
 <script>
-import { MDCList } from '@material/list'
-
 import MissedTaskChunk from '@/components/MissedTaskChunk'
 
 export default {
@@ -21,18 +19,6 @@ export default {
   },
   props: [
     'missedTaskChunks'
-  ],
-  data: function () {
-    return {
-      ui: {
-        list: null
-      }
-    }
-  },
-  mounted: function () {
-    if (this.ui.list === null) {
-      this.ui.list = new MDCList(this.$refs.list)
-    }
-  }
+  ]
 }
 </script>
