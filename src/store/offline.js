@@ -3,6 +3,7 @@ import { deserialize } from 'serializr'
 import Label from '@/models/Label'
 import Task from '@/models/Task'
 import TaskChunk from '@/models/TaskChunk'
+import TaskChunkSeries from '@/models/TaskChunkSeries'
 import User from '@/models/User'
 
 function persistUser (state) {
@@ -138,12 +139,51 @@ function restoreTaskChunks (store) {
   return false
 }
 
+function persistTaskChunkSeries (state) {
+  if (state.ready !== true) {
+    localStorage.removeItem('taskchunkseries')
+
+    return
+  }
+
+  localStorage.setItem('taskchunkseries', JSON.stringify(state.taskChunkSeries))
+}
+
+function loadPersistedTaskChunkSeries () {
+  let taskChunkSeries = JSON.parse(localStorage.getItem('taskchunkseries'))
+  if (taskChunkSeries === null) {
+    return
+  }
+
+  return Object.values(taskChunkSeries).map(
+    taskChunkSeries => {
+      taskChunkSeries.interval_days = taskChunkSeries.intervalDays
+      taskChunkSeries.monthly_day = taskChunkSeries.monthlyDay
+      taskChunkSeries.monthly_months = taskChunkSeries.monthlyMonths
+      taskChunkSeries.monthlyweekday_weekday = taskChunkSeries.monthlyweekdayWeekday
+      taskChunkSeries.monthlyweekday_nth = taskChunkSeries.monthlyweekdayNth
+      taskChunkSeries.task_id = taskChunkSeries.taskId
+      return deserialize(TaskChunkSeries, taskChunkSeries)
+    })
+}
+
+function restoreTaskChunkSeries (store) {
+  let taskChunkSeries = loadPersistedTaskChunkSeries()
+  if (taskChunkSeries !== undefined) {
+    store.commit('setTaskChunkSeries', taskChunkSeries)
+    console.info('restored task chunk series from local storage')
+    return true
+  }
+  return false
+}
+
 const offlinePlugin = store => {
   if (restoreUser(store)) {
     restoreLabels(store)
 
     if (restoreTasks(store)) {
       restoreTaskChunks(store)
+      restoreTaskChunkSeries(store)
     }
   }
 
@@ -156,6 +196,8 @@ const offlinePlugin = store => {
       persistUser(state.user)
     } else if (type.toLowerCase().indexOf('label') >= 0) {
       persistLabels(state.label)
+    } else if (type.toLowerCase().indexOf('taskchunkseries') >= 0) {
+      persistTaskChunkSeries(state.taskchunkseries)
     } else if (type.toLowerCase().indexOf('taskchunk') >= 0) {
       persistTaskChunks(state.taskchunk)
     } else if (type.toLowerCase().indexOf('task') >= 0) {

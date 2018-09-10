@@ -5,6 +5,7 @@ import { API_URL } from '@/config'
 import { ensureAuthToken, handleGenericErrors } from '@/api'
 import Task from '@/models/Task'
 import TaskChunk from '@/models/TaskChunk'
+import TaskChunkSeries from '@/models/TaskChunkSeries'
 
 function fetchTaskChunks (minDate, maxDate, taskId) {
   return new Promise(function (resolve, reject) {
@@ -201,12 +202,25 @@ function createTaskChunkSeries (store, task, data) {
           })
         }
 
-        // TODO: store the series in the store
+        store.commit('addTaskChunkSeries', deserialize(TaskChunkSeries, response.data.series))
 
         resolve()
       } else {
         reject(response.data)
       }
+    }).catch(error => handleGenericErrors(error, resolve, reject))
+  })
+}
+
+function fetchTaskChunkSeries () {
+  return new Promise(function (resolve, reject) {
+    if (!ensureAuthToken()) {
+      reject(new Error('no auth'))
+    }
+
+    axios.get(API_URL + '/task/chunk/series/').then(function (response) {
+      resolve(
+        response.data.map(raw => deserialize(TaskChunkSeries, raw)))
     }).catch(error => handleGenericErrors(error, resolve, reject))
   })
 }
@@ -217,6 +231,7 @@ export {
   deleteTaskChunk,
   exchangeTaskChunk,
   fetchTaskChunks,
+  fetchTaskChunkSeries,
   finishTaskChunk,
   splitTaskChunk,
   updateTaskChunkDay
