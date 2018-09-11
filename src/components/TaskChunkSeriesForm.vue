@@ -263,6 +263,7 @@
 </template>
 
 <script>
+import { lastDayOfMonth } from 'date-fns'
 import { MDCSelect } from '@material/select'
 
 import { formatDayString } from '@/utils'
@@ -297,8 +298,13 @@ export default {
       this.emitInput()
     },
     start (value) {
-      if (this.rule === 'monthly') {
-        this.monthlyDay = new Date(value).getDate()
+      if (this.rule === 'monthly' && value !== '') {
+        let start = new Date(value)
+        let startDate = start.getDate()
+        if (lastDayOfMonth(start).getDate() !== startDate || parseInt(this.monthlyDay) < 28) {
+          // update monthly day if it is not the last day of the month
+          this.monthlyDay = startDate
+        }
       }
       this.emitInput()
     },
@@ -308,7 +314,16 @@ export default {
     intervalDays () {
       this.emitInput()
     },
-    monthlyDay () {
+    monthlyDay (value) {
+      if (this.rule === 'monthly' && value !== '') {
+        let start = new Date(this.start)
+        let month = start.getMonth()
+        start.setDate(value)
+        if (start.getMonth() !== month) {
+          start = lastDayOfMonth(new Date(this.start))
+        }
+        this.start = formatDayString(start)
+      }
       this.emitInput()
     },
     monthlyMonths () {
