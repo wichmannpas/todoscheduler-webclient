@@ -75,6 +75,17 @@
         <font-awesome-icon
             icon="pencil-alt" />
       </a>
+      <a
+          v-if="series !== null"
+          @click="$emit('editTaskChunkSeries', chunk)"
+          class="
+            task-edit
+            tooltip tooltip-right"
+          :data-tooltip="series.description()">
+        <i class="material-icons">
+          av_timer
+        </i>
+      </a>
     </span>
     <span class="float-right">
       <a
@@ -206,6 +217,9 @@ export default {
     },
     task () {
       return this.chunk.task(this.$store)
+    },
+    series () {
+      return this.chunk.series(this.$store)
     }
   },
   methods: {

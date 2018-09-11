@@ -122,6 +122,7 @@ function loadPersistedTaskChunks () {
       taskchunk.task = {
         id: taskchunk.taskId
       }
+      taskchunk.series = taskchunk.seriesId
       return deserialize(TaskChunk, taskchunk)
     })
 }
