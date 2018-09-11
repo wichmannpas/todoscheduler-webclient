@@ -25,6 +25,31 @@ class TaskChunkSeries {
   task (store) {
     return store.state.task.tasks[this.taskId]
   }
+
+  monthlyweekdayWeekdayPretty () {
+    switch (this.monthlyweekdayWeekday) {
+      case 0: return 'Monday'
+      case 1: return 'Tuesday'
+      case 2: return 'Wednesday'
+      case 3: return 'Thursday'
+      case 4: return 'Friday'
+      case 5: return 'Saturday'
+      case 6: return 'Sunday'
+    }
+  }
+
+  description () {
+    // TODO: use i18next to get proper plurals and formatting
+    if (this.rule === 'interval') {
+      return 'every ' + this.intervalDays.toString() + ' day(s)'
+    } else if (this.rule === 'monthly') {
+      return 'on ' + this.monthlyDay.toString() + '. every ' + this.monthlyMonths.toString() + ' month(s)'
+    } else if (this.rule === 'monthlyweekday') {
+      return 'on the ' + this.monthlyweekdayNth.toString() + '. ' + this.monthlyweekdayWeekdayPretty() + ' every ' + this.monthlyMonths.toString() + ' month(s)'
+    }
+
+    return 'invalid rule'
+  }
 }
 
 createModelSchema(TaskChunkSeries, {

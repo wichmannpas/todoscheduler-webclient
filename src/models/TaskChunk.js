@@ -13,6 +13,7 @@ import {
 class TaskChunk {
   id = -1
   taskId = -1
+  seriesId = null
   day = new Date()
   dayOrder = -1
   duration = Decimal(0)
@@ -20,6 +21,14 @@ class TaskChunk {
 
   task (store) {
     return store.state.task.tasks[this.taskId]
+  }
+
+  series (store) {
+    if (this.seriesId === null) {
+      return null
+    }
+
+    return store.state.taskchunkseries.taskChunkSeries[this.seriesId]
   }
 
   past (today) {
@@ -88,6 +97,7 @@ createModelSchema(TaskChunk, {
     val => { return { id: val } },
     val => val.id
   )),
+  seriesId: alias('series', primitive()),
   day: date(),
   dayOrder: alias('day_order', primitive()),
   duration: custom(
