@@ -31,6 +31,23 @@
       This task name is invalid.
     </p>
 
+    <textarea
+        ref="notesInput"
+        class="full-width-text-field"
+        :value="value.notes"
+        @input="updateTask"
+        :disabled="loading"
+        rows="5" />
+    <p
+        v-if="errors.indexOf('notes') >= 0"
+        class="
+          mdc-text-field-helper-text
+          mdc-text-field-helper-text--validation-msg
+          mdc-text-field-helper-text--persistent
+          error">
+      These notes are invalid.
+    </p>
+
     <div
         ref="duration"
         class="
@@ -288,7 +305,8 @@ export default {
         priority: this.priority,
         deadline: deadline,
         start: start,
-        labelIds: this.labelIds
+        labelIds: this.labelIds,
+        notes: this.$refs.notesInput.value
       })
     }
   }

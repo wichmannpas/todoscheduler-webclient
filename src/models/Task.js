@@ -22,6 +22,7 @@ class Task {
   labelIds = []
   scheduledDuration = Decimal(0)
   finishedDuration = Decimal(0)
+  notes = null
 
   /**
    * Merge data of other task into this task.
@@ -143,7 +144,10 @@ class Task {
 
   matchesFilter (filter) {
     let lowerFilter = filter.toLocaleLowerCase()
-    return this.name.toLocaleLowerCase().indexOf(lowerFilter) >= 0
+    return (
+      this.name.toLocaleLowerCase().indexOf(lowerFilter) >= 0 ||
+      (this.notes !== null && this.notes.toLocaleLowerCase().indexOf(lowerFilter) >= 0)
+    )
   }
 }
 
@@ -165,7 +169,8 @@ createModelSchema(Task, {
   finishedDuration: alias('finished_duration', custom(
     val => { return val.toFixed() },
     val => { return new Decimal(val) }
-  ))
+  )),
+  notes: primitive()
 })
 
 export default Task
