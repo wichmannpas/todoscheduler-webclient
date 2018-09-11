@@ -84,15 +84,17 @@
           @click="completeTask()"
           class="task-action tooltip tooltip-left"
           data-tooltip="Complete task">
-        <font-awesome-icon
-            icon="check" />
+        <i class="material-icons">
+          check
+        </i>
       </a>
       <a
           @click="scheduleTask"
           class="task-action tooltip tooltip-left"
           :data-tooltip="task.completelyScheduled() ?'Schedule more' : 'Schedule'">
-        <font-awesome-icon
-            icon="play" />
+        <i class="material-icons">
+          play_arrow
+        </i>
       </a>
     </span>
   </li>

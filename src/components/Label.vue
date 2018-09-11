@@ -24,8 +24,9 @@
           @click="deleteLabel"
           class="label-action tooltip tooltip-left"
           data-tooltip="Delete Label">
-        <font-awesome-icon
-            icon="times" />
+        <i class="material-icons">
+          clear
+        </i>
       </a>
     </span>
   </li>

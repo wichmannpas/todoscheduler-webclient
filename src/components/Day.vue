@@ -11,11 +11,11 @@
       <span class="float-right">
         {{ maxDuration.toNumber() }}h
         <span
-            class="tooltip tooltip-left"
+            class="tooltip tooltip-bottom"
               data-tooltip="Max duration for this day">
-          <font-awesome-icon
-              icon="clock"
-          />
+          <i class="material-icons normal-whitespace small">
+            watch_later
+          </i>
         </span>
     </span>
     </div>
@@ -32,8 +32,9 @@
         <span
             class="tooltip"
             data-tooltip="Unfinished/total scheduled duration">
-          <font-awesome-icon
-              :icon="['far', 'clock']" />
+          <i class="material-icons normal-whitespace small">
+            access_time
+          </i>
         </span>
       </span>
     </div>

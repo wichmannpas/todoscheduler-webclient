@@ -131,3 +131,17 @@ a {
   cursor: pointer;
   margin-left: -3em;
 }
+
+.material-icons {
+  &.normal-whitespace {
+    white-space: normal !important;
+  }
+
+  &.small {
+    font-size: 0.9em;
+  }
+}
+
+.mdc-list-item__meta {
+  text-align: center;
+}

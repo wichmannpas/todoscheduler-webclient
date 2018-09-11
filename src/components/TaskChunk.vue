@@ -30,55 +30,64 @@
     <br/>
     <span class="float-left">
       <a
-          @click="finishChunk(true)"
           v-if="!chunk.finished"
-          class="tooltip tooltip-right"
+          @click="finishChunk(true)"
+          class="action tooltip tooltip-right"
           data-tooltip="Done">
-        <font-awesome-icon
-            icon="check" />
+        <i class="material-icons">
+          check
+        </i>
       </a>
       <a
+          v-else
           @click="finishChunk(false)"
-          v-if="chunk.finished"
-          class="tooltip tooltip-right"
+          class="action tooltip tooltip-right"
           data-tooltip="Not done">
-        <font-awesome-icon
-            icon="undo" />
+        <i class="material-icons">
+          undo
+        </i>
       </a>
+
       <a
           @click="deleteChunk()"
-          class="tooltip tooltip-right"
+          class="action tooltip tooltip-right"
           data-tooltip="No time needed on this day">
-        <font-awesome-icon
-            icon="times" />
+        <i class="material-icons">
+          clear
+        </i>
       </a>
       <a
           @click="postponeChunk()"
-          class="tooltip tooltip-right"
+          class="action tooltip tooltip-right"
           data-tooltip="Postpone to another day">
-        <font-awesome-icon
-            :icon="['far', 'clock']" />
+        <i class="material-icons">
+          watch_later
+        </i>
       </a>
       <a
           @click="increaseTaskDuration(1)"
-          class="tooltip tooltip-right"
+          class="action tooltip tooltip-right"
           data-tooltip="Needs more time on another day">
-        <font-awesome-icon
-            :icon="['far', 'copy']" />
+        <i class="material-icons">
+          content_copy
+        </i>
       </a>
       <a
           @click="$emit('editTask', task)"
           class="
+            action
             task-edit
             tooltip tooltip-right"
           data-tooltip="Edit task">
-        <font-awesome-icon
-            icon="pencil-alt" />
+        <i class="material-icons">
+          edit
+        </i>
       </a>
       <a
           v-if="series !== null"
           @click="$emit('editTaskChunkSeries', chunk)"
           class="
+            action
             task-edit
             tooltip tooltip-right"
           :data-tooltip="series.description()">
@@ -90,72 +99,79 @@
     <span class="float-right">
       <a
           @click="splitChunk()"
-          class="tooltip tooltip-left"
+          class="action tooltip tooltip-left"
           v-bind:class="[
             { 'invisible': !canBeSplit }
           ]"
           data-tooltip="Split task chunk">
-        <font-awesome-icon
-            icon="layer-group" />
+        <i class="material-icons">
+          layers
+        </i>
       </a>
       <a
           @click="updateChunkDay(-1)"
-          class="tooltip tooltip-left"
+          class="action tooltip tooltip-left"
           v-bind:class="[
             { 'invisible': chunk.finished }
           ]"
           data-tooltip="Move to previous day">
-        <font-awesome-icon
-            icon="arrow-left" />
+        <i class="material-icons">
+          arrow_back
+        </i>
       </a>
       <a
           @click="moveChunk(-1)"
-          class="tooltip tooltip-left"
+          class="action tooltip tooltip-left"
           v-bind:class="[
             { 'invisible': chunk.finished },
             { 'invisible': !canBeMovedUp }
           ]"
          data-tooltip="Needs time earlier">
-        <font-awesome-icon
-            icon="arrow-up" />
+        <i class="material-icons">
+          arrow_upward
+        </i>
       </a>
       <a
           @click="moveChunk(1)"
-          class="tooltip tooltip-left"
+          class="action tooltip tooltip-left"
           v-bind:class="[
             { 'invisible': chunk.finished },
             { 'invisible': !canBeMovedDown }
           ]"
           data-tooltip="Needs time later">
-        <font-awesome-icon
-            icon="arrow-down" />
+        <i class="material-icons">
+          arrow_downward
+        </i>
       </a>
       <a
           @click="updateChunkDay(1)"
-          class="tooltip tooltip-left"
+          class="action tooltip tooltip-left"
           v-bind:class="[
             { 'invisible': chunk.finished }
           ]"
           data-tooltip="Move to next day">
-        <font-awesome-icon
-            icon="arrow-right" />
+        <i class="material-icons">
+          arrow_forward
+        </i>
       </a>
       <a
           @click="changeChunkDuration('-0.5')"
-          class="tooltip tooltip-left"
+          class="action tooltip tooltip-left"
           v-bind:class="[
             { 'invisible': chunk.duration.toNumber() <= 0.5 }
           ]"
           data-tooltip="Takes 30 less minutes">
-        <font-awesome-icon
-            icon="minus" />
+        <i class="material-icons">
+          remove
+        </i>
       </a>
       <a
           @click="changeChunkDuration('0.5')"
-          class="tooltip tooltip-left"
+          class="action tooltip tooltip-left"
           data-tooltip="Takes 30 more minutes">
-        <font-awesome-icon
-            icon="plus" />
+        <i class="material-icons">
+          add
+        </i>
       </a>
     </span>
     <div class="labels">
