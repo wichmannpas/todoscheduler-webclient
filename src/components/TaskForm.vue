@@ -36,6 +36,7 @@
         class="full-width-text-field"
         :value="value.notes"
         @input="updateTask"
+        @keyup.enter="handleNotesKeyup"
         :disabled="loading"
         rows="5" />
     <p
@@ -308,6 +309,11 @@ export default {
         labelIds: this.labelIds,
         notes: this.$refs.notesInput.value
       })
+    },
+    handleNotesKeyup (event) {
+      if (event.ctrlKey || event.MetaKey) {
+        this.$emit('submit')
+      }
     }
   }
 }

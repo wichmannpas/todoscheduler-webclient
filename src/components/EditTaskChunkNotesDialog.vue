@@ -22,6 +22,7 @@
               mdc-dialog__body--big">
           <textarea
               v-model="notes"
+              @keyup.enter="handleNotesKeyup"
               class="full-width-text-field"
               :disabled="loading"
               rows="5" />
@@ -99,6 +100,11 @@ export default {
     },
     closeDialog () {
       this.$emit('close')
+    },
+    handleNotesKeyup (event) {
+      if (event.ctrlKey || event.MetaKey) {
+        this.updateNotes()
+      }
     }
   }
 }

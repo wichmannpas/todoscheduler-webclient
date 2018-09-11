@@ -87,6 +87,7 @@
 
     <textarea
         v-model="notes"
+        @keyup.enter="handleNotesKeyup"
         class="full-width-text-field"
         :disabled="loading"
         :class="{ hidden: series }"
@@ -273,6 +274,11 @@ export default {
       }).finally(() => {
         this.loading = false
       })
+    },
+    handleNotesKeyup (event) {
+      if (event.ctrlKey || event.MetaKey) {
+        this.scheduleTask()
+      }
     }
   }
 }
