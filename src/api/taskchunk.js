@@ -167,6 +167,25 @@ function updateTaskChunkDay (store, chunk, newDay) {
   })
 }
 
+function updateTaskChunkNotes (store, chunk, notes) {
+  return new Promise(function (resolve, reject) {
+    if (!ensureAuthToken()) {
+      reject(new Error('no auth'))
+    }
+
+    axios.patch(API_URL + '/task/chunk/' + chunk.id.toString() + '/', {
+      notes: notes
+    }).then(function (response) {
+      store.commit('updateTaskChunk', {
+        taskChunk: deserialize(TaskChunk, response.data),
+        today: store.state.time.today
+      })
+
+      resolve()
+    }).catch(error => handleGenericErrors(error, resolve, reject))
+  })
+}
+
 function createTaskChunkSeries (store, task, data) {
   return new Promise(function (resolve, reject) {
     if (!ensureAuthToken()) {
@@ -252,5 +271,6 @@ export {
   finishTaskChunk,
   splitTaskChunk,
   updateTaskChunkDay,
+  updateTaskChunkNotes,
   updateTaskChunkSeries
 }
