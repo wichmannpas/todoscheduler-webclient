@@ -85,6 +85,22 @@
       This duration is invalid.
     </p>
 
+    <textarea
+        v-model="notes"
+        class="full-width-text-field"
+        :disabled="loading"
+        :class="{ hidden: series }"
+        rows="5" />
+    <p
+        v-if="errors.indexOf('notes') >= 0"
+        class="
+          mdc-text-field-helper-text
+          mdc-text-field-helper-text--validation-msg
+          mdc-text-field-helper-text--persistent
+          error">
+      These notes are invalid.
+    </p>
+
     <div
         v-if="missesDeadline"
         class="error">
@@ -160,6 +176,7 @@ export default {
       scheduleForDate: formatDayString(new Date()),
       duration: this.task.defaultScheduleDuration(
         this.$store.state.user.user).toNumber(),
+      notes: '',
       errors: []
     }
   },
@@ -221,7 +238,7 @@ export default {
       if (this.scheduleFor !== 'another_time') {
         day = this.scheduleFor
       }
-      scheduleTask(this.$store, this.task, day, this.duration).then(response => {
+      scheduleTask(this.$store, this.task, day, this.duration, this.notes).then(response => {
         Vue.set(this, 'errors', [])
 
         this.$emit('complete')

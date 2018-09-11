@@ -57,7 +57,11 @@ function completeTask (store, task) {
   })
 }
 
-function scheduleTask (store, task, day, duration) {
+function scheduleTask (store, task, day, duration, notes) {
+  if (notes === undefined) {
+    notes = null
+  }
+
   return new Promise(function (resolve, reject) {
     if (!ensureAuthToken()) {
       reject(new Error('no auth'))
@@ -66,7 +70,8 @@ function scheduleTask (store, task, day, duration) {
     axios.post(API_URL + '/task/chunk/', {
       task_id: task.id,
       day: day,
-      duration: duration
+      duration: duration,
+      notes: notes
     }).then(function (response) {
       if (response.status === 201) {
         store.commit('updateTask', {

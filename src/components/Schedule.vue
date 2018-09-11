@@ -13,6 +13,7 @@
           :day="day"
           @editTask="editTask"
           @editTaskChunkSeries="editTaskChunkSeries"
+          @editTaskChunkNotes="editTaskChunkNotes"
           class="
             mdc-layout-grid__cell--span-3-desktop
             mdc-layout-grid__cell--span-4-tablet
@@ -26,6 +27,10 @@
           @close="editSeriesDialogActive = false"
           v-if="editSeriesDialogActive"
           :series="editedSeries" />
+      <EditTaskChunkNotesDialog
+          @close="editNotesDialogActive = false"
+          v-if="editNotesDialogActive"
+          :chunk="editedChunk" />
     </div>
   </div>
   <Loading
@@ -36,8 +41,9 @@
 import { addDays, subDays } from 'date-fns'
 
 import Day from '@/components/Day'
-import EditTaskDialog from '@/components/EditTaskDialog'
+import EditTaskChunkNotesDialog from '@/components/EditTaskChunkNotesDialog'
 import EditTaskChunkSeriesDialog from '@/components/EditTaskChunkSeriesDialog'
+import EditTaskDialog from '@/components/EditTaskDialog'
 import Loading from '@/components/Loading'
 import ScheduleNavigation from '@/components/ScheduleNavigation'
 
@@ -47,16 +53,19 @@ export default {
   name: 'Schedule',
   components: {
     Day,
-    EditTaskDialog,
+    EditTaskChunkNotesDialog,
     EditTaskChunkSeriesDialog,
+    EditTaskDialog,
     Loading,
     ScheduleNavigation
   },
   data: function () {
     return {
       editDialogActive: false,
+      editNotesDialogActive: false,
       editedTask: null,
       editSeriesDialogActive: false,
+      editedChunk: null,
       editedSeries: null
     }
   },
@@ -94,6 +103,14 @@ export default {
       }
       this.editSeriesDialogActive = true
       this.editedSeries = series
+    },
+    editTaskChunkNotes (chunk) {
+      if (this.editNotesDialogActive === true) {
+        console.warn('not opening edit notes dialog as it is already active')
+        return
+      }
+      this.editNotesDialogActive = true
+      this.editedChunk = chunk
     },
     getListOfDays (firstDay, count) {
       let result = []

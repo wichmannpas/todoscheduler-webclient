@@ -84,6 +84,17 @@
         </i>
       </a>
       <a
+          @click="$emit('editTaskChunkNotes', chunk)"
+          class="
+            action
+            task-edit
+            tooltip tooltip-right"
+          data-tooltip="Edit notes">
+        <i class="material-icons">
+          speaker_notes
+        </i>
+      </a>
+      <a
           v-if="series !== null"
           @click="$emit('editTaskChunkSeries', series)"
           class="

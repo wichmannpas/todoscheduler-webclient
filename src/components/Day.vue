@@ -25,6 +25,7 @@
         v-bind:key="chunk.id"
         v-bind:chunk="chunk"
         @editTaskChunkSeries="editTaskChunkSeries"
+        @editTaskChunkNotes="editTaskChunkNotes"
         @editTask="editTask" />
     </div>
     <div class="footer">
@@ -95,6 +96,9 @@ export default {
     },
     editTaskChunkSeries (series) {
       this.$emit('editTaskChunkSeries', series)
+    },
+    editTaskChunkNotes (chunk) {
+      this.$emit('editTaskChunkNotes', chunk)
     }
   }
 }

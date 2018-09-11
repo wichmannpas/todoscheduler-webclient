@@ -18,6 +18,7 @@ class TaskChunk {
   dayOrder = -1
   duration = Decimal(0)
   finished = false
+  notes = null
 
   task (store) {
     return store.state.task.tasks[this.taskId]
@@ -104,7 +105,8 @@ createModelSchema(TaskChunk, {
     val => { return val.toFixed() },
     val => { return new Decimal(val) }
   ),
-  finished: primitive()
+  finished: primitive(),
+  notes: primitive()
 })
 
 export default TaskChunk
