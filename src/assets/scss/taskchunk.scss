@@ -30,7 +30,7 @@ span.task-chunk {
     font-weight: bold;
 
     display: inline-block;
-    width: calc(100% - 5em);
+    width: calc(100% - 6em);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -39,5 +39,12 @@ span.task-chunk {
   .labels {
     margin-top: 0.5em;
     white-space: nowrap;
+  }
+
+  .action {
+    .material-icons {
+      width: 0.9em;
+      font-size: 1.15em;
+    }
   }
 }

@@ -18,15 +18,17 @@
           @click="finishChunk(chunk)"
           class="tooltip tooltip-left task-chunk-action"
           data-tooltip="Done">
-        <font-awesome-icon
-            icon="check" />
+        <i class="material-icons">
+          check
+        </i>
       </a>
       <a
           @click="postponeChunk(chunk)"
           class="tooltip tooltip-left task-chunk-action"
           data-tooltip="Postpone to another day">
-        <font-awesome-icon
-            :icon="['far', 'clock']" />
+        <i class="material-icons">
+          watch_later
+        </i>
       </a>
     </span>
   </li>
