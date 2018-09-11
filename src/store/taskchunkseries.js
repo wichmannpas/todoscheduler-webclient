@@ -1,6 +1,10 @@
 import Vue from 'vue'
 
+import { deserialize } from 'serializr'
+
 import { fetchTaskChunkSeries } from '@/api/taskchunk'
+import Task from '@/models/Task'
+import TaskChunk from '@/models/TaskChunk'
 
 export default {
   state: {
@@ -51,6 +55,28 @@ export default {
         commit('setTaskChunkSeries', taskChunkSeries)
         commit('setTaskChunkSeriesFetched')
       })
+    },
+    addRawTaskChunksFromSeries ({ commit, rootState }, responseData) {
+      let newTaskChunks = responseData.scheduled.map(raw => deserialize(TaskChunk, raw))
+
+      if (newTaskChunks.length > 0) {
+        commit('addUpdateTaskChunks', {
+          taskChunks: newTaskChunks,
+          today: rootState.time.today
+        })
+
+        // at least one new chunk was scheduled and the task updated
+        // we extract the task from the first scheduled chunk and update it
+        let task = deserialize(Task, responseData.scheduled[0].task)
+        commit('updateTask', {
+          task: task,
+          today: rootState.time.today
+        })
+      }
+
+      if (responseData.cleaned !== undefined) {
+        commit('deleteTaskChunks', responseData.cleaned)
+      }
     }
   }
 }

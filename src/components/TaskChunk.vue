@@ -85,7 +85,7 @@
       </a>
       <a
           v-if="series !== null"
-          @click="$emit('editTaskChunkSeries', chunk)"
+          @click="$emit('editTaskChunkSeries', series)"
           class="
             action
             task-edit

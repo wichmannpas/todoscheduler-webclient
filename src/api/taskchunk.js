@@ -186,21 +186,7 @@ function createTaskChunkSeries (store, task, data) {
       monthlyweekday_nth: data.monthlyweekdayNth
     }).then(function (response) {
       if (response.status === 201) {
-        let taskChunks = response.data.scheduled.map(raw => deserialize(TaskChunk, raw))
-
-        if (taskChunks.length > 0) {
-          store.commit('addUpdateTaskChunks', {
-            taskChunks: taskChunks,
-            today: store.state.time.today
-          })
-
-          // at least one new chunk was scheduled and the task updated
-          // we extract the task from the first scheduled chunk and update it
-          store.commit('updateTask', {
-            task: task,
-            today: store.state.time.today
-          })
-        }
+        store.dispatch('addRawTaskChunksFromSeries', response.data)
 
         store.commit('addTaskChunkSeries', deserialize(TaskChunkSeries, response.data.series))
 
@@ -225,6 +211,37 @@ function fetchTaskChunkSeries () {
   })
 }
 
+function updateTaskChunkSeries (store, series) {
+  return new Promise(function (resolve, reject) {
+    if (!ensureAuthToken()) {
+      reject(new Error('no auth'))
+    }
+
+    axios.put(API_URL + '/task/chunk/series/' + series.id.toString() + '/', {
+      task_id: series.task(store).id,
+      duration: series.duration,
+      start: series.start,
+      end: series.end,
+      rule: series.rule,
+      interval_days: series.intervalDays,
+      monthly_day: series.monthlyDay,
+      monthly_months: series.monthlyMonths,
+      monthlyweekday_weekday: series.monthlyweekdayWeekday,
+      monthlyweekday_nth: series.monthlyweekdayNth
+    }).then(response => {
+      if (response.status === 200) {
+        store.dispatch('addRawTaskChunksFromSeries', response.data)
+
+        store.commit('addTaskChunkSeries', deserialize(TaskChunkSeries, response.data.series))
+
+        resolve()
+      } else {
+        reject(response.data)
+      }
+    }).catch(error => handleGenericErrors(error, resolve, reject))
+  })
+}
+
 export {
   changeTaskChunkDuration,
   createTaskChunkSeries,
@@ -234,5 +251,6 @@ export {
   fetchTaskChunkSeries,
   finishTaskChunk,
   splitTaskChunk,
-  updateTaskChunkDay
+  updateTaskChunkDay,
+  updateTaskChunkSeries
 }

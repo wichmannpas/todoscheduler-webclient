@@ -9,6 +9,8 @@ import {
   primitive
 } from 'serializr'
 
+import { prettyDate } from '@/utils'
+
 class TaskChunkSeries {
   id = -1
   taskId = -1
@@ -49,6 +51,14 @@ class TaskChunkSeries {
     }
 
     return 'invalid rule'
+  }
+
+  prettyStart (today) {
+    return prettyDate(this.start, today)
+  }
+
+  prettyEnd (today) {
+    return prettyDate(this.end, today)
   }
 }
 
