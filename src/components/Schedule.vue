@@ -12,6 +12,7 @@
           :key="day.getTime()"
           :day="day"
           @editTask="editTask"
+          @editTaskChunkSeries="editTaskChunkSeries"
           class="
             mdc-layout-grid__cell--span-3-desktop
             mdc-layout-grid__cell--span-4-tablet
@@ -20,8 +21,11 @@
       <EditTaskDialog
           @close="editDialogActive = false"
           v-if="editDialogActive"
-          v-bind:task="editedTask"
-      />
+          :task="editedTask" />
+      <EditTaskChunkSeriesDialog
+          @close="editSeriesDialogActive = false"
+          v-if="editSeriesDialogActive"
+          :series="editedSeries" />
     </div>
   </div>
   <Loading
@@ -33,6 +37,7 @@ import { addDays, subDays } from 'date-fns'
 
 import Day from '@/components/Day'
 import EditTaskDialog from '@/components/EditTaskDialog'
+import EditTaskChunkSeriesDialog from '@/components/EditTaskChunkSeriesDialog'
 import Loading from '@/components/Loading'
 import ScheduleNavigation from '@/components/ScheduleNavigation'
 
@@ -43,13 +48,16 @@ export default {
   components: {
     Day,
     EditTaskDialog,
+    EditTaskChunkSeriesDialog,
     Loading,
     ScheduleNavigation
   },
   data: function () {
     return {
       editDialogActive: false,
-      editedTask: null
+      editedTask: null,
+      editSeriesDialogActive: false,
+      editedSeries: null
     }
   },
   computed: {
@@ -78,6 +86,14 @@ export default {
       }
       this.editDialogActive = true
       this.editedTask = task
+    },
+    editTaskChunkSeries (series) {
+      if (this.editSeriesDialogActive === true) {
+        console.warn('not opening edit series dialog as it is already active')
+        return
+      }
+      this.editSeriesDialogActive = true
+      this.editedSeries = series
     },
     getListOfDays (firstDay, count) {
       let result = []

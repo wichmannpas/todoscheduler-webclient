@@ -192,6 +192,31 @@ export default {
         state.taskChunks,
         taskChunkId)
     },
+    deleteTaskChunks (state, taskChunkIds) {
+      let missing = 0
+      taskChunkIds.forEach(id => {
+        let taskChunk = state.taskChunks[id]
+
+        if (taskChunk === undefined) {
+          missing++
+          return
+        }
+
+        let day = formatDayString(taskChunk.day)
+        if (state.dayOrders[day] !== undefined) {
+          Vue.delete(
+            state.dayOrders[day],
+            state.dayOrders[day].indexOf(id))
+        }
+
+        Vue.delete(
+          state.taskChunks,
+          id)
+      })
+      if (missing > 0) {
+        console.warn('could not delete ' + missing + ' task chunk(s) as they do(es) not exist')
+      }
+    },
     setFirstDisplayedDay (state, day) {
       Vue.set(state, 'firstDisplayedDay', day)
     },

@@ -24,6 +24,7 @@
         v-for="chunk in taskChunks"
         v-bind:key="chunk.id"
         v-bind:chunk="chunk"
+        @editTaskChunkSeries="editTaskChunkSeries"
         @editTask="editTask" />
     </div>
     <div class="footer">
@@ -91,6 +92,9 @@ export default {
   methods: {
     editTask (task) {
       this.$emit('editTask', task)
+    },
+    editTaskChunkSeries (series) {
+      this.$emit('editTaskChunkSeries', series)
     }
   }
 }
