@@ -57,6 +57,10 @@ class TaskChunk {
     return store.state.taskchunk.highlightedChunks[this.id] === true
   }
 
+  hasNotes () {
+    return this.notes !== null && this.notes.length > 0
+  }
+
   /**
    * Compare to another task chunk.
    * returns negative values if < other
