@@ -89,6 +89,9 @@
             action
             task-edit
             tooltip tooltip-right"
+          :class="{
+            'has-notes': chunk.hasNotes()
+          }"
           data-tooltip="Edit notes">
         <i class="material-icons">
           speaker_notes

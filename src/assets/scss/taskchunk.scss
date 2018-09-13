@@ -46,5 +46,9 @@ span.task-chunk {
       width: 0.9em;
       font-size: 1.15em;
     }
+
+    &.has-notes {
+      color: #DBD200;
+    }
   }
 }
