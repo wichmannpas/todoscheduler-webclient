@@ -251,7 +251,18 @@ function updateTaskChunkSeries (store, series) {
       if (response.status === 200) {
         store.dispatch('addRawTaskChunksFromSeries', response.data)
 
-        store.commit('addTaskChunkSeries', deserialize(TaskChunkSeries, response.data.series))
+        let oldSeries = store.state.taskchunkseries.taskChunkSeries[series.id]
+
+        series = deserialize(TaskChunkSeries, response.data.series)
+        store.commit('addTaskChunkSeries', series)
+
+        if (series.duration.comparedTo(oldSeries.duration) !== 0) {
+          store.commit('updateTaskChunksDuration', {
+            taskId: series.taskId,
+            oldDuration: oldSeries.duration,
+            newDuration: series.duration
+          })
+        }
 
         resolve()
       } else {

@@ -173,6 +173,25 @@ export default {
         taskChunk.id
       )
     },
+    /**
+     * Change all durations of chunks belonging to task with taskId, if they
+     * currently have oldDuration.
+     *
+     * As only the duration of the chunks is changed, the order is not affected
+     * by this.
+     */
+    updateTaskChunksDuration (state, { taskId, oldDuration, newDuration }) {
+      Object.entries(state.taskChunks).forEach(([id, taskChunk]) => {
+        if (taskChunk.duration.comparedTo(oldDuration) !== 0) {
+          return // continue
+        }
+
+        Vue.set(
+          state.taskChunks[id],
+          'duration',
+          newDuration)
+      })
+    },
     deleteTaskChunk (state, taskChunkId) {
       let taskChunk = state.taskChunks[taskChunkId]
 

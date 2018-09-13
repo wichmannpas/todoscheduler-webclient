@@ -78,6 +78,48 @@
           <p>
             This series is scheduled {{ series.description() }}, starting {{ series.prettyStart($store.state.time.today) }}.
           </p>
+
+          <p>
+            You can change the duration of a series.
+            The duration of all task chunks whose duration equals the current series duration will be updated to the new duration.
+          </p>
+
+          <div
+              ref="duration"
+              class="
+                mdc-text-field
+                full-width-text-field
+                mdc-text-field--with-trailing-icon">
+            <input
+                id="series-duration"
+                ref="durationInput"
+                v-model="duration"
+                :disabled="loading"
+                type="number"
+                step="0.01"
+                class="
+                  mdc-text-field__input
+                  align-right" />
+            <label
+                class="mdc-floating-label"
+                for="series-duration">
+              Duration
+            </label>
+            <span
+                class="mdc-text-field__icon mdc-text-field__text"
+                tabindex="-1">h</span>
+            <div class="mdc-line-ripple"></div>
+          </div>
+          <p
+              v-if="errors.indexOf('duration') >= 0"
+              class="
+                mdc-text-field-helper-text
+                mdc-text-field-helper-text--validation-msg
+                mdc-text-field-helper-text--persistent
+                error">
+            This duration is invalid.
+          </p>
+
           <p>
             You can change the end date of a series.
             When changing the end date, already scheduled task chunks of this series occuring <em>after</em> that end date are removed.
@@ -95,6 +137,7 @@
                 v-model="end"
                 id="series-end"
                 type="date"
+                :disabled="loading"
                 class="mdc-text-field__input" />
             <label
                 class="mdc-floating-label mdc-floating-label--float-above"
@@ -150,6 +193,9 @@
 </template>
 
 <script>
+import Decimal from 'decimal.js-light'
+import { MDCTextField } from '@material/textfield'
+
 import { updateTaskChunkSeries } from '@/api/taskchunk'
 import Loading from '@/components/Loading'
 import MergeTask from '@/components/MergeTask'
@@ -170,9 +216,18 @@ export default {
   ],
   data: function () {
     return {
+      ui: {
+        durationInput: null
+      },
       loading: false,
       errors: [],
-      end: formatDayString(this.series.end)
+      end: formatDayString(this.series.end),
+      duration: this.series.duration.toFixed()
+    }
+  },
+  mounted: function () {
+    if (this.ui.durationInput === null) {
+      this.ui.durationInput = new MDCTextField(this.$refs.duration)
     }
   },
   computed: {
@@ -187,6 +242,7 @@ export default {
       let series = Object.assign(new TaskChunkSeries(), this.series)
       series.start = formatDayString(series.start)
       series.end = this.end
+      series.duration = Decimal(this.duration)
       updateTaskChunkSeries(this.$store, series).then(response => {
         this.errors = []
 
