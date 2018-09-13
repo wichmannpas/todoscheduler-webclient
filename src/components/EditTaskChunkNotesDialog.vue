@@ -20,8 +20,20 @@
               mdc-dialog__body
               mdc-dialog__body--scrollable
               mdc-dialog__body--big">
+          <h3>
+            Task Notes
+          </h3>
           <textarea
-              v-model="notes"
+              v-model="taskNotes"
+              @keyup.enter="handleNotesKeyup"
+              class="full-width-text-field"
+              :disabled="loading"
+              rows="5" />
+          <h3>
+            Task Chunk Notes
+          </h3>
+          <textarea
+              v-model="chunkNotes"
               @keyup.enter="handleNotesKeyup"
               class="full-width-text-field"
               :disabled="loading"
@@ -61,6 +73,7 @@
 import Vue from 'vue'
 
 import Loading from '@/components/Loading'
+import { updateTaskNotes } from '@/api/task'
 import { updateTaskChunkNotes } from '@/api/taskchunk'
 
 export default {
@@ -74,7 +87,8 @@ export default {
   data: function () {
     return {
       loading: false,
-      notes: this.chunk.notes
+      chunkNotes: this.chunk.notes,
+      taskNotes: this.chunk.task(this.$store).notes
     }
   },
   computed: {
@@ -90,11 +104,16 @@ export default {
 
       this.loading = true
 
-      updateTaskChunkNotes(this.$store, this.chunk, this.notes).then(() => {
-        this.$emit('close')
+      updateTaskNotes(this.$store, this.task, this.taskNotes).then(() => {
+        updateTaskChunkNotes(this.$store, this.chunk, this.chunkNotes).then(() => {
+          this.$emit('close')
+        }).catch(response => {
+          Vue.set(this, 'errors', Object.keys(response))
+        }).finally(() => {
+          this.loading = false
+        })
       }).catch(response => {
         Vue.set(this, 'errors', Object.keys(response))
-      }).finally(() => {
         this.loading = false
       })
     },

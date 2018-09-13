@@ -167,6 +167,25 @@ function changeTaskDuration (store, task, newDuration) {
   })
 }
 
+function updateTaskNotes (store, task, notes) {
+  return new Promise(function (resolve, reject) {
+    if (!ensureAuthToken()) {
+      reject(new Error('no auth'))
+    }
+
+    axios.patch(API_URL + '/task/task/' + task.id.toString() + '/', {
+      notes: notes
+    }).then(function (response) {
+      store.commit('updateTask', {
+        task: deserialize(Task, response.data),
+        today: store.state.time.today
+      })
+
+      resolve()
+    }).catch(error => handleGenericErrors(error, resolve, reject))
+  })
+}
+
 function mergeTask (store, task, mergedTask) {
   return new Promise(function (resolve, reject) {
     if (!ensureAuthToken()) {
@@ -201,5 +220,6 @@ export {
   fetchTasks,
   mergeTask,
   scheduleTask,
-  updateTask
+  updateTask,
+  updateTaskNotes
 }
