@@ -99,6 +99,10 @@ class Task {
     return !this.completelyScheduled() && differenceInDays(this.deadline, today) < 3
   }
 
+  hasNotes () {
+    return this.notes !== null && this.notes.length > 0
+  }
+
   /**
    * Compare to another task.
    * returns negative values if < other

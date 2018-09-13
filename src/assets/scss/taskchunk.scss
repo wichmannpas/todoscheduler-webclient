@@ -47,8 +47,16 @@ span.task-chunk {
       font-size: 1.15em;
     }
 
-    &.has-notes {
+    &.has-task-notes {
+      color: #989100;
+    }
+
+    &.has-chunk-notes {
       color: #DBD200;
+    }
+
+    &.has-task-notes.has-chunk-notes {
+      color: #69C800;
     }
   }
 }

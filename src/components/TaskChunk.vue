@@ -90,7 +90,8 @@
             task-edit
             tooltip tooltip-right"
           :class="{
-            'has-notes': chunk.hasNotes()
+            'has-chunk-notes': task.hasNotes(),
+            'has-task-notes': chunk.hasNotes()
           }"
           data-tooltip="Edit notes">
         <i class="material-icons">
