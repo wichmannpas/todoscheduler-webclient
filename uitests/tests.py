@@ -386,12 +386,12 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today(),
             task=task,
             duration=2,
-            day_order=0)
+            day_order=1)
         TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=1,
-            day_order=0,
+            day_order=1,
             finished=True)
 
         self.selenium.get(self.frontend_url)
@@ -432,12 +432,12 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today(),
             task=task,
             duration=2,
-            day_order=0)
+            day_order=1)
         TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=1,
-            day_order=0,
+            day_order=1,
             finished=True)
 
         self.selenium.get(self.frontend_url)
@@ -476,12 +476,12 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today(),
             task=task,
             duration=2,
-            day_order=0)
+            day_order=1)
         TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=1,
-            day_order=0,
+            day_order=1,
             finished=True)
 
         self.selenium.get(self.frontend_url)
@@ -520,12 +520,12 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today(),
             task=task,
             duration=2,
-            day_order=0)
+            day_order=1)
         TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=1,
-            day_order=0,
+            day_order=1,
             finished=True)
 
         self.selenium.get(self.frontend_url)
@@ -567,12 +567,12 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today(),
             task=task,
             duration=2,
-            day_order=0)
+            day_order=1)
         TaskChunk.objects.create(
             day=date.today(),
             task=task,
             duration=1,
-            day_order=0,
+            day_order=1,
             finished=True)
 
         self.selenium.get(self.frontend_url)
@@ -721,11 +721,11 @@ class MainPageTest(AuthenticatedSeleniumTest):
         # create task chunks to fill current and next 2 days
         TaskChunk.objects.bulk_create([
             TaskChunk(
-                task=other_task, duration=10, day=date.today(), day_order=0),
+                task=other_task, duration=10, day=date.today(), day_order=1),
             TaskChunk(
-                task=other_task, duration=10, day=date.today() + timedelta(days=1), day_order=0),
+                task=other_task, duration=10, day=date.today() + timedelta(days=1), day_order=1),
             TaskChunk(
-                task=other_task, duration=10, day=date.today() + timedelta(days=2), day_order=0)])
+                task=other_task, duration=10, day=date.today() + timedelta(days=2), day_order=1)])
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
@@ -898,7 +898,7 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today(),
             task=task,
             duration=2,
-            day_order=0)
+            day_order=1)
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
@@ -919,7 +919,7 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today(),
             task=task,
             duration=2,
-            day_order=0)
+            day_order=1)
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
@@ -940,7 +940,7 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today(),
             task=task,
             duration=2,
-            day_order=0)
+            day_order=1)
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
@@ -961,7 +961,7 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today(),
             task=task,
             duration=2,
-            day_order=0)
+            day_order=1)
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
@@ -980,7 +980,7 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today(),
             task=task,
             duration=2,
-            day_order=0,
+            day_order=1,
             finished=True)
 
         self.selenium.get(self.frontend_url)
@@ -1000,7 +1000,7 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today(),
             task=task,
             duration=2,
-            day_order=0,
+            day_order=1,
             finished=True)
 
         self.selenium.get(self.frontend_url)
@@ -1025,7 +1025,7 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today(),
             task=task,
             duration=2,
-            day_order=0,
+            day_order=1,
             finished=True)
 
         self.selenium.get(self.frontend_url)
@@ -1048,7 +1048,7 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today(),
             task=task1,
             duration=Decimal(2.5),
-            day_order=0)
+            day_order=1)
 
         self.assertEqual(
             TaskChunk.objects.count(),
@@ -1081,7 +1081,7 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today(),
             task=task1,
             duration=2,
-            day_order=0)
+            day_order=1)
 
         self.selenium.execute_script('window.localStorage.setItem("drag-and-drop", "never")')
 
@@ -1104,7 +1104,7 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today(),
             task=task1,
             duration=2,
-            day_order=0)
+            day_order=1)
 
         self.selenium.execute_script('window.localStorage.setItem("drag-and-drop", "never")')
 
@@ -1127,7 +1127,7 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today(),
             task=task1,
             duration=2,
-            day_order=0)
+            day_order=1)
         task2 = Task.objects.create(
             user=self.user,
             name='Task 2',
@@ -1136,7 +1136,7 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today(),
             task=task2,
             duration=1,
-            day_order=1)
+            day_order=2)
 
         self.selenium.execute_script('window.localStorage.setItem("drag-and-drop", "never")')
 
@@ -1147,12 +1147,9 @@ class MainPageTest(AuthenticatedSeleniumTest):
 
         chunk1.refresh_from_db()
         chunk2.refresh_from_db()
-        self.assertEqual(
-            chunk1.day_order,
-            1)
-        self.assertEqual(
+        self.assertLess(
             chunk2.day_order,
-            0)
+            chunk1.day_order)
 
     def test_task_chunk_down(self):
         task1 = Task.objects.create(
@@ -1163,7 +1160,7 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today(),
             task=task1,
             duration=2,
-            day_order=0)
+            day_order=1)
         task2 = Task.objects.create(
             user=self.user,
             name='Task 2',
@@ -1172,7 +1169,7 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today(),
             task=task2,
             duration=1,
-            day_order=1)
+            day_order=2)
 
         self.selenium.execute_script('window.localStorage.setItem("drag-and-drop", "never")')
 
@@ -1183,12 +1180,9 @@ class MainPageTest(AuthenticatedSeleniumTest):
 
         chunk1.refresh_from_db()
         chunk2.refresh_from_db()
-        self.assertEqual(
-            chunk1.day_order,
-            1)
-        self.assertEqual(
+        self.assertLess(
             chunk2.day_order,
-            0)
+            chunk1.day_order)
 
     def test_missed_task_chunk_finish(self):
         task = Task.objects.create(
@@ -1199,7 +1193,7 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today() - timedelta(days=4),
             task=task,
             duration=2,
-            day_order=0)
+            day_order=1)
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
@@ -1223,7 +1217,7 @@ class MainPageTest(AuthenticatedSeleniumTest):
             day=date.today() - timedelta(days=4),
             task=task,
             duration=2,
-            day_order=0)
+            day_order=1)
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
