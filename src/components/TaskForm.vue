@@ -38,7 +38,7 @@
         @input="updateTask"
         @keyup.enter="handleNotesKeyup"
         :disabled="loading"
-        rows="5" />
+        :rows="notesRows" />
     <p
         v-if="errors.indexOf('notes') >= 0"
         class="
@@ -232,7 +232,7 @@
 import { MDCSlider } from '@material/slider'
 import { MDCTextField } from '@material/textfield'
 
-import { formatDayString, priorityString } from '@/utils'
+import { formatDayString, priorityString, textareaRows } from '@/utils'
 
 export default {
   name: 'TaskForm',
@@ -250,7 +250,8 @@ export default {
         prioritySlider: null
       },
       labelIds: this.value.labelIds,
-      priority: this.value.priority
+      priority: this.value.priority,
+      notesRows: textareaRows(this.value.notes)
     }
   },
   mounted: function () {
@@ -300,6 +301,9 @@ export default {
         start = null
       }
       this.priority = parseInt(this.$refs.priority.getAttribute('aria-valuenow'))
+
+      this.notesRows = textareaRows(this.$refs.notesInput.value)
+
       this.$emit('input', {
         name: this.$refs.nameInput.value,
         duration: this.$refs.durationInput.value,

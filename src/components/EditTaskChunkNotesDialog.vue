@@ -28,7 +28,7 @@
               @keyup.enter="handleNotesKeyup"
               class="full-width-text-field"
               :disabled="loading"
-              rows="5" />
+              :rows="taskNotesRows" />
           <h3>
             Task Chunk Notes
           </h3>
@@ -37,7 +37,7 @@
               @keyup.enter="handleNotesKeyup"
               class="full-width-text-field"
               :disabled="loading"
-              rows="5" />
+              :rows="chunkNotesRows" />
           <Loading v-if="loading" />
         </section>
         <footer class="mdc-dialog__footer">
@@ -75,6 +75,7 @@ import Vue from 'vue'
 import Loading from '@/components/Loading'
 import { updateTaskNotes } from '@/api/task'
 import { updateTaskChunkNotes } from '@/api/taskchunk'
+import { textareaRows } from '@/utils'
 
 export default {
   name: 'EditTaskChunkNotesDialog',
@@ -94,6 +95,13 @@ export default {
   computed: {
     task () {
       return this.chunk.task(this.$store)
+    },
+
+    taskNotesRows () {
+      return textareaRows(this.taskNotes)
+    },
+    chunkNotesRows () {
+      return textareaRows(this.chunkNotes)
     }
   },
   methods: {
