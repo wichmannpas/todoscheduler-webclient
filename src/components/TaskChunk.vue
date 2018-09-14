@@ -1,12 +1,14 @@
 <template>
   <span
-      v-bind:class="[
+      :data-day-order="chunk.dayOrder"
+      :data-chunk-id="chunk.id"
+      :class="[
         'task-chunk',
         { highlighted: chunk.highlighted($store) },
         { finished: chunk.finished },
         { overdue: chunk.overdue }
       ]"
-      v-bind:style="[
+      :style="[
         { height: (chunk.duration.toNumber() * 4).toString() + 'em' }
       ]">
     <span
@@ -268,7 +270,7 @@ export default {
       return this.chunk.series(this.$store)
     },
     enableDragAndDrop () {
-      return window.innerWidth >= 300 && window.innerHeight >= 500
+      return window.innerWidth >= 600 && window.innerHeight >= 500
     }
   },
   methods: {

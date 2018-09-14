@@ -17,10 +17,11 @@
             watch_later
           </i>
         </span>
-    </span>
+      </span>
     </div>
     <div
         ref="dragContainer"
+        :data-day="formattedDay"
         class="body">
       <TaskChunk
         v-for="chunk in taskChunks"
@@ -49,8 +50,9 @@
 import { isWeekend } from 'date-fns'
 import Sortable from 'sortablejs'
 
-import { isBeforeDay, isToday, naturalDay } from '@/utils'
+import { formatDayString, isBeforeDay, isToday, naturalDay } from '@/utils'
 import TaskChunk from '@/components/TaskChunk'
+import { moveTaskChunk } from '@/api/taskchunk'
 
 export default {
   name: 'Day',
@@ -60,7 +62,9 @@ export default {
   props: [
     'day'
   ],
-  mounted: function () {
+  mounted () {
+    let store = this.$store
+
     Sortable.create(this.$refs.dragContainer, {
       handle: '.drag-handle',
       group: 'day-taskchunks',
@@ -82,9 +86,35 @@ export default {
       /**
        * revert the drag move to re-do it later using the store as soon
        * as the server has acknowledged the request.
+       *
+       * It may be required to find a better solution in order to prevent
+       * race conditions with DOM updates of Vue (e.g., simultaneously
+       * arriving updates)
        */
       onEnd (event) {
         let item = event.item
+
+        if (event.from === event.to && event.oldIndex === event.newIndex) {
+          // not actually moved
+          return
+        }
+
+        // determine new day and day order
+        let day = event.to.dataset['day']
+        let dayOrder
+        if (item.nextSibling === null) {
+          // last item of list, determine new day order
+          if (event.to.children.length === 1) {
+            // new item is the only children, assign new day order
+            dayOrder = 1
+          } else {
+            // increment day order of second-last item
+            dayOrder = parseInt(event.to.children[event.to.children.length - 2].dataset.dayOrder) + 1
+          }
+        } else {
+          // place before specified element by using its day order
+          dayOrder = parseInt(item.nextSibling.dataset.dayOrder)
+        }
 
         if (event.from !== event.to) {
           // changed day
@@ -107,13 +137,17 @@ export default {
           }
         }
 
-        return false
+        let chunkId = parseInt(item.dataset.chunkId)
+        moveTaskChunk(store, chunkId, day, dayOrder)
       }
     })
   },
   computed: {
     naturalDay () {
       return naturalDay(this.day, this.$store.state.time.today)
+    },
+    formattedDay () {
+      return formatDayString(this.day)
     },
 
     taskChunks () {

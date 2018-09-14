@@ -172,7 +172,50 @@ export default {
         0,
         taskChunk.id
       )
-    }
+    },
+    /**
+     * move a task chunk, updating all other task chunks that were moved
+     * in accordance with this move.
+     */
+    moveTaskChunk (state, { taskChunk }) {
+      let oldTaskChunk = state.taskChunks[taskChunk.id]
+      let oldDay = formatDayString(oldTaskChunk.day)
+
+      // remove the task chunk from the old day
+      // this is also necessary if the day was not changed to
+      // ensure that it is re-inserted at the correct position
+      Vue.delete(
+        state.dayOrders[oldDay],
+        state.dayOrders[oldDay].indexOf(oldTaskChunk.id))
+
+      let day = formatDayString(taskChunk.day)
+
+      if (state.dayOrders[day] === undefined) {
+        Vue.set(state.dayOrders, day, [])
+      }
+
+      // increment all task chunk day orders which need to be moved down
+      state.dayOrders[day].forEach(chunkId => {
+        if (chunkId === taskChunk.id) {
+          // skip current
+          return // continue
+        }
+
+        let chunk = state.taskChunks[chunkId]
+        if (chunk.dayOrder >= taskChunk.dayOrder) {
+          Vue.set(
+            state.taskChunks[chunkId],
+            'dayOrder',
+            chunk.dayOrder + 1)
+        }
+      })
+
+      Vue.set(
+        state.taskChunks,
+        taskChunk.id,
+        taskChunk)
+      state.dayOrders[day].splice(
+        insertIndex(state.dayOrders[day], taskChunk, state.taskChunks),
         0,
         taskChunk.id
       )
