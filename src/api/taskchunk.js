@@ -67,8 +67,7 @@ function changeTaskChunkDuration (store, chunk, newDuration) {
       duration: newDuration
     }).then(function (response) {
       store.commit('updateTaskChunk', {
-        taskChunk: deserialize(TaskChunk, response.data),
-        today: store.state.time.today
+        taskChunk: deserialize(TaskChunk, response.data)
       })
       store.commit('updateTask', {
         task: deserialize(Task, response.data.task),
@@ -90,13 +89,11 @@ function exchangeTaskChunk (store, chunk, exchange) {
       day_order: exchange.dayOrder
     }).then(function (response) {
       store.commit('updateTaskChunk', {
-        taskChunk: deserialize(TaskChunk, response.data),
-        today: store.state.time.today
+        taskChunk: deserialize(TaskChunk, response.data)
       })
       exchange.dayOrder = chunk.dayOrder
       store.commit('updateTaskChunk', {
-        taskChunk: exchange,
-        today: store.state.time.today
+        taskChunk: exchange
       })
 
       resolve()
@@ -114,8 +111,7 @@ function finishTaskChunk (store, chunk, newState) {
       finished: newState
     }).then(function (response) {
       store.commit('updateTaskChunk', {
-        taskChunk: deserialize(TaskChunk, response.data),
-        today: store.state.time.today
+        taskChunk: deserialize(TaskChunk, response.data)
       })
       store.commit('updateTask', {
         task: deserialize(Task, response.data.task),
@@ -139,8 +135,7 @@ function splitTaskChunk (store, chunk) {
       store.commit(
         'addUpdateTaskChunks',
         {
-          taskChunks: response.data.map(raw => deserialize(TaskChunk, raw)),
-          today: store.state.time.today
+          taskChunks: response.data.map(raw => deserialize(TaskChunk, raw))
         })
 
       resolve()
@@ -158,8 +153,13 @@ function updateTaskChunkDay (store, chunk, newDay) {
       day: newDay
     }).then(function (response) {
       store.commit('updateTaskChunk', {
-        taskChunk: deserialize(TaskChunk, response.data),
-        today: store.state.time.today
+        taskChunk: deserialize(TaskChunk, response.data)
+      })
+
+      resolve()
+    }).catch(error => handleGenericErrors(error, resolve, reject))
+  })
+}
       })
 
       resolve()
@@ -177,8 +177,7 @@ function updateTaskChunkNotes (store, chunk, notes) {
       notes: notes
     }).then(function (response) {
       store.commit('updateTaskChunk', {
-        taskChunk: deserialize(TaskChunk, response.data),
-        today: store.state.time.today
+        taskChunk: deserialize(TaskChunk, response.data)
       })
 
       resolve()

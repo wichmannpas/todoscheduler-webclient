@@ -74,7 +74,7 @@ export default {
     /**
      * requires no redundant taskChunks to be present
      */
-    setTaskChunks (state, { taskChunks, today }) {
+    setTaskChunks (state, { taskChunks }) {
       state.taskChunks = {}
       state.dayOrders = {}
 
@@ -90,7 +90,7 @@ export default {
         }
 
         state.dayOrders[day].splice(
-          insertIndex(state.dayOrders[day], taskChunk, state.taskChunks, today),
+          insertIndex(state.dayOrders[day], taskChunk, state.taskChunks),
           0,
           taskChunk.id
         )
@@ -101,7 +101,7 @@ export default {
     /**
      * add specified task chunks, previously removing them if they exist
      */
-    addUpdateTaskChunks (state, { taskChunks, today }) {
+    addUpdateTaskChunks (state, { taskChunks }) {
       taskChunks.forEach(taskChunk => {
         let oldTaskChunk = state.taskChunks[taskChunk.id]
 
@@ -122,7 +122,7 @@ export default {
           Vue.set(state.dayOrders, day, [])
         }
         state.dayOrders[day].splice(
-          insertIndex(state.dayOrders[day], taskChunk, state.taskChunks, today),
+          insertIndex(state.dayOrders[day], taskChunk, state.taskChunks),
           0,
           taskChunk.id
         )
@@ -130,7 +130,7 @@ export default {
 
       state.ready = true
     },
-    addTaskChunk (state, { taskChunk, today }) {
+    addTaskChunk (state, { taskChunk }) {
       if (state.taskChunks[taskChunk.id] !== undefined) {
         // task chunk exists already
         return
@@ -146,12 +146,12 @@ export default {
         Vue.set(state.dayOrders, day, [])
       }
       state.dayOrders[day].splice(
-        insertIndex(state.dayOrders[day], taskChunk, state.taskChunks, today),
+        insertIndex(state.dayOrders[day], taskChunk, state.taskChunks),
         0,
         taskChunk.id
       )
     },
-    updateTaskChunk (state, { taskChunk, today }) {
+    updateTaskChunk (state, { taskChunk }) {
       let oldTaskChunk = state.taskChunks[taskChunk.id]
       let oldDay = formatDayString(oldTaskChunk.day)
       Vue.delete(
@@ -168,7 +168,11 @@ export default {
         Vue.set(state.dayOrders, day, [])
       }
       state.dayOrders[day].splice(
-        insertIndex(state.dayOrders[day], taskChunk, state.taskChunks, today),
+        insertIndex(state.dayOrders[day], taskChunk, state.taskChunks),
+        0,
+        taskChunk.id
+      )
+    }
         0,
         taskChunk.id
       )
@@ -292,13 +296,11 @@ export default {
       ).then(taskChunks => {
         if (incremental !== true) {
           commit('setTaskChunks', {
-            taskChunks: taskChunks,
-            today: today
+            taskChunks: taskChunks
           })
         } else {
           commit('addUpdateTaskChunks', {
-            taskChunks: taskChunks,
-            today: today
+            taskChunks: taskChunks
           })
         }
         commit('setTaskChunksFetched')
