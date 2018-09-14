@@ -1,5 +1,24 @@
 import { differenceInDays, format, parse } from 'date-fns'
 
+import { TEXTAREA_MIN_ROWS, TEXTAREA_MAX_ROWS } from '@/config'
+
+/**
+ * Calculate the desired height of a textarea.
+ */
+function textareaRows (text) {
+  if (text === null || text === undefined) {
+    return TEXTAREA_MIN_ROWS
+  }
+
+  let lines = text.split('\n').length
+  if (lines < TEXTAREA_MIN_ROWS) {
+    return TEXTAREA_MIN_ROWS
+  } else if (lines > TEXTAREA_MAX_ROWS) {
+    return TEXTAREA_MAX_ROWS
+  }
+  return lines
+}
+
 /**
  * Set all values of a Date object with higher precision than day to zero.
  *
@@ -168,5 +187,6 @@ export {
   naturalDay,
   parseDayString,
   prettyDate,
-  priorityString
+  priorityString,
+  textareaRows
 }

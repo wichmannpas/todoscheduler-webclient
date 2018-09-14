@@ -91,7 +91,7 @@
         class="full-width-text-field"
         :disabled="loading"
         :class="{ hidden: series }"
-        rows="5" />
+        :rows="notesRows" />
     <p
         v-if="errors.indexOf('notes') >= 0"
         class="
@@ -152,7 +152,7 @@ import { scheduleTask } from '@/api/task'
 import { createTaskChunkSeries } from '@/api/taskchunk'
 import TaskChunkSeriesForm from '@/components/TaskChunkSeriesForm'
 import Loading from '@/components/Loading'
-import { isAfterDay, formatDayString } from '@/utils'
+import { isAfterDay, formatDayString, textareaRows } from '@/utils'
 
 export default {
   name: 'ScheduleTaskForm',
@@ -218,6 +218,9 @@ export default {
       }
 
       return isAfterDay(scheduleForDate, this.task.deadline)
+    },
+    notesRows () {
+      return textareaRows(this.notes)
     }
   },
   methods: {
