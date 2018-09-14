@@ -6,7 +6,6 @@
     <div
         class="schedule mdc-layout-grid">
       <div class="mdc-layout-grid__inner">
-
         <Day
           v-for="day in days"
           :key="day.getTime()"

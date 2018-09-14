@@ -123,7 +123,19 @@
           layers
         </i>
       </a>
+      <span
+          v-if="enableDragAndDrop"
+          class="c-hand drag-handle action tooltip tooltip-left"
+          v-bind:class="[
+            { 'invisible': chunk.finished }
+          ]"
+          data-tooltip="Move">
+        <i class="material-icons">
+          drag_handle
+        </i>
+      </span>
       <a
+          v-if="!enableDragAndDrop"
           @click="updateChunkDay(-1)"
           class="action tooltip tooltip-left"
           v-bind:class="[
@@ -135,6 +147,7 @@
         </i>
       </a>
       <a
+          v-if="!enableDragAndDrop"
           @click="moveChunk(-1)"
           class="action tooltip tooltip-left"
           v-bind:class="[
@@ -147,6 +160,7 @@
         </i>
       </a>
       <a
+          v-if="!enableDragAndDrop"
           @click="moveChunk(1)"
           class="action tooltip tooltip-left"
           v-bind:class="[
@@ -159,6 +173,7 @@
         </i>
       </a>
       <a
+          v-if="!enableDragAndDrop"
           @click="updateChunkDay(1)"
           class="action tooltip tooltip-left"
           v-bind:class="[
@@ -251,6 +266,9 @@ export default {
     },
     series () {
       return this.chunk.series(this.$store)
+    },
+    enableDragAndDrop () {
+      return window.innerWidth >= 300 && window.innerHeight >= 500
     }
   },
   methods: {

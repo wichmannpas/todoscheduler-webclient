@@ -19,7 +19,9 @@
         </span>
     </span>
     </div>
-    <div class="body">
+    <div
+        ref="dragContainer"
+        class="body">
       <TaskChunk
         v-for="chunk in taskChunks"
         v-bind:key="chunk.id"
@@ -45,6 +47,7 @@
 
 <script>
 import { isWeekend } from 'date-fns'
+import Sortable from 'sortablejs'
 
 import { isBeforeDay, isToday, naturalDay } from '@/utils'
 import TaskChunk from '@/components/TaskChunk'
@@ -57,6 +60,57 @@ export default {
   props: [
     'day'
   ],
+  mounted: function () {
+    Sortable.create(this.$refs.dragContainer, {
+      handle: '.drag-handle',
+      group: 'day-taskchunks',
+      animation: 0,
+      filter (event, elem) {
+        // TODO: finished
+        return false
+      },
+      onMove (event, originalEvent) {
+        let relatedFinished = event.related.classList.contains('finished')
+
+        let relatedEnd = event.relatedRect.top + event.relatedRect.height
+
+        if (relatedFinished && originalEvent.clientY < relatedEnd) {
+          // do not allow moving above finished element
+          return false
+        }
+      },
+      /**
+       * revert the drag move to re-do it later using the store as soon
+       * as the server has acknowledged the request.
+       */
+      onEnd (event) {
+        let item = event.item
+
+        if (event.from !== event.to) {
+          // changed day
+
+          if (event.oldIndex >= event.from.childNodes.length) {
+            // was last of day
+            event.from.appendChild(item)
+          } else {
+            event.from.insertBefore(item, event.from.childNodes[event.oldIndex])
+          }
+        } else {
+          // moved within the same day
+
+          if (event.oldIndex < event.newIndex) {
+            // moved down
+            event.from.insertBefore(item, event.from.childNodes[event.oldIndex])
+          } else if (event.oldIndex > event.newIndex) {
+            // moved up
+            event.from.insertBefore(item, event.from.childNodes[event.oldIndex].nextSibling)
+          }
+        }
+
+        return false
+      }
+    })
+  },
   computed: {
     naturalDay () {
       return naturalDay(this.day, this.$store.state.time.today)
