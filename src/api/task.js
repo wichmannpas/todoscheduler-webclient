@@ -79,8 +79,7 @@ function scheduleTask (store, task, day, duration, notes) {
           today: store.state.time.today
         })
         store.commit('addTaskChunk', {
-          taskChunk: deserialize(TaskChunk, response.data),
-          today: store.state.time.today
+          taskChunk: deserialize(TaskChunk, response.data)
         })
 
         resolve()
@@ -195,8 +194,7 @@ function mergeTask (store, task, mergedTask) {
     axios.post(API_URL + '/task/task/' + task.id.toString() + '/merge/' + mergedTask.id.toString() + '/').then(function (response) {
       if (response.status === 200) {
         store.commit('addUpdateTaskChunks', {
-          taskChunks: response.data.map(raw => deserialize(TaskChunk, raw)),
-          today: store.state.time.today
+          taskChunks: response.data.map(raw => deserialize(TaskChunk, raw))
         })
 
         store.commit('deleteTask', mergedTask.id)
