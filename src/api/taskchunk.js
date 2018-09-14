@@ -85,6 +85,13 @@ function exchangeTaskChunk (store, chunk, exchange) {
       reject(new Error('no auth'))
     }
 
+    if (chunk.dayOrder < exchange.dayOrder) {
+      // the API moves all conflicting chunks down, thus we need to
+      // send the request in such a way that we move a chunk up
+      let newExchange = chunk
+      chunk = exchange
+      exchange = newExchange
+    }
     axios.patch(API_URL + '/task/chunk/' + chunk.id.toString() + '/', {
       day_order: exchange.dayOrder
     }).then(function (response) {
