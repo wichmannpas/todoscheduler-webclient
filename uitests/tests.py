@@ -1083,6 +1083,8 @@ class MainPageTest(AuthenticatedSeleniumTest):
             duration=2,
             day_order=0)
 
+        self.selenium.execute_script('window.localStorage.setItem("drag-and-drop", "never")')
+
         self.selenium.get(self.frontend_url)
         sleep(0.5)
         self.selenium.find_elements_by_css_selector('[data-tooltip="Move to previous day"]')[0].click()
@@ -1103,6 +1105,8 @@ class MainPageTest(AuthenticatedSeleniumTest):
             task=task1,
             duration=2,
             day_order=0)
+
+        self.selenium.execute_script('window.localStorage.setItem("drag-and-drop", "never")')
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
@@ -1133,6 +1137,8 @@ class MainPageTest(AuthenticatedSeleniumTest):
             task=task2,
             duration=1,
             day_order=1)
+
+        self.selenium.execute_script('window.localStorage.setItem("drag-and-drop", "never")')
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)
@@ -1167,6 +1173,8 @@ class MainPageTest(AuthenticatedSeleniumTest):
             task=task2,
             duration=1,
             day_order=1)
+
+        self.selenium.execute_script('window.localStorage.setItem("drag-and-drop", "never")')
 
         self.selenium.get(self.frontend_url)
         sleep(0.5)

@@ -270,6 +270,13 @@ export default {
       return this.chunk.series(this.$store)
     },
     enableDragAndDrop () {
+      let configured = localStorage.getItem('drag-and-drop')
+      if (configured === 'always') {
+        return true
+      } else if (configured === 'never') {
+        return false
+      }
+
       return window.innerWidth >= 600 && window.innerHeight >= 500
     }
   },
