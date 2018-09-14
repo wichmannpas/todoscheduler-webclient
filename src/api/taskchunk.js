@@ -160,6 +160,22 @@ function updateTaskChunkDay (store, chunk, newDay) {
     }).catch(error => handleGenericErrors(error, resolve, reject))
   })
 }
+
+/**
+ * Move a task chunk to specified day with day order.
+ */
+function moveTaskChunk (store, chunkId, day, dayOrder) {
+  return new Promise(function (resolve, reject) {
+    if (!ensureAuthToken()) {
+      reject(new Error('no auth'))
+    }
+
+    axios.patch(API_URL + '/task/chunk/' + chunkId.toString() + '/', {
+      day: day,
+      day_order: dayOrder
+    }).then(function (response) {
+      store.commit('moveTaskChunk', {
+        taskChunk: deserialize(TaskChunk, response.data)
       })
 
       resolve()
@@ -279,6 +295,7 @@ export {
   fetchTaskChunks,
   fetchTaskChunkSeries,
   finishTaskChunk,
+  moveTaskChunk,
   splitTaskChunk,
   updateTaskChunkDay,
   updateTaskChunkNotes,
