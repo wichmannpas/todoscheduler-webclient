@@ -63,7 +63,7 @@ export default {
   },
   methods: {
     previousWeek () {
-      let firstDay = subDays(this.firstDay, 8)
+      let firstDay = subDays(this.firstDay, 7)
 
       this.$emit('navigate', firstDay)
     },
@@ -71,7 +71,7 @@ export default {
       this.$emit('navigate', null)
     },
     nextWeek () {
-      let firstDay = addDays(this.firstDay, 8)
+      let firstDay = addDays(this.firstDay, 7)
 
       this.$emit('navigate', firstDay)
     }
