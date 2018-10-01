@@ -19,14 +19,42 @@
             mdc-dialog__body--scrollable
             mdc-dialog__body--big">
         <h3>
+          <a
+              v-if="!editing.taskNotes"
+              @click="editing.taskNotes = true"
+              data-tooltip="Edit"
+              class="c-hand tooltip">
+            <i
+                class="material-icons">
+              edit
+            </i>
+          </a>
+          <a
+              v-else
+              @click="updateTaskNotes"
+              data-tooltip="Save"
+              class="c-hand tooltip">
+            <i
+                class="material-icons">
+              done
+            </i>
+          </a>
           Task Notes
         </h3>
         <textarea
+            v-if="editing.taskNotes"
             v-model="taskNotes"
             @keyup.enter="handleTaskNotesKeyup"
             class="full-width-text-field"
             :disabled="loading.taskNotes"
             :rows="taskNotesRows" />
+        <div
+            v-else
+            class="notes"
+            @checkboxChange="taskCheckboxChanged"
+            @click="editTaskNotes"
+            v-html="compiledTaskNotes">
+        </div>
 
         <Loading v-if="loading.taskNotes" />
         <h3>
@@ -111,7 +139,8 @@ export default {
         taskNotes: false
       },
       editing: {
-        chunkNotes: false
+        chunkNotes: false,
+        taskNotes: false
       },
       chunkNotes: this.chunk.notes,
       taskNotes: this.chunk.task(this.$store).notes
@@ -124,6 +153,9 @@ export default {
 
     compiledChunkNotes () {
       return compileMarkdown(this.chunkNotes)
+    },
+    compiledTaskNotes () {
+      return compileMarkdown(this.taskNotes)
     },
 
     taskNotesRows () {
@@ -142,11 +174,24 @@ export default {
 
       this.editing.chunkNotes = true
     },
+    editTaskNotes (event) {
+      if (event !== undefined && event.target.tagName === 'INPUT') {
+        // ignore clicks on inputs
+        return
+      }
+
+      this.editing.taskNotes = true
+    },
 
     chunkCheckboxChanged (event) {
       this.chunkNotes = setCheckbox(
         this.chunkNotes, event.detail.occurrence, event.detail.checked)
       this.updateChunkNotes()
+    },
+    taskCheckboxChanged (event) {
+      this.taskNotes = setCheckbox(
+        this.taskNotes, event.detail.occurrence, event.detail.checked)
+      this.updateTaskNotes()
     },
 
     updateChunkNotes () {
@@ -171,10 +216,12 @@ export default {
 
       this.loading.taskNotes = true
 
-      updateTaskNotes(this.$store, this.task, this.taskNotes).catch(response => {
+      updateTaskNotes(this.$store, this.task, this.taskNotes).then(() => {
+        this.editing.taskNotes = false
+      }).catch(response => {
         Vue.set(this, 'errors', Object.keys(response))
       }).finally(() => {
-        this.loading = false
+        this.loading.taskNotes = false
       })
     },
     closeDialog () {
