@@ -191,8 +191,8 @@ function compileMarkdown (input) {
   })
 
   let occurrence
-  function replacement (match, checkedGroup) {
-    let checked = checkedGroup === 'x'
+  function replacement (match, checkedGroup, markedCheckedGroup) {
+    let checked = checkedGroup === 'x' || markedCheckedGroup === ' checked=""'
 
     return `
       <input
@@ -202,10 +202,10 @@ function compileMarkdown (input) {
       '/>'
   }
 
-  // replace checkboxes
+  // replace checkboxes (marked compiles checkboxes within lists, replace them as well)
   occurrence = 0
   compiled = compiled.replace(
-    /\[( |x)\]/g, replacement)
+    /\[( |x)\]|<input( checked=""|) disabled="" type="checkbox">/g, replacement)
 
   return compiled
 }
