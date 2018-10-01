@@ -19,6 +19,7 @@
     "date-fns": "^1.29.0",
     "decimal.js-light": "^2.4.1",
     "invert-color": "^1.5.0",
+    "marked": "^0.5.1",
     "material-components-web": "^0.38.2",
     "material-icons-font": "^1.4.2",
     "node-sass": "^4.9.3",
