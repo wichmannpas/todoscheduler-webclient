@@ -1,4 +1,5 @@
 import { differenceInDays, format, parse } from 'date-fns'
+import marked from 'marked'
 
 import { TEXTAREA_MIN_ROWS, TEXTAREA_MAX_ROWS } from '@/config'
 
@@ -176,7 +177,59 @@ function priorityString (priority) {
   }
 }
 
+/**
+ * Compiles markdown using marked and renders check lists.
+ */
+function compileMarkdown (input) {
+  if (input === null) {
+    return null
+  }
+
+  let compiled = marked(input, {
+    sanitize: true,
+    breaks: true
+  })
+
+  let occurrence
+  function replacement (match, checkedGroup) {
+    let checked = checkedGroup === 'x'
+
+    return `
+      <input
+          type="checkbox"
+          onchange="this.closest('.notes').dispatchEvent(new CustomEvent('checkboxChange', { detail: { occurrence: ` + (occurrence++).toString() + ', checked: this.checked } }))" ' +
+      (checked ? 'checked' : '') +
+      '/>'
+  }
+
+  // replace checkboxes
+  occurrence = 0
+  compiled = compiled.replace(
+    /\[( |x)\]/g, replacement)
+
+  return compiled
+}
+
+/**
+ * Set the ith checkbox (starting with 0) within input
+ * to be checked or unchecked.
+ */
+function setCheckbox (input, occurrence, checked) {
+  let thisOccurrence = 0
+  return input.replace(/\[( |x)\]/g, match => {
+    if (thisOccurrence++ !== occurrence) {
+      return match
+    }
+
+    if (checked) {
+      return '[x]'
+    }
+    return '[ ]'
+  })
+}
+
 export {
+  compileMarkdown,
   dayDelta,
   dayOfDate,
   formatDayString,
@@ -188,5 +241,6 @@ export {
   parseDayString,
   prettyDate,
   priorityString,
+  setCheckbox,
   textareaRows
 }
