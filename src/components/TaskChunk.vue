@@ -125,17 +125,6 @@
           layers
         </i>
       </a>
-      <span
-          v-if="enableDragAndDrop"
-          class="c-hand drag-handle action tooltip tooltip-left"
-          v-bind:class="[
-            { 'invisible': chunk.finished }
-          ]"
-          data-tooltip="Move">
-        <i class="material-icons">
-          drag_handle
-        </i>
-      </span>
       <a
           v-if="!enableDragAndDrop"
           @click="updateChunkDay(-1)"
@@ -205,6 +194,17 @@
           add
         </i>
       </a>
+      <span
+          v-if="enableDragAndDrop"
+          class="c-hand drag-handle action tooltip tooltip-left"
+          v-bind:class="[
+            { 'invisible': chunk.finished }
+          ]"
+          data-tooltip="Move">
+        <i class="material-icons">
+          drag_handle
+        </i>
+      </span>
     </span>
     <div class="labels">
       <span
