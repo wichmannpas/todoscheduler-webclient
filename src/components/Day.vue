@@ -11,7 +11,7 @@
       <span class="float-right">
         {{ maxDuration.toNumber() }}h
         <span
-            class="tooltip tooltip-bottom"
+            class="tooltip tooltip-left"
               data-tooltip="Max duration for this day">
           <i class="material-icons normal-whitespace small">
             watch_later
@@ -35,7 +35,7 @@
       <span class="float-right">
         {{ unfinishedScheduledDuration.toNumber() }}h/{{ scheduledDuration.toNumber() }}h
         <span
-            class="tooltip"
+            class="tooltip tooltip-left"
             data-tooltip="Unfinished/total scheduled duration">
           <i class="material-icons normal-whitespace small">
             access_time
