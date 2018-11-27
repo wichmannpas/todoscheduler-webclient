@@ -49,22 +49,24 @@ function naturalDay (day, today) {
   day = dayOfDate(new Date(day.getTime()))
   let dayTime = day.getTime()
 
+  let monthAndDay = format(day, 'MMM. D')
+
   let todayTime = today.getTime()
   let yesterdayTime = todayTime - 86400000
   let tomorrowTime = todayTime + 86400000
   if (yesterdayTime === dayTime) {
-    return 'yesterday'
+    return 'yesterday (' + monthAndDay + ')'
   } else if (todayTime === dayTime) {
-    return 'today'
+    return 'today (' + monthAndDay + ')'
   } else if (tomorrowTime === dayTime) {
-    return 'tomorrow'
+    return 'tomorrow (' + monthAndDay + ')'
   }
 
   let dayDelta = differenceInDays(day, today)
   if (dayDelta <= 6 && dayDelta >= 0) {
-    return format(day, 'dddd')
+    return format(day, 'dddd (') + monthAndDay + ')'
   }
-  let result = format(day, 'ddd, MMMM D')
+  let result = format(day, 'ddd, ') + monthAndDay
 
   let year = format(day, 'YYYY')
   if (year !== format(today, 'YYYY')) {
