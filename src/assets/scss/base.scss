@@ -145,3 +145,11 @@ a {
 .mdc-list-item__meta {
   text-align: center;
 }
+
+
+// fix tooltip max width to prevent horizontal scrolling
+.tooltip {
+  &::after {
+    max-width: 30vw;
+  }
+}
