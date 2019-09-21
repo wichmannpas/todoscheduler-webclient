@@ -88,12 +88,20 @@ a {
 
 .mdc-dialog__body--scrollable {
   overflow-y: auto !important;
+
+  max-height: none;
 }
 
-.mdc-dialog__body--big {
-  @media (min-height: 650px) {
-    max-height: none !important;
-  }
+.mdc-dialog__surface {
+  position: fixed;
+  top: 1em !important;
+  right: 1em !important;
+  left: 1em !important;
+  //bottom: 1em !important;
+  max-height: 93vh;
+
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .material-icons.headline-icon {
