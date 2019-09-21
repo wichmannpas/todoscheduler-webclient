@@ -32,6 +32,16 @@
         @editTask="editTask" />
     </div>
     <div class="footer">
+      <span>
+        <span
+          class="tooltip tooltip-right"
+          data-tooltip="Unfinished/total scheduled task chunk count">
+          <i class="material-icons normal-whitespace small">
+            check_circle
+          </i>
+          {{ unfinishedTaskChunkCount }}/{{ taskChunkCount }}
+        </span>
+      </span>
       <span class="float-right">
         {{ unfinishedScheduledDuration.toNumber() }}h/{{ scheduledDuration.toNumber() }}h
         <span
@@ -152,6 +162,12 @@ export default {
 
     taskChunks () {
       return this.$store.getters.taskChunksForDay(this.day)
+    },
+    taskChunkCount () {
+      return this.taskChunks.length
+    },
+    unfinishedTaskChunkCount () {
+      return this.taskChunks.filter(chunk => !chunk.finished).length
     },
 
     scheduledDuration () {
