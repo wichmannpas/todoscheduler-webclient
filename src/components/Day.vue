@@ -35,11 +35,11 @@
       <span>
         <span
           class="tooltip tooltip-right"
-          data-tooltip="Unfinished/total scheduled task chunk count">
+          data-tooltip="Finished/total scheduled task chunk count">
           <i class="material-icons normal-whitespace small">
             check_circle
           </i>
-          {{ unfinishedTaskChunkCount }}/{{ taskChunkCount }}
+          {{ finishedTaskChunkCount }}/{{ taskChunkCount }}
         </span>
       </span>
       <span class="float-right">
@@ -166,8 +166,8 @@ export default {
     taskChunkCount () {
       return this.taskChunks.length
     },
-    unfinishedTaskChunkCount () {
-      return this.taskChunks.filter(chunk => !chunk.finished).length
+    finishedTaskChunkCount () {
+      return this.taskChunks.filter(chunk => chunk.finished).length
     },
 
     scheduledDuration () {
